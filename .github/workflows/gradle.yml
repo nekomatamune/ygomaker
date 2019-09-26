@@ -11,6 +11,6 @@ jobs:
     - uses: actions/checkout@v1
     - uses: olafurpg/setup-scala@v2
       with:
-        java-version: adopt@1.11
+        java-version: zulu@1.8
     - name: Build with Gradle
       run: ./gradlew build
