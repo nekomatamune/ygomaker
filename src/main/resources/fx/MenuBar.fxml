@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<MenuBar xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         fx:controller="me.nekomatamune.ygomaker.fx.MenuBar"
+         useSystemMenuBar="true">
+
+    <Menu text="File">
+        <MenuItem fx:id="loadPackMenuItem"
+                  text="Load Pack" accelerator="Shortcut+O"/>
+        <MenuItem text="Save Pack" accelerator="Shortcut+S"/>
+        <MenuItem text="Save Pack as..." accelerator="Shortcut+shift+S"/>
+
+        <SeparatorMenuItem/>
+
+        <MenuItem fx:id="exitMenuItem"
+                  text="Exit" accelerator="Shortcut+Q"/>
+    </Menu>
+
+</MenuBar>

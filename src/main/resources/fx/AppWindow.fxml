@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Text?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="me.nekomatamune.ygomaker.fx.AppWindow"
+            prefHeight="800" prefWidth="1000">
+    <top>
+        <fx:include fx:id="menuBar" source="MenuBar.fxml"/>
+    </top>
+    <left>
+        <fx:include fx:id="cardList" source="CardList.fxml"/>
+    </left>
+    <center>
+        <Text>Center</Text>
+    </center>
+    <right>
+        <fx:include fx:id="cardForm" source="CardForm.fxml"/>
+    </right>
+
+</BorderPane>

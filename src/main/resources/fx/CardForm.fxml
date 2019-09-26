@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="me.nekomatamune.ygomaker.fx.CardForm"
+          hgap="10" vgap="10">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" minWidth="10"/>
+    </columnConstraints>
+
+    <!-- Row 0 -->
+    <TextField fx:id="cardNameTextField"
+               promptText="Card Name" prefColumnCount="15"
+               GridPane.rowIndex="0" GridPane.columnIndex="0"
+               GridPane.columnSpan="3"/>
+
+    <!-- Row 1 -->
+    <ComboBox fx:id="cardTypeComboBox"
+              promptText="Card Type"
+              GridPane.rowIndex="1" GridPane.columnIndex="0"
+              GridPane.columnSpan="3"/>
+
+    <!-- Row 2 -->
+    <ComboBox fx:id="attributeComboBox"
+              promptText="Attribute"
+              GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+    <ComboBox fx:id="levelComboBox"
+              promptText="Level"
+              GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+    <!-- Row 3 -->
+    <ComboBox fx:id="monsterTypeComboBox"
+              promptText="Type"
+              GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+    <ComboBox fx:id="monsterAbilityComboBox"
+              promptText="Ability"
+              GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+    <CheckBox fx:id="effectCheckBox"
+              text="Effect"
+              GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+
+    <!-- Row 4 -->
+    <TextArea fx:id="effectTextArea"
+              promptText="Effect / Lore" wrapText="true"
+              prefRowCount="7" prefColumnCount="15"
+              GridPane.rowIndex="4" GridPane.columnIndex="0"
+              GridPane.columnSpan="3"/>
+
+    <!-- Row 5 -->
+    <TextField fx:id="atkTextField"
+               promptText="ATK" prefColumnCount="3"
+               GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+    <TextField fx:id="defTextField"
+               promptText="DEF" prefColumnCount="3"
+               GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+    <TextField fx:id="codeTextField"
+               promptText="Code" prefColumnCount="5"
+               GridPane.rowIndex="5" GridPane.columnIndex="2" />
+
+    <!-- Row 6 -->
+    <fx:include fx:id="cardImage"
+                source="CardImage.fxml"
+                GridPane.rowIndex="6" GridPane.columnIndex="0"
+                GridPane.columnSpan="4"/>
+</GridPane>
