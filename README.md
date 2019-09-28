@@ -1,7 +1,7 @@
 # YGOMaker
 
-![master](https://img.shields.io/travis/nekomatamune/ygomaker/master.svg?label=Master%20Build&style=plastic)
-![dev](https://img.shields.io/travis/nekomatamune/ygomaker/dev.svg?label=Dev%20Build&style=plastic)
+![master](https://img.shields.io/travis/nekomatamune/ygomaker/master.svg?label=Master%20Build&style=plastic&logo=travis)
+![dev](https://img.shields.io/travis/nekomatamune/ygomaker/dev.svg?label=Dev%20Build&style=plastic&logo=travis)
 ![dependencies](https://img.shields.io/librariesio/github/nekomatamune/ygomaker?label=Dependencies&style=plastic)
 
 ![last commit](https://img.shields.io/github/last-commit/nekomatamune/ygomaker?label=Last%20Commit&style=plastic)
