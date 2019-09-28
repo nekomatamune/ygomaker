@@ -2,7 +2,8 @@ pull_request_rules:
   - name: automatic merge on CI success and review
     conditions:
       - status-success=continuous-integration/travis-ci/pr
-      - "#approved-reviews-by>=1"
+      - base=master
+      - head=dev
     actions:
       merge:
         method: merge
