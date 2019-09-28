@@ -1,3 +1,5 @@
 # YGOMaker
 
-[![Build Status](https://travis-ci.com/nekomatamune/ygomaker.svg?branch=master)](https://travis-ci.com/nekomatamune/ygomaker)
+![master](https://img.shields.io/travis/nekomatamune/ygomaker/master.svg?label=Master)
+![dev](https://img.shields.io/travis/nekomatamune/ygomaker/dev.svg?label=Dev)
+
