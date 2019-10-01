@@ -1,12 +1,12 @@
 package me.nekomatamune.ygomaker.fx
 
-import me.nekomatamune.ygomaker.*
 import javafx.collections.FXCollections.observableArrayList
 import javafx.fxml.FXML
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
+import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
 import java.nio.file.Path
 
@@ -15,41 +15,18 @@ private val logger = KotlinLogging.logger { }
 class CardForm {
 	private lateinit var packDir: Path
 
-	@FXML
-	lateinit var cardNameTextField: TextField
-
-	@FXML
-	lateinit var cardTypeComboBox: ComboBox<CardType>
-
-	@FXML
-	lateinit var attributeComboBox: ComboBox<Attribute>
-
-	@FXML
-	lateinit var levelComboBox: ComboBox<Int>
-
-	@FXML
-	lateinit var monsterTypeComboBox: ComboBox<String>
-
-	@FXML
-	lateinit var monsterAbilityComboBox: ComboBox<String>
-
-	@FXML
-	lateinit var effectCheckBox: CheckBox
-
-	@FXML
-	lateinit var effectTextArea: TextArea
-
-	@FXML
-	lateinit var atkTextField: TextField
-
-	@FXML
-	lateinit var defTextField: TextField
-
-	@FXML
-	lateinit var codeTextField: TextField
-
-	@FXML
-	lateinit var cardImageController: CardImage
+	@FXML lateinit var cardNameTextField: TextField
+	@FXML lateinit var cardTypeComboBox: ComboBox<CardType>
+	@FXML	lateinit var attributeComboBox: ComboBox<Attribute>
+	@FXML	lateinit var levelComboBox: ComboBox<Int>
+	@FXML	lateinit var monsterTypeComboBox: ComboBox<String>
+	@FXML	lateinit var monsterAbilityComboBox: ComboBox<String>
+	@FXML	lateinit var effectCheckBox: CheckBox
+	@FXML	lateinit var effectTextArea: TextArea
+	@FXML	lateinit var atkTextField: TextField
+	@FXML	lateinit var defTextField: TextField
+	@FXML	lateinit var codeTextField: TextField
+	@FXML	lateinit var cardImageController: CardImage
 
 	var onSelectCardInProgress: Boolean = false
 
