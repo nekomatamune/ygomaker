@@ -96,6 +96,19 @@ class CardList {
 	}
 
 	private fun onModifyCardImage(event: Event): Result<Unit> {
+		disableOnSelectCard = true
+
+		val mergedCard = event.image!!.let {
+			cardListView.selectionModel.selectedItem.copy(
+				image = it
+			)
+		}
+
+		val cards = cardListView.items
+		val selectIdx = cardListView.selectionModel.selectedIndex
+		cards[selectIdx] = mergedCard
+
+		disableOnSelectCard = false
 		return Result.success(Unit)
 	}
 
