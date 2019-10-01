@@ -26,7 +26,6 @@ class CardForm {
 	@FXML	lateinit var atkTextField: TextField
 	@FXML	lateinit var defTextField: TextField
 	@FXML	lateinit var codeTextField: TextField
-	@FXML	lateinit var cardImageController: CardImage
 
 	var onSelectCardInProgress: Boolean = false
 
