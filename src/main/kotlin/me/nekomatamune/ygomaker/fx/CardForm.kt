@@ -130,7 +130,6 @@ class CardForm {
 		dispatchEvent(Event(name = EventName.MODIFY_CARD, card = newCard))
 	}
 
-
 	private fun onSelectCard(card: Card) {
 		onSelectCardInProgress = true
 
