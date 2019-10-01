@@ -3,6 +3,7 @@
 ygomaker.jar
 .idea
 /out/
+/data/
 
 # Ignore Gradle GUI config
 gradle-app.setting
