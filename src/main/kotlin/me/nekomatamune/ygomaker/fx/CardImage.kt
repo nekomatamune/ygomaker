@@ -18,6 +18,7 @@ import java.io.FileNotFoundException
 import java.nio.file.Path
 import kotlin.math.max
 import kotlin.math.roundToInt
+import me.nekomatamune.ygomaker.Image as CardImage
 
 private val logger = KotlinLogging.logger { }
 
@@ -91,7 +92,7 @@ class CardImage {
 	private fun onSelectCard(event: Event): Result<Unit> {
 		logger.debug { "Handling ${event.name} event" }
 
-		event.card?.image!!.let {
+		(event.card?.image ?: CardImage()).let {
 			fileTextField.text = it.file
 			xSpinner.valueFactory.value = it.x
 			ySpinner.valueFactory.value = it.y
@@ -120,16 +121,19 @@ class CardImage {
 	}
 
 	private fun loadImage(): Result<Unit> {
+		if(fileTextField.text.isBlank()) {
+			imageView.image = null
+			return Result.success(Unit)
+		}
+
 		val imagePath = packDir.resolve(fileTextField.text)
 		logger.debug { "Loading image from ${imagePath.toUri()}" }
 
 		imagePath.toFile().let {
 			if (!it.exists()) {
-				logger.error { "bad1" }
 				return Result.failure(FileNotFoundException(imagePath.toString()))
 			}
 			if (!it.isFile) {
-				logger.error { "bad2" }
 				return Result.failure(
 					IllegalArgumentException("Not a file: $it"))
 			}
