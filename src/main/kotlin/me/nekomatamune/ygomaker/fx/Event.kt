@@ -48,5 +48,6 @@ enum class EventName {
 	SAVE_PACK_AS,
 	SELECT_CARD,
 	MODIFY_CARD,
+	MODIFY_CARD_IMAGE,
 }
 
