@@ -54,6 +54,7 @@ class CardImage {
 	private fun onSpinnerValueChange(oldValue: Int, newValue: Int) {
 		logger.trace { "onSpinnerValueChange: $oldValue -> $newValue" }
 		updateViewPort()
+		dispatchModifyCardImageEvent()
 	}
 
 	private fun onMousePressed(event: MouseEvent) {
@@ -72,6 +73,7 @@ class CardImage {
 		ySpinner.valueFactory.value =
 			(ySpinner.value + (mouseClickY - event.screenY) * scale).roundToInt()
 		onMousePressed(event)
+		dispatchModifyCardImageEvent()
 	}
 
 	private fun onMouseScrolled(event: ScrollEvent) {
@@ -79,6 +81,7 @@ class CardImage {
 		sizeSpinner.valueFactory.value =
 			(sizeSpinner.value * (1 + (event.deltaY * 0.001))).roundToInt()
 		updateViewPort()
+		dispatchModifyCardImageEvent()
 	}
 
 	private fun onZoom(event: ZoomEvent) {
@@ -86,6 +89,7 @@ class CardImage {
 		sizeSpinner.valueFactory.value =
 			(sizeSpinner.value / event.zoomFactor).roundToInt()
 		updateViewPort()
+		dispatchModifyCardImageEvent()
 	}
 
 	private fun onSelectCard(event: Event): Result<Unit> {
@@ -113,10 +117,23 @@ class CardImage {
 			val imageFile = packDir.relativize(selectedFile.toPath())
 
 			fileTextField.text = imageFile.toString()
+			dispatchModifyCardImageEvent()
 			loadImage().onFailure {
 				logger.error(it.cause) { it.message }
 			}
 		}
+	}
+
+	private fun dispatchModifyCardImageEvent() {
+		dispatchEvent(Event(
+			name = EventName.MODIFY_CARD_IMAGE,
+			image = me.nekomatamune.ygomaker.Image(
+				file = fileTextField.text,
+				x = xSpinner.value,
+				y = ySpinner.value,
+				size = sizeSpinner.value
+			)
+		))
 	}
 
 	private fun loadImage(): Result<Unit> {

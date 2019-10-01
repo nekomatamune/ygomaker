@@ -2,6 +2,7 @@ package me.nekomatamune.ygomaker.fx
 
 import me.nekomatamune.ygomaker.Card
 import javafx.event.ActionEvent
+import me.nekomatamune.ygomaker.Image
 import mu.KotlinLogging
 import java.nio.file.Path
 
@@ -38,7 +39,8 @@ data class Event(
 
 	// The following fields are payloads of various EventName
 	val packDir: Path? = null,
-	val card: Card? = null
+	val card: Card? = null,
+	val image: Image? = null
 )
 
 enum class EventName {
