@@ -49,6 +49,10 @@ class CardList {
 		registerEventHandler(EventName.MODIFY_CARD) {
 			onModifyCard(it)
 		}
+
+		registerEventHandler(EventName.MODIFY_CARD_IMAGE) {
+			onModifyCardImage(it)
+		}
 	}
 
 	private fun onSelectCard(newValue: Card) {
@@ -88,6 +92,10 @@ class CardList {
 		//cardListView.items[cardListView.selectionModel.selectedIndex] = mergedCard
 
 		disableOnSelectCard = false
+		return Result.success(Unit)
+	}
+
+	private fun onModifyCardImage(event: Event): Result<Unit> {
 		return Result.success(Unit)
 	}
 
