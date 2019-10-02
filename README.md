@@ -10,4 +10,5 @@
 ![license](https://img.shields.io/github/license/nekomatamune/ygomaker?label=License&style=plastic&logo=read-the-docs)
 
 
-
+## TL;DR
+`./gradlew pack && ./run.sh --gui TEST`
