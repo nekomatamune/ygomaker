@@ -12,3 +12,16 @@
 
 ## TL;DR
 `./gradlew pack && ./run.sh --gui TEST`
+
+## File Structrue
+
+Group          | Files/Directories
+-----          | -----
+Source Codes   | `src/main/*`, `src/test/*`, `run.sh`
+Documentation  | `README.md`
+Gradle         | `build.gradle.kt`, `setting.gradle.kt`
+Gradle Wrapper | `gradle/*`, `gradlew`, `gradlew.bat`
+Git            | `.gitignore`
+Travis CI      | `.travis.yml`
+Mergify        | `.mergify.yml`
+Repo Metadata  | `LICENSE`
