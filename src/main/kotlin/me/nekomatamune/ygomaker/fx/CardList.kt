@@ -1,9 +1,5 @@
 package me.nekomatamune.ygomaker.fx
 
-import me.nekomatamune.ygomaker.Card
-import me.nekomatamune.ygomaker.Pack
-import me.nekomatamune.ygomaker.copyWithFilledCardCodes
-import me.nekomatamune.ygomaker.toShortString
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.control.ListCell
@@ -11,6 +7,9 @@ import javafx.scene.control.ListView
 import javafx.scene.text.Text
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
+import me.nekomatamune.ygomaker.Card
+import me.nekomatamune.ygomaker.Pack
+import me.nekomatamune.ygomaker.toShortString
 import mu.KotlinLogging
 import java.io.FileNotFoundException
 import java.nio.file.Path
@@ -125,18 +124,12 @@ class CardList {
 			Pack.serializer(), cardFile.toFile().readText())
 
 		logger.info { "Pack ${pack.name} (${pack.code})" }
-		val cardsWithCode = pack.copyWithFilledCardCodes().cards.values
-			.sortedBy { it.code }
-			.map {
-				logger.info { "\t${it.toShortString()}" }
-				it
-			}
 
 		packDirText.text = pack.name
 		this.packDir = packDir
 
 		cardListView.apply {
-			items = FXCollections.observableArrayList(cardsWithCode)
+			items = FXCollections.observableArrayList(pack.cards)
 			selectionModel.selectFirst()
 		}
 

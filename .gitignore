@@ -3,7 +3,12 @@
 ygomaker.jar
 .idea
 /out/
-/data/
+
+# Ignore data, but not the TEST pack
+!data
+data/*
+!data/TEST
+
 
 # Ignore Gradle GUI config
 gradle-app.setting
