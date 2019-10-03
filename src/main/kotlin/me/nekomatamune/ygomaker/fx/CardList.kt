@@ -4,6 +4,7 @@ import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
+import javafx.scene.control.TextField
 import javafx.scene.text.Text
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
@@ -23,6 +24,9 @@ class CardList {
 
 	@FXML
 	private lateinit var packDirText: Text
+
+	@FXML private lateinit var packNameTextField: TextField
+	@FXML private lateinit var packCodeTextField: TextField
 
 	@FXML
 	private lateinit var cardListView: ListView<Card>
@@ -125,9 +129,11 @@ class CardList {
 
 		logger.info { "Pack ${pack.name} (${pack.code})" }
 
-		packDirText.text = pack.name
+		packDirText.text = cardFile.toString()
+		packNameTextField.text = pack.name
+		packCodeTextField.text = pack.code
 		this.packDir = packDir
-
+		
 		cardListView.apply {
 			items = FXCollections.observableArrayList(pack.cards)
 			selectionModel.selectFirst()
