@@ -1,7 +1,9 @@
 package me.nekomatamune.ygomaker.fx
 
 import javafx.collections.FXCollections
+import javafx.collections.FXCollections.observableList
 import javafx.fxml.FXML
+import javafx.scene.control.ComboBox
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
 import javafx.scene.control.TextField
@@ -9,6 +11,7 @@ import javafx.scene.text.Text
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.Card
+import me.nekomatamune.ygomaker.Language
 import me.nekomatamune.ygomaker.Pack
 import me.nekomatamune.ygomaker.toShortString
 import mu.KotlinLogging
@@ -27,6 +30,7 @@ class CardList {
 
 	@FXML private lateinit var packNameTextField: TextField
 	@FXML private lateinit var packCodeTextField: TextField
+	@FXML private lateinit var languageComboBox: ComboBox<Language>
 
 	@FXML
 	private lateinit var cardListView: ListView<Card>
@@ -36,6 +40,8 @@ class CardList {
 	@FXML
 	private fun initialize() {
 		logger.debug { "Initializing CardList" }
+
+		languageComboBox.items = observableList(Language.values().toList())
 
 		cardListView.apply {
 			setCellFactory { CardListCell() }
@@ -132,8 +138,9 @@ class CardList {
 		packDirText.text = cardFile.toString()
 		packNameTextField.text = pack.name
 		packCodeTextField.text = pack.code
+		languageComboBox.selectionModel.select(pack.language)
 		this.packDir = packDir
-		
+
 		cardListView.apply {
 			items = FXCollections.observableArrayList(pack.cards)
 			selectionModel.selectFirst()
