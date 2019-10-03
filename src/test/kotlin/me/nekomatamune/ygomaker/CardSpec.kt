@@ -33,7 +33,7 @@ object CardSpec : Spek({
 						"y": 456,
 						"size": 789
 					},
-					"code": "TEST-JP123",
+					"code": "123",
 					"effect": "my_effect",
 					"serial": 12344321
 				}
@@ -66,7 +66,7 @@ object CardSpec : Spek({
 				get { y }.isEqualTo(456)
 				get { size }.isEqualTo(789)
 			}
-			get { code }.isEqualTo("TEST-JP123")
+			get { code }.isEqualTo("123")
 			get { effect }.isEqualTo("my_effect")
 			get { serial }.isEqualTo(12344321)
 		}
@@ -79,14 +79,11 @@ object CardSpec : Spek({
 				"code": "my_pack_code",
 				"language": "EN",
 				"copyright": "my_copyright",
-				"cards": {
-				  001: {
+				"cards": [{
 						"name": "card_01"
-					},
-					002: {
+				}, {
 						"name": "card_02"
-					}
-				}
+				}]
 			}
 		""".trimIndent()
 
@@ -98,10 +95,7 @@ object CardSpec : Spek({
 			get { code }.isEqualTo("my_pack_code")
 			get { language }.isEqualTo(Language.EN)
 			get { copyright }.isEqualTo("my_copyright")
-			get { cards.mapValues { it.value.name } }
-				.hasEntry(1, "card_01")
-				.hasEntry(2, "card_02")
-				.hasSize(2)
+			get { cards.map { it.name } }.containsExactly("card_01", "card_02")
 		}
 	}
 })

@@ -62,7 +62,7 @@ data class Pack(
 	val code: String = "",
 	val language: Language = Language.JP,
 	val copyright: String? = null,
-	val cards: Map<Int, Card> = mapOf()
+	val cards: List<Card> = listOf()
 )
 
 /**
