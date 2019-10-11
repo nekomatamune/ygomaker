@@ -32,6 +32,7 @@ class CardList {
 	@FXML private lateinit var cardListView: ListView<Card>
 
 	private var disableOnSelectCard = false
+	private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
 	@FXML
 	private fun initialize() {
@@ -148,8 +149,7 @@ class CardList {
 			return Result.failure(FileNotFoundException(cardFile.toString()))
 		}
 
-		pack = Json(JsonConfiguration.Stable).parse(
-			Pack.serializer(), cardFile.toFile().readText())
+		pack = json.parse(Pack.serializer(), cardFile.toFile().readText())
 
 		logger.info { "Pack ${pack.name} (${pack.code})" }
 
@@ -171,8 +171,7 @@ class CardList {
 		logger.info { "Saving pack into $packDir" }
 		val cardFile = packDir.resolve("pack.json")
 
-		val packJson = Json(JsonConfiguration.Stable).stringify(
-			Pack.serializer(), pack)
+		val packJson = json.stringify(Pack.serializer(), pack)
 
 		cardFile.toFile().writeText(packJson)
 
