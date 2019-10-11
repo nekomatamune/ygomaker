@@ -11,7 +11,7 @@
                 "attribute": "LIGHT",
                 "level": 8,
                 "type": "魔法使い族",
-                "ability": "リーバス",
+                "ability": null,
                 "effect": false,
                 "atk": "3000",
                 "def": "2500",

@@ -96,7 +96,7 @@ class CardForm {
 				attribute = attributeComboBox.value,
 				level = levelComboBox.value,
 				type = monsterTypeComboBox.value,
-				ability = monsterAbilityComboBox.value,
+				ability = monsterAbilityComboBox.value.ifEmpty { null },
 				effect = effectCheckBox.isSelected,
 				atk = atkTextField.text,
 				def = defTextField.text
@@ -115,7 +115,7 @@ class CardForm {
 		attributeComboBox.selectionModel.select(card.monster?.attribute)
 		levelComboBox.selectionModel.select(card.monster?.level)
 		monsterTypeComboBox.selectionModel.select(card.monster?.type)
-		monsterAbilityComboBox.selectionModel.select(card.monster?.ability)
+		monsterAbilityComboBox.selectionModel.select(card.monster?.ability ?: "")
 		effectCheckBox.isSelected = card.monster?.effect ?: false
 		effectTextArea.text = card.effect
 		atkTextField.text = card.monster?.atk ?: ""
