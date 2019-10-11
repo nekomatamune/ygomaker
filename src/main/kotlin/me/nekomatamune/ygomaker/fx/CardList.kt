@@ -37,7 +37,15 @@ class CardList {
 	private fun initialize() {
 		logger.debug { "Initializing CardList" }
 
+		sequenceOf(packNameTextField, packCodeTextField).forEach {
+			it.textProperty().addListener { _, _, _ ->
+				onModifyPackInfo()
+			}
+		}
 		languageComboBox.items = observableList(Language.values().toList())
+		languageComboBox.valueProperty().addListener { _, _, _ ->
+			onModifyPackInfo()
+		}
 
 		cardListView.apply {
 			setCellFactory { CardListCell() }
@@ -63,6 +71,15 @@ class CardList {
 		registerEventHandler(EventName.MODIFY_CARD_IMAGE) {
 			onModifyCardImage(it)
 		}
+	}
+
+	private fun onModifyPackInfo() {
+		logger.debug { "Update pack info" }
+		pack = pack.copy(
+			name = packNameTextField.text,
+			code = packCodeTextField.text,
+			language = languageComboBox.selectionModel.selectedItem
+		)
 	}
 
 	private fun onSelectCard(newValue: Card) {
