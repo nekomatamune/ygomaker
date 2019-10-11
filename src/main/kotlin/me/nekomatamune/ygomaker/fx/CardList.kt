@@ -1,13 +1,17 @@
 package me.nekomatamune.ygomaker.fx
 
 import javafx.collections.FXCollections
+import javafx.collections.FXCollections.observableList
 import javafx.fxml.FXML
+import javafx.scene.control.ComboBox
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
+import javafx.scene.control.TextField
 import javafx.scene.text.Text
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.Card
+import me.nekomatamune.ygomaker.Language
 import me.nekomatamune.ygomaker.Pack
 import me.nekomatamune.ygomaker.toShortString
 import mu.KotlinLogging
@@ -21,17 +25,28 @@ class CardList {
 	private lateinit var pack: Pack
 	private lateinit var packDir: Path
 
-	@FXML
-	private lateinit var packDirText: Text
-
-	@FXML
-	private lateinit var cardListView: ListView<Card>
+	@FXML private lateinit var packDirText: Text
+	@FXML private lateinit var packNameTextField: TextField
+	@FXML private lateinit var packCodeTextField: TextField
+	@FXML private lateinit var languageComboBox: ComboBox<Language>
+	@FXML private lateinit var cardListView: ListView<Card>
 
 	private var disableOnSelectCard = false
+	private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
 	@FXML
 	private fun initialize() {
 		logger.debug { "Initializing CardList" }
+
+		sequenceOf(packNameTextField, packCodeTextField).forEach {
+			it.textProperty().addListener { _, _, _ ->
+				onModifyPackInfo()
+			}
+		}
+		languageComboBox.items = observableList(Language.values().toList())
+		languageComboBox.valueProperty().addListener { _, _, _ ->
+			onModifyPackInfo()
+		}
 
 		cardListView.apply {
 			setCellFactory { CardListCell() }
@@ -45,6 +60,11 @@ class CardList {
 			loadPack(it.packDir!!)
 		}
 
+		registerEventHandler(EventName.SAVE_PACK) {
+			logger.debug { "Handling SAVE_PACK event" }
+			savePack()
+		}
+
 		registerEventHandler(EventName.MODIFY_CARD) {
 			onModifyCard(it)
 		}
@@ -52,6 +72,15 @@ class CardList {
 		registerEventHandler(EventName.MODIFY_CARD_IMAGE) {
 			onModifyCardImage(it)
 		}
+	}
+
+	private fun onModifyPackInfo() {
+		logger.debug { "Update pack info" }
+		pack = pack.copy(
+			name = packNameTextField.text,
+			code = packCodeTextField.text,
+			language = languageComboBox.selectionModel.selectedItem
+		)
 	}
 
 	private fun onSelectCard(newValue: Card) {
@@ -120,18 +149,31 @@ class CardList {
 			return Result.failure(FileNotFoundException(cardFile.toString()))
 		}
 
-		pack = Json(JsonConfiguration.Stable).parse(
-			Pack.serializer(), cardFile.toFile().readText())
+		pack = json.parse(Pack.serializer(), cardFile.toFile().readText())
 
 		logger.info { "Pack ${pack.name} (${pack.code})" }
 
-		packDirText.text = pack.name
+		packDirText.text = cardFile.toString()
+		packNameTextField.text = pack.name
+		packCodeTextField.text = pack.code
+		languageComboBox.selectionModel.select(pack.language)
 		this.packDir = packDir
 
 		cardListView.apply {
 			items = FXCollections.observableArrayList(pack.cards)
 			selectionModel.selectFirst()
 		}
+
+		return Result.success(Unit)
+	}
+
+	private fun savePack(): Result<Unit> {
+		logger.info { "Saving pack into $packDir" }
+		val cardFile = packDir.resolve("pack.json")
+
+		val packJson = json.stringify(Pack.serializer(), pack)
+
+		cardFile.toFile().writeText(packJson)
 
 		return Result.success(Unit)
 	}

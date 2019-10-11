@@ -1,6 +1,5 @@
 package me.nekomatamune.ygomaker.fx
 
-import me.nekomatamune.ygomaker.Command
 import javafx.application.Platform
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -9,17 +8,16 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.MenuItem
 import javafx.stage.DirectoryChooser
+import me.nekomatamune.ygomaker.Command
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
 
 class MenuBar {
 
-	@FXML
-	private lateinit var loadPackMenuItem: MenuItem
-
-	@FXML
-	private lateinit var exitMenuItem: MenuItem
+	@FXML private lateinit var loadPackMenuItem: MenuItem
+	@FXML private lateinit var savePackMenuItem: MenuItem
+	@FXML private lateinit var exitMenuItem: MenuItem
 
 	@FXML
 	private fun initialize() {
@@ -27,6 +25,10 @@ class MenuBar {
 
 		loadPackMenuItem.onAction = EventHandler<ActionEvent> {
 			onLoadPackMenuItem()
+		}
+
+		savePackMenuItem.onAction = EventHandler<ActionEvent> {
+			dispatchEvent(Event(name = EventName.SAVE_PACK))
 		}
 
 		exitMenuItem.onAction = EventHandler<ActionEvent> {

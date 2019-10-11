@@ -1,62 +1,84 @@
 {
-	"name": "Testing Pack",
-	"code": "TEST",
-	"language": "JP",
-	"cards": [
-		{
-			"code": "001",
-			"name": "青眼の白龍",
-			"type": "NORMAL_SUMMON_MONSTER",
-			"monster": {
-				"attribute": "LIGHT",
-				"level": 8,
-				"type": "ドラゴン族",
-				"atk": 3000,
-				"def": 2500
-			},
-			"image": {
-				"file": "001.png",
-				"x": 100,
-				"y": 100,
-				"size": 400
-			},
-			"effect": "高い攻撃力を誇る伝説のドラゴン。どんな相手でも粉砕する、その破壊力は計り知れない。"
-		},
-		{
-			"code": "003",
-			"name": "滅びの爆裂疾風弾",
-			"type": "NORMAL_SPELL",
-			"effect": "このカードを発動するターン、自分の「青眼の白龍」は攻撃できない。①：自分フィールドに「青眼の白龍」が存在する場合に発動できる。相手フィールドのモンスターを全て破壊する。"
-		},
-		{
-			"code": "002",
-			"name": "青眼の究極竜",
-			"type": "FUSION_MONSTER",
-			"monster": {
-				"attribute": "LIGHT",
-				"level": 12,
-				"type": "ドラゴン族",
-				"atk": 4500,
-				"def": 3800
-			},
-			"effect": "「青眼の白龍」＋「青眼の白龍」＋「青眼の白龍」"
-		},
-		{
-			"code": "004",
-			"name": "青眼の亜白龍",
-			"type": "SPECIAL_SUMMON_MONSTER",
-			"monster": {
-				"attribute": "LIGHT",
-				"level": 8,
-				"type": "ドラゴン族",
-				"effect": true,
-				"atk": 3000,
-				"def": 2500
-			},
-			"image": {
-				"file": "004.jpg"
-			},
-			"effect": "このカードは通常召喚できない。手札の「青眼の白龍」１体を相手に見せた場合に特殊召喚できる。この方法による「青眼の亜白龍」の特殊召喚は１ターンに１度しかできない。①：このカードのカード名は、フィールド・墓地に存在する限り「青眼の白龍」として扱う。②：１ターンに１度、相手フィールドのモンスター１体を対象として発動できる。そのモンスターを破壊する。この効果を発動するターン、このカードは攻撃できない。"
-		}
-	]
+    "name": "Testing Pack",
+    "code": "TEST",
+    "language": "EN",
+    "copyright": null,
+    "cards": [
+        {
+            "name": "青眼の白龍",
+            "type": "NORMAL_SUMMON_MONSTER",
+            "monster": {
+                "attribute": "LIGHT",
+                "level": 8,
+                "type": "ドラゴン族",
+                "ability": null,
+                "effect": false,
+                "atk": "3000",
+                "def": "2500",
+                "pendulum": null,
+                "links": null
+            },
+            "image": {
+                "file": "001.png",
+                "x": 100,
+                "y": 100,
+                "size": 400
+            },
+            "code": "001",
+            "effect": "高い攻撃力を誇る伝説のドラゴン。どんな相手でも粉砕する、その破壊力は計り知れない。",
+            "serial": 0
+        },
+        {
+            "name": "滅びの爆裂疾風弾",
+            "type": "NORMAL_SPELL",
+            "monster": null,
+            "image": null,
+            "code": "003",
+            "effect": "このカードを発動するターン、自分の「青眼の白龍」は攻撃できない。①：自分フィールドに「青眼の白龍」が存在する場合に発動できる。相手フィールドのモンスターを全て破壊する。",
+            "serial": 0
+        },
+        {
+            "name": "青眼の究極竜",
+            "type": "FUSION_MONSTER",
+            "monster": {
+                "attribute": "LIGHT",
+                "level": 12,
+                "type": "ドラゴン族",
+                "ability": null,
+                "effect": false,
+                "atk": "4500",
+                "def": "3800",
+                "pendulum": null,
+                "links": null
+            },
+            "image": null,
+            "code": "002",
+            "effect": "「青眼の白龍」＋「青眼の白龍」＋「青眼の白龍」",
+            "serial": 0
+        },
+        {
+            "name": "青眼の亜白龍",
+            "type": "SPECIAL_SUMMON_MONSTER",
+            "monster": {
+                "attribute": "LIGHT",
+                "level": 8,
+                "type": "ドラゴン族",
+                "ability": null,
+                "effect": true,
+                "atk": "3000",
+                "def": "2500",
+                "pendulum": null,
+                "links": null
+            },
+            "image": {
+                "file": "004.jpg",
+                "x": 0,
+                "y": 0,
+                "size": 300
+            },
+            "code": "004",
+            "effect": "このカードは通常召喚できない。手札の「青眼の白龍」１体を相手に見せた場合に特殊召喚できる。この方法による「青眼の亜白龍」の特殊召喚は１ターンに１度しかできない。①：このカードのカード名は、フィールド・墓地に存在する限り「青眼の白龍」として扱う。②：１ターンに１度、相手フィールドのモンスター１体を対象として発動できる。そのモンスターを破壊する。この効果を発動するターン、このカードは攻撃できない。",
+            "serial": 0
+        }
+    ]
 }

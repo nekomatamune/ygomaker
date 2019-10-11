@@ -9,7 +9,8 @@
     <Menu text="File">
         <MenuItem fx:id="loadPackMenuItem"
                   text="Load Pack" accelerator="Shortcut+O"/>
-        <MenuItem text="Save Pack" accelerator="Shortcut+S"/>
+        <MenuItem fx:id="savePackMenuItem"
+                  text="Save Pack" accelerator="Shortcut+S"/>
         <MenuItem text="Save Pack as..." accelerator="Shortcut+shift+S"/>
 
         <SeparatorMenuItem/>
