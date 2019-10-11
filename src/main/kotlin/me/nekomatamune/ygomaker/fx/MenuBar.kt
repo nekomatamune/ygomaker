@@ -16,6 +16,7 @@ private val logger = KotlinLogging.logger { }
 class MenuBar {
 
 	@FXML private lateinit var loadPackMenuItem: MenuItem
+	@FXML private lateinit var savePackMenuItem: MenuItem
 	@FXML private lateinit var exitMenuItem: MenuItem
 
 	@FXML
