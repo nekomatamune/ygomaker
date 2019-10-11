@@ -1,7 +1,7 @@
 {
     "name": "Testing Pack",
     "code": "TEST",
-    "language": "EN",
+    "language": "JP",
     "copyright": null,
     "cards": [
         {
@@ -10,8 +10,8 @@
             "monster": {
                 "attribute": "LIGHT",
                 "level": 8,
-                "type": "ドラゴン族",
-                "ability": null,
+                "type": "魔法使い族",
+                "ability": "リーバス",
                 "effect": false,
                 "atk": "3000",
                 "def": "2500",
