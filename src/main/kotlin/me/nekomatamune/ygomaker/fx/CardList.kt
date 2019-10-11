@@ -51,6 +51,11 @@ class CardList {
 			loadPack(it.packDir!!)
 		}
 
+		registerEventHandler(EventName.SAVE_PACK) {
+			logger.debug { "Handling SAVE_PACK event" }
+			savePack()
+		}
+
 		registerEventHandler(EventName.MODIFY_CARD) {
 			onModifyCard(it)
 		}
@@ -141,6 +146,14 @@ class CardList {
 			items = FXCollections.observableArrayList(pack.cards)
 			selectionModel.selectFirst()
 		}
+
+		return Result.success(Unit)
+	}
+
+	private fun savePack(): Result<Unit> {
+		logger.info { "Saving pack into $packDir" }
+		val cardFile = packDir.resolve("pack.json")
+		//Json(JsonConfiguration.Stable).stringify(Pack.serializer())
 
 		return Result.success(Unit)
 	}
