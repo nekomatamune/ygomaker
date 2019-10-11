@@ -25,15 +25,11 @@ class CardList {
 	private lateinit var pack: Pack
 	private lateinit var packDir: Path
 
-	@FXML
-	private lateinit var packDirText: Text
-
+	@FXML private lateinit var packDirText: Text
 	@FXML private lateinit var packNameTextField: TextField
 	@FXML private lateinit var packCodeTextField: TextField
 	@FXML private lateinit var languageComboBox: ComboBox<Language>
-
-	@FXML
-	private lateinit var cardListView: ListView<Card>
+	@FXML private lateinit var cardListView: ListView<Card>
 
 	private var disableOnSelectCard = false
 
