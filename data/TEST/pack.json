@@ -1,7 +1,7 @@
 {
     "name": "Testing Pack",
     "code": "TEST",
-    "language": "EN",
+    "language": "JP",
     "copyright": null,
     "cards": [
         {
@@ -10,8 +10,8 @@
             "monster": {
                 "attribute": "LIGHT",
                 "level": 8,
-                "type": "ドラゴン族",
-                "ability": null,
+                "type": "魔法使い族",
+                "ability": "リーバス",
                 "effect": false,
                 "atk": "3000",
                 "def": "2500",
@@ -20,9 +20,9 @@
             },
             "image": {
                 "file": "001.png",
-                "x": 100,
-                "y": 100,
-                "size": 400
+                "x": 261,
+                "y": 209,
+                "size": 221
             },
             "code": "001",
             "effect": "高い攻撃力を誇る伝説のドラゴン。どんな相手でも粉砕する、その破壊力は計り知れない。",

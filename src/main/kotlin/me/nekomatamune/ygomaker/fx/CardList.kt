@@ -117,7 +117,7 @@ class CardList {
 		val cards = cardListView.items
 		val selectIdx = cardListView.selectionModel.selectedIndex
 		cards[selectIdx] = mergedCard
-		//cardListView.items[cardListView.selectionModel.selectedIndex] = mergedCard
+		pack = pack.copy(cards = cards)
 
 		disableOnSelectCard = false
 		return Result.success(Unit)
@@ -135,6 +135,7 @@ class CardList {
 		val cards = cardListView.items
 		val selectIdx = cardListView.selectionModel.selectedIndex
 		cards[selectIdx] = mergedCard
+		pack = pack.copy(cards = cards)
 
 		disableOnSelectCard = false
 		return Result.success(Unit)
