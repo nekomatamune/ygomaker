@@ -27,6 +27,10 @@ class MenuBar {
 			onLoadPackMenuItem()
 		}
 
+		savePackMenuItem.onAction = EventHandler<ActionEvent> {
+			dispatchEvent(Event(name = EventName.SAVE_PACK))
+		}
+
 		exitMenuItem.onAction = EventHandler<ActionEvent> {
 			onExitMenuItem()
 		}
