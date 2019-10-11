@@ -170,7 +170,11 @@ class CardList {
 	private fun savePack(): Result<Unit> {
 		logger.info { "Saving pack into $packDir" }
 		val cardFile = packDir.resolve("pack.json")
-		//Json(JsonConfiguration.Stable).stringify(Pack.serializer())
+
+		val packJson = Json(JsonConfiguration.Stable).stringify(
+			Pack.serializer(), pack)
+
+		cardFile.toFile().writeText(packJson)
 
 		return Result.success(Unit)
 	}
