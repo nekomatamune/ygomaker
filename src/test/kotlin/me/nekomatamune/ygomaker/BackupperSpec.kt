@@ -12,11 +12,15 @@ import kotlin.streams.toList
 
 object BackupperSpec : Spek({
 
-	test("backup() should copy file and rotate existing backups") {
-		val sourceDir = Files.createTempDirectory(null)
-		val backupDir = Files.createTempDirectory(null)
+	lateinit var sourceDir: Path
+	lateinit var backupDir: Path
+	beforeEachTest {
+		sourceDir = Files.createTempDirectory(null)
+		backupDir = Files.createTempDirectory(null)
 		sequenceOf(sourceDir, backupDir).forEach { it.toFile().deleteOnExit() }
+	}
 
+	test("backup() should copy file and rotate existing backups") {
 		val backupper = Backupper(backupDir, 3)
 		expectThat(Files.list(backupDir).toList()).isEmpty()
 
@@ -51,11 +55,7 @@ object BackupperSpec : Spek({
 	}
 
 	test("backup() should not mix backups of different files") {
-		val sourceDir = Files.createTempDirectory(null)
-		val backupDir = Files.createTempDirectory(null)
-		sequenceOf(sourceDir, backupDir).forEach { it.toFile().deleteOnExit() }
-
-		val backupper = Backupper(backupDir, 3)
+		val backupper = Backupper(backupDir, 10)
 		expectThat(Files.list(backupDir).toList()).isEmpty()
 
 		backupper.backup(createFile(sourceDir, "myfile", "v0"))
