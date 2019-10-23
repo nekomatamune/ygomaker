@@ -2,88 +2,79 @@ package me.nekomatamune.ygomaker
 
 import org.spekframework.spek2.Spek
 import strikt.api.expectThat
-import strikt.assertions.containsExactly
+import strikt.assertions.hasEntry
+import strikt.assertions.hasSize
+import strikt.assertions.isEmpty
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.streams.toList
 
 
 object BackupperSpec : Spek({
-	val backupContent = "The content to backup"
 
+	test("backup() should copy file and rotate existing backups") {
+		val sourceDir = Files.createTempDirectory(null)
+		val backupDir = Files.createTempDirectory(null)
+		sequenceOf(sourceDir, backupDir).forEach { it.toFile().deleteOnExit() }
 
-	group("a Backupper") {
-		lateinit var fileToBackup: Path
-		lateinit var sourceDir: Path
-		lateinit var backupDir: Path
-		lateinit var backupper: Backupper
+		val backupper = Backupper(backupDir, 3)
+		expectThat(Files.list(backupDir).toList()).isEmpty()
 
+		backupper.backup(createFile(sourceDir, "myfile", "v0"))
+		expectThat(Files.list(backupDir)
+			.map { it.fileName.toString() to it.toFile().readText() }.toList().toMap())
+			.hasEntry("myfile.0.bak", "v0")
+			.hasSize(1)
 
+		backupper.backup(createFile(sourceDir, "myfile", "v1"))
+		expectThat(Files.list(backupDir)
+			.map { it.fileName.toString() to it.toFile().readText() }.toList().toMap())
+			.hasEntry("myfile.0.bak", "v1")
+			.hasEntry("myfile.1.bak", "v0")
+			.hasSize(2)
 
-		beforeEachTest {
-			sourceDir = Files.createTempDirectory(null)
-			sourceDir.toFile().deleteOnExit()
-			backupDir = Files.createTempDirectory(null)
-			backupDir.toFile().deleteOnExit()
+		backupper.backup(createFile(sourceDir, "myfile", "v2"))
+		expectThat(Files.list(backupDir)
+			.map { it.fileName.toString() to it.toFile().readText() }.toList().toMap())
+			.hasEntry("myfile.0.bak", "v2")
+			.hasEntry("myfile.1.bak", "v1")
+			.hasEntry("myfile.2.bak", "v0")
+			.hasSize(3)
 
-			val sourceDir = Files.createTempDirectory(null)!!
-			sourceDir.toFile().deleteOnExit()
-			fileToBackup = sourceDir.resolve("pack.json")
-			fileToBackup.toFile().writeText("my content")
-
-			backupper = Backupper(backupDir, 3)
-		}
-
-		test("backup() should back up file when no previous backup exists") {
-
-			backupper.backup(createFile(sourceDir, "pack.json", "backup 0"))
-
-			expectThat(backupDir.toFile().listFiles()!!.map {
-				it.toPath().fileName.toString() to it.readText()
-			}).containsExactly("pack.json.0.bak" to "backup 0")
-		}
-
-		test("backup() should rotate file when previous backup exists") {
-			createFile(backupDir, "pack.json.0.bak", "backup 1")
-
-			backupper.backup(createFile(sourceDir, "pack.json", "backup 0"))
-
-			expectThat(backupDir.toFile().listFiles()!!.map {
-				it.toPath().fileName.toString() to it.readText()
-			}).containsExactly(
-				"pack.json.0.bak" to "backup 0",
-				"pack.json.1.bak" to "backup 1"
-			)
-		}
-
-		test("backup() should not exceed max backup number") {
-			createFile(backupDir, "pack.json.0.bak", "backup 1")
-			createFile(backupDir, "pack.json.1.bak", "backup 2")
-			createFile(backupDir, "pack.json.2.bak", "backup 3")
-
-			backupper.backup(createFile(sourceDir, "pack.json", "backup 0"))
-
-			expectThat(backupDir.toFile().listFiles()!!.map {
-				it.toPath().fileName.toString() to it.readText()
-			}).containsExactly(
-				"pack.json.0.bak" to "backup 0",
-				"pack.json.1.bak" to "backup 1",
-				"pack.json.2.bak" to "backup 2"
-			)
-		}
-
-
+		backupper.backup(createFile(sourceDir, "myfile", "v3"))
+		expectThat(Files.list(backupDir)
+			.map { it.fileName.toString() to it.toFile().readText() }.toList().toMap())
+			.hasEntry("myfile.0.bak", "v3")
+			.hasEntry("myfile.1.bak", "v2")
+			.hasEntry("myfile.2.bak", "v1")
+			.hasSize(3)
 	}
 
+	test("backup() should not mix backups of different files") {
+		val sourceDir = Files.createTempDirectory(null)
+		val backupDir = Files.createTempDirectory(null)
+		sequenceOf(sourceDir, backupDir).forEach { it.toFile().deleteOnExit() }
+
+		val backupper = Backupper(backupDir, 3)
+		expectThat(Files.list(backupDir).toList()).isEmpty()
+
+		backupper.backup(createFile(sourceDir, "myfile", "v0"))
+		backupper.backup(createFile(sourceDir, "yourfile", "v0"))
+		backupper.backup(createFile(sourceDir, "myfile", "v1"))
+		backupper.backup(createFile(sourceDir, "yourfile", "v1"))
+
+		expectThat(Files.list(backupDir)
+			.map { it.fileName.toString() to it.toFile().readText() }.toList().toMap())
+			.hasEntry("myfile.0.bak", "v1")
+			.hasEntry("myfile.1.bak", "v0")
+			.hasEntry("yourfile.0.bak", "v1")
+			.hasEntry("yourfile.1.bak", "v0")
+			.hasSize(4)
+	}
 })
 
-private fun createFile(
-	dir: Path,
-	fileName: String,
-	content: String
-): Path {
-
+private fun createFile(dir: Path, fileName: String, content: String): Path {
 	val file = dir.resolve(fileName)
 	file.toFile().writeText(content)
-
 	return file
 }
