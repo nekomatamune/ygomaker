@@ -4,14 +4,18 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 
-private val backupDir by lazy { Command.dataDir.resolve("bak") }
 private const val numBackups = 8
 
-class Backupper {
+class Backupper(
+	private val backupDir: Path,
+	private val numBackups: Int
+) {
 
 	fun backup(file: Path) {
+		check(numBackups > 0)
+
 		// Rotate previously backed up files
-		(numBackups downTo 0).map {
+		(numBackups-2 downTo 0).map {
 			(backupFileFor(file, it) to backupFileFor(file, it + 1))
 		}.filter {
 			it.first.toFile().exists()
@@ -21,10 +25,7 @@ class Backupper {
 				StandardCopyOption.ATOMIC_MOVE)
 		}
 
-		Files.copy(file, backupFileFor(file, 0),
-			StandardCopyOption.COPY_ATTRIBUTES,
-			StandardCopyOption.ATOMIC_MOVE
-		)
+		Files.copy(file, backupFileFor(file, 0))
 	}
 
 	private fun backupFileFor(file: Path, backupNumber: Int) =
