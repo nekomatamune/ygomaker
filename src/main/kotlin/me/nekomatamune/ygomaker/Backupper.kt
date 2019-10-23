@@ -1,9 +1,11 @@
 package me.nekomatamune.ygomaker
 
+import mu.KotlinLogging
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 
+private val logger = KotlinLogging.logger { }
 private const val numBackups = 8
 
 class Backupper(
@@ -13,6 +15,11 @@ class Backupper(
 
 	fun backup(file: Path) {
 		check(numBackups > 0)
+
+		if(!Files.exists(backupDir)) {
+			logger.info("Creating backup directory ")
+			Files.createDirectory(backupDir)
+		}
 
 		// Rotate previously backed up files
 		(numBackups-2 downTo 0).map {
