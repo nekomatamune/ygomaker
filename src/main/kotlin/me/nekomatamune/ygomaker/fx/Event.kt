@@ -20,7 +20,7 @@ fun unregisterAllEventHandlers() {
 }
 
 fun dispatchEvent(event: Event) {
-	logger.debug { "Dispatching event ${event.name}" }
+	logger.trace { "Dispatching event ${event.name}" }
 
 	handlers[event.name]?.forEach {
 		it(event).onFailure {

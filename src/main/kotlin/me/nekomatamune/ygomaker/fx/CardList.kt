@@ -10,13 +10,11 @@ import javafx.scene.control.TextField
 import javafx.scene.text.Text
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
-import me.nekomatamune.ygomaker.Card
-import me.nekomatamune.ygomaker.Language
-import me.nekomatamune.ygomaker.Pack
-import me.nekomatamune.ygomaker.toShortString
+import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
 import java.io.FileNotFoundException
-import java.nio.file.Path
+import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
 
 private val logger = KotlinLogging.logger { }
 
@@ -33,6 +31,9 @@ class CardList {
 
 	private var disableOnSelectCard = false
 	private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
+	private val backupper by lazy {
+		Backupper(Command.dataDir.resolve("bak"), 10)
+	}
 
 	@FXML
 	private fun initialize() {
@@ -65,6 +66,11 @@ class CardList {
 			savePack()
 		}
 
+		registerEventHandler(EventName.SAVE_PACK_AS) {
+			logger.debug { "Handling SAVE_PACK_AS event" }
+			saveAsPack(it.packDir!!)
+		}
+
 		registerEventHandler(EventName.MODIFY_CARD) {
 			onModifyCard(it)
 		}
@@ -75,7 +81,7 @@ class CardList {
 	}
 
 	private fun onModifyPackInfo() {
-		logger.debug { "Update pack info" }
+		logger.trace { "Pack info updated" }
 		pack = pack.copy(
 			name = packNameTextField.text,
 			code = packCodeTextField.text,
@@ -154,7 +160,8 @@ class CardList {
 
 		logger.info { "Pack ${pack.name} (${pack.code})" }
 
-		packDirText.text = cardFile.toString()
+		packDirText.text = Paths.get(".").toAbsolutePath().relativize(
+			cardFile.toAbsolutePath()).normalize().toString()
 		packNameTextField.text = pack.name
 		packCodeTextField.text = pack.code
 		languageComboBox.selectionModel.select(pack.language)
@@ -172,11 +179,34 @@ class CardList {
 		logger.info { "Saving pack into $packDir" }
 		val cardFile = packDir.resolve("pack.json")
 
+		backupper.backup(cardFile)
+
 		val packJson = json.stringify(Pack.serializer(), pack)
 
 		cardFile.toFile().writeText(packJson)
 
 		return Result.success(Unit)
+	}
+
+	private fun saveAsPack(newPackDir: Path): Result<Unit> {
+		Files.walkFileTree(packDir, object : SimpleFileVisitor<Path>() {
+			override fun visitFile(file: Path,
+				attrs: BasicFileAttributes): FileVisitResult {
+				Files.copy(file, newPackDir.resolve(file.fileName),
+					StandardCopyOption.REPLACE_EXISTING)
+				return FileVisitResult.CONTINUE
+			}
+		})
+
+		packDir = newPackDir
+
+		savePack().let {
+			if (it.isFailure) {
+				return it
+			}
+		}
+
+		return loadPack(packDir)
 	}
 
 	fun updateSelectedCard(card: Card) {

@@ -94,7 +94,7 @@ class CardImage {
 	}
 
 	private fun onSelectCard(event: Event): Result<Unit> {
-		logger.debug { "Handling ${event.name} event" }
+		logger.trace { "Handling SELECT_CARD event" }
 
 		(event.card?.image ?: CardImage()).let {
 			fileTextField.text = it.file
@@ -154,7 +154,6 @@ class CardImage {
 				return Result.failure(
 					IllegalArgumentException("Not a file: $it"))
 			}
-			logger.info { "Load here: $it" }
 
 			val image = Image(it.toURI().toString())
 			imageView.image = image
