@@ -81,7 +81,7 @@ class CardList {
 	}
 
 	private fun onModifyPackInfo() {
-		logger.debug { "Update pack info" }
+		logger.trace { "Pack info updated" }
 		pack = pack.copy(
 			name = packNameTextField.text,
 			code = packCodeTextField.text,

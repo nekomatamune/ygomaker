@@ -17,15 +17,15 @@ class CardForm {
 
 	@FXML lateinit var cardNameTextField: TextField
 	@FXML lateinit var cardTypeComboBox: ComboBox<CardType>
-	@FXML	lateinit var attributeComboBox: ComboBox<Attribute>
-	@FXML	lateinit var levelComboBox: ComboBox<Int>
-	@FXML	lateinit var monsterTypeComboBox: ComboBox<String>
-	@FXML	lateinit var monsterAbilityComboBox: ComboBox<String>
-	@FXML	lateinit var effectCheckBox: CheckBox
-	@FXML	lateinit var effectTextArea: TextArea
-	@FXML	lateinit var atkTextField: TextField
-	@FXML	lateinit var defTextField: TextField
-	@FXML	lateinit var codeTextField: TextField
+	@FXML lateinit var attributeComboBox: ComboBox<Attribute>
+	@FXML lateinit var levelComboBox: ComboBox<Int>
+	@FXML lateinit var monsterTypeComboBox: ComboBox<String>
+	@FXML lateinit var monsterAbilityComboBox: ComboBox<String>
+	@FXML lateinit var effectCheckBox: CheckBox
+	@FXML lateinit var effectTextArea: TextArea
+	@FXML lateinit var atkTextField: TextField
+	@FXML lateinit var defTextField: TextField
+	@FXML lateinit var codeTextField: TextField
 
 	var onSelectCardInProgress: Boolean = false
 
@@ -40,7 +40,7 @@ class CardForm {
 		monsterAbilityComboBox.items = observableArrayList(MONSTER_ABILITY_PRESETS)
 
 		cardTypeComboBox.valueProperty().addListener { _, _, newValue ->
-			logger.debug { "Card type changed to $newValue" }
+			logger.trace { "Card type changed to $newValue" }
 
 			(newValue in MONSTER_CARD_TYPES).let { isMonsterCard ->
 				attributeComboBox.isDisable = !isMonsterCard
@@ -74,7 +74,7 @@ class CardForm {
 		}
 
 		registerEventHandler(EventName.SELECT_CARD) {
-			logger.debug { "Handling SELECT_CARD event" }
+			logger.trace { "Handling SELECT_CARD event" }
 			packDir = it.packDir!!
 			onSelectCard(it.card!!)
 			Result.success(Unit)
@@ -109,7 +109,6 @@ class CardForm {
 	private fun onSelectCard(card: Card) {
 		onSelectCardInProgress = true
 
-		logger.debug { "onSelectCardInProgress = true" }
 		cardNameTextField.text = card.name
 		cardTypeComboBox.selectionModel.select(card.type)
 		attributeComboBox.selectionModel.select(card.monster?.attribute)
@@ -122,7 +121,6 @@ class CardForm {
 		defTextField.text = card.monster?.def ?: ""
 		codeTextField.text = card.code
 
-		logger.debug { "onSelectCardInProgress = false" }
 		onSelectCardInProgress = false
 	}
 }

@@ -6,7 +6,6 @@ import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 
 private val logger = KotlinLogging.logger { }
-private const val numBackups = 8
 
 class Backupper(
 	private val backupDir: Path,
@@ -16,8 +15,8 @@ class Backupper(
 	fun backup(file: Path) {
 		check(numBackups > 0)
 
-		if (!Files.exists(backupDir)) {
-			logger.info("Creating backup directory ")
+		if (Files.notExists(backupDir)) {
+			logger.info("Creating backup directory $backupDir")
 			Files.createDirectory(backupDir)
 		}
 
@@ -27,6 +26,7 @@ class Backupper(
 		}.filter {
 			it.first.toFile().exists()
 		}.forEach {
+			logger.debug { "Rotating backup file ${it.first} to ${it.second}" }
 			Files.move(it.first, it.second,
 				StandardCopyOption.REPLACE_EXISTING,
 				StandardCopyOption.ATOMIC_MOVE)
