@@ -55,31 +55,10 @@ class CardForm {
 			cardTypeComboBox, attributeComboBox, levelComboBox,
 			monsterTypeComboBox, monsterAbilityComboBox,
 			effectCheckBox
-		).map {
-			when (it) {
-				is TextInputControl -> it.textProperty()
-				is ComboBoxBase<*> -> it.valueProperty()
-				is CheckBox -> it.selectedProperty()
-				else -> error("Unexpected control class ${it.javaClass}")
-			}
-		}.forEach {
+		).forEach {
 			it.addSimpleListener(::onCardValueChange)
 		}
-//
-//		sequenceOf(
-//			cardNameTextField, atkTextField, defTextField, effectTextArea
-//		).forEach {
-//			it.textProperty().addSimpleListener(::onCardValueChange)
-//		}
-//
-//		sequenceOf(
-//			cardTypeComboBox, attributeComboBox, levelComboBox,
-//			monsterTypeComboBox, monsterAbilityComboBox
-//		).forEach {
-//			it.valueProperty().addSimpleListener(::onCardValueChange)
-//		}
-//
-//		effectCheckBox.selectedProperty().addSimpleListener(::onCardValueChange)
+
 		registerEventHandler(EventName.SELECT_CARD, ::onSelectCard)
 	}
 

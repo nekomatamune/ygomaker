@@ -39,16 +39,14 @@ class CardList {
 	private fun initialize() {
 		logger.debug { "Initializing CardList" }
 
-		sequenceOf(packNameTextField, packCodeTextField).forEach {
-			it.textProperty().addSimpleListener(::onModifyPackInfo)
+		sequenceOf(
+			packNameTextField, packCodeTextField, languageComboBox, cardListView
+		).forEach {
+			it.addSimpleListener(::onModifyPackInfo)
 		}
-		languageComboBox.items = observableList(Language.values().toList())
-		languageComboBox.valueProperty().addSimpleListener(::onModifyPackInfo)
 
-		cardListView.apply {
-			setCellFactory { CardListCell() }
-			selectionModel.selectedItemProperty().addSimpleListener(::onSelectCard)
-		}
+		languageComboBox.items = observableList(Language.values().toList())
+		cardListView.setCellFactory { CardListCell() }
 
 		registerEventHandler(EventName.LOAD_PACK) {
 			logger.debug { "Handling LOAD_PACK event" }
