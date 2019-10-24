@@ -39,9 +39,7 @@ class CardImage {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
-			it.valueProperty().addListener { _, oldValue, newValue ->
-				onSpinnerValueChange(oldValue, newValue)
-			}
+			it.valueProperty().addSimpleListener(::onSpinnerValueChange)
 		}
 		fileTextField.onMouseClicked = EventHandler { onClickImageFile() }
 		imageView.onMousePressed = EventHandler<MouseEvent> { onMousePressed(it) }
@@ -52,8 +50,7 @@ class CardImage {
 		registerEventHandler(EventName.SELECT_CARD, this::onSelectCard)
 	}
 
-	private fun onSpinnerValueChange(oldValue: Int, newValue: Int) {
-		logger.trace { "onSpinnerValueChange: $oldValue -> $newValue" }
+	private fun onSpinnerValueChange() {
 		updateViewPort()
 		dispatchModifyCardImageEvent()
 	}
@@ -138,7 +135,7 @@ class CardImage {
 	}
 
 	private fun loadImage(): Result<Unit> {
-		if(fileTextField.text.isBlank()) {
+		if (fileTextField.text.isBlank()) {
 			imageView.image = null
 			return Result.success(Unit)
 		}
