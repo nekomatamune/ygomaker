@@ -15,8 +15,8 @@ class Backupper(
 	fun backup(file: Path) {
 		check(numBackups > 0)
 
-		if (!Files.exists(backupDir)) {
-			logger.info("Creating backup directory ")
+		if (Files.notExists(backupDir)) {
+			logger.info("Creating backup directory $backupDir")
 			Files.createDirectory(backupDir)
 		}
 
