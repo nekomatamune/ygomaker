@@ -17,6 +17,7 @@ class MenuBar {
 
 	@FXML private lateinit var loadPackMenuItem: MenuItem
 	@FXML private lateinit var savePackMenuItem: MenuItem
+	@FXML private lateinit var saveAsPackMenuItem: MenuItem
 	@FXML private lateinit var exitMenuItem: MenuItem
 
 	@FXML
@@ -29,6 +30,10 @@ class MenuBar {
 
 		savePackMenuItem.onAction = EventHandler<ActionEvent> {
 			dispatchEvent(Event(name = EventName.SAVE_PACK))
+		}
+
+		saveAsPackMenuItem.onAction = EventHandler<ActionEvent> {
+			dispatchEvent(Event(name = EventName.SAVE_PACK_AS))
 		}
 
 		exitMenuItem.onAction = EventHandler<ActionEvent> {
