@@ -26,6 +26,7 @@ class Backupper(
 		}.filter {
 			it.first.toFile().exists()
 		}.forEach {
+			logger.debug { "Rotating backup file ${it.first} to ${it.second}" }
 			Files.move(it.first, it.second,
 				StandardCopyOption.REPLACE_EXISTING,
 				StandardCopyOption.ATOMIC_MOVE)
