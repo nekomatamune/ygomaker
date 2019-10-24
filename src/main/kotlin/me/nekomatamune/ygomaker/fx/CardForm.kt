@@ -2,10 +2,7 @@ package me.nekomatamune.ygomaker.fx
 
 import javafx.collections.FXCollections.observableArrayList
 import javafx.fxml.FXML
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ComboBox
-import javafx.scene.control.TextArea
-import javafx.scene.control.TextField
+import javafx.scene.control.*
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
 import java.nio.file.Path
@@ -52,21 +49,37 @@ class CardForm {
 				defTextField.isEditable = isMonsterCard
 			}
 		}
-		
-		sequenceOf(
-			cardNameTextField, atkTextField, defTextField, effectTextArea
-		).forEach {
-			it.textProperty().addSimpleListener(::onCardValueChange)
-		}
 
 		sequenceOf(
+			cardNameTextField, atkTextField, defTextField, effectTextArea,
 			cardTypeComboBox, attributeComboBox, levelComboBox,
-			monsterTypeComboBox, monsterAbilityComboBox
-		).forEach {
-			it.valueProperty().addSimpleListener(::onCardValueChange)
+			monsterTypeComboBox, monsterAbilityComboBox,
+			effectCheckBox
+		).map {
+			when (it) {
+				is TextInputControl -> it.textProperty()
+				is ComboBoxBase<*> -> it.valueProperty()
+				is CheckBox -> it.selectedProperty()
+				else -> error("Unexpected control class ${it.javaClass}")
+			}
+		}.forEach {
+			it.addSimpleListener(::onCardValueChange)
 		}
-
-		effectCheckBox.selectedProperty().addSimpleListener(::onCardValueChange)
+//
+//		sequenceOf(
+//			cardNameTextField, atkTextField, defTextField, effectTextArea
+//		).forEach {
+//			it.textProperty().addSimpleListener(::onCardValueChange)
+//		}
+//
+//		sequenceOf(
+//			cardTypeComboBox, attributeComboBox, levelComboBox,
+//			monsterTypeComboBox, monsterAbilityComboBox
+//		).forEach {
+//			it.valueProperty().addSimpleListener(::onCardValueChange)
+//		}
+//
+//		effectCheckBox.selectedProperty().addSimpleListener(::onCardValueChange)
 		registerEventHandler(EventName.SELECT_CARD, ::onSelectCard)
 	}
 
