@@ -54,24 +54,20 @@ class CardForm {
 		}
 
 
-		sequenceOf(cardNameTextField, atkTextField, defTextField, effectTextArea)
-			.forEach {
-				it.textProperty().addListener { _, _, _ ->
-					onCardValueChange()
-				}
-			}
-
-		sequenceOf(cardTypeComboBox, attributeComboBox, levelComboBox,
-			monsterTypeComboBox, monsterAbilityComboBox)
-			.forEach {
-				it.valueProperty().addListener { _, _, _ ->
-					onCardValueChange()
-				}
-			}
-
-		effectCheckBox.selectedProperty().addListener { _, _, _ ->
-			onCardValueChange()
+		sequenceOf(
+			cardNameTextField, atkTextField, defTextField, effectTextArea
+		).forEach {
+			it.textProperty().addSimpleListener(::onCardValueChange)
 		}
+
+		sequenceOf(
+			cardTypeComboBox, attributeComboBox, levelComboBox,
+			monsterTypeComboBox, monsterAbilityComboBox
+		).forEach {
+			it.valueProperty().addSimpleListener(::onCardValueChange)
+		}
+
+		effectCheckBox.selectedProperty().addSimpleListener(::onCardValueChange)
 
 		registerEventHandler(EventName.SELECT_CARD) {
 			logger.trace { "Handling SELECT_CARD event" }
