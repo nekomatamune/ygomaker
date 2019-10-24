@@ -40,20 +40,14 @@ class CardList {
 		logger.debug { "Initializing CardList" }
 
 		sequenceOf(packNameTextField, packCodeTextField).forEach {
-			it.textProperty().addListener { _, _, _ ->
-				onModifyPackInfo()
-			}
+			it.textProperty().addSimpleListener(::onModifyPackInfo)
 		}
 		languageComboBox.items = observableList(Language.values().toList())
-		languageComboBox.valueProperty().addListener { _, _, _ ->
-			onModifyPackInfo()
-		}
+		languageComboBox.valueProperty().addSimpleListener(::onModifyPackInfo)
 
 		cardListView.apply {
 			setCellFactory { CardListCell() }
-			selectionModel.selectedItemProperty().addListener { _, _, newValue ->
-				onSelectCard(newValue)
-			}
+			selectionModel.selectedItemProperty().addSimpleListener(::onSelectCard)
 		}
 
 		registerEventHandler(EventName.LOAD_PACK) {
@@ -89,15 +83,14 @@ class CardList {
 		)
 	}
 
-	private fun onSelectCard(newValue: Card) {
+	private fun onSelectCard() {
 		if (disableOnSelectCard) {
 			return
 		}
 
-		logger.info("Selected card ${newValue.toShortString()}")
 		dispatchEvent(Event(
 			name = EventName.SELECT_CARD,
-			card = newValue,
+			card = cardListView.selectionModel.selectedItem,
 			packDir = packDir
 		))
 	}
