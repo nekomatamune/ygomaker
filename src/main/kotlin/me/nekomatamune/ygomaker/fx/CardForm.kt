@@ -109,7 +109,6 @@ class CardForm {
 	private fun onSelectCard(card: Card) {
 		onSelectCardInProgress = true
 
-		logger.debug { "onSelectCardInProgress = true" }
 		cardNameTextField.text = card.name
 		cardTypeComboBox.selectionModel.select(card.type)
 		attributeComboBox.selectionModel.select(card.monster?.attribute)
@@ -122,7 +121,6 @@ class CardForm {
 		defTextField.text = card.monster?.def ?: ""
 		codeTextField.text = card.code
 
-		logger.debug { "onSelectCardInProgress = false" }
 		onSelectCardInProgress = false
 	}
 }
