@@ -16,7 +16,8 @@ import me.nekomatamune.ygomaker.Pack
 import me.nekomatamune.ygomaker.toShortString
 import mu.KotlinLogging
 import java.io.FileNotFoundException
-import java.nio.file.Path
+import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
 
 private val logger = KotlinLogging.logger { }
 
@@ -67,7 +68,7 @@ class CardList {
 
 		registerEventHandler(EventName.SAVE_PACK_AS) {
 			logger.debug { "Handling SAVE_PACK_AS event" }
-			saveAsPack()
+			saveAsPack(it.packDir!!)
 		}
 
 		registerEventHandler(EventName.MODIFY_CARD) {
@@ -159,7 +160,8 @@ class CardList {
 
 		logger.info { "Pack ${pack.name} (${pack.code})" }
 
-		packDirText.text = cardFile.toString()
+		packDirText.text = Paths.get(".").toAbsolutePath().relativize(
+			cardFile.toAbsolutePath()).normalize().toString()
 		packNameTextField.text = pack.name
 		packCodeTextField.text = pack.code
 		languageComboBox.selectionModel.select(pack.language)
@@ -184,9 +186,25 @@ class CardList {
 		return Result.success(Unit)
 	}
 
-	private fun saveAsPack(): Result<Unit> {
-		// TODO: fill this method
-		return Result.success(Unit)
+	private fun saveAsPack(newPackDir: Path): Result<Unit> {
+		Files.walkFileTree(packDir, object : SimpleFileVisitor<Path>() {
+			override fun visitFile(file: Path,
+				attrs: BasicFileAttributes): FileVisitResult {
+				Files.copy(file, newPackDir.resolve(file.fileName),
+					StandardCopyOption.REPLACE_EXISTING)
+				return FileVisitResult.CONTINUE
+			}
+		})
+
+		packDir = newPackDir
+
+		savePack().let {
+			if (it.isFailure) {
+				return it
+			}
+		}
+
+		return loadPack(packDir)
 	}
 
 	fun updateSelectedCard(card: Card) {
