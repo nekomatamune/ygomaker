@@ -16,14 +16,14 @@ class Backupper(
 	fun backup(file: Path) {
 		check(numBackups > 0)
 
-		if(!Files.exists(backupDir)) {
+		if (!Files.exists(backupDir)) {
 			logger.info("Creating backup directory ")
 			Files.createDirectory(backupDir)
 		}
 
 		// Rotate previously backed up files
-		(numBackups-2 downTo 0).map {
-			(backupFileFor(file, it) to backupFileFor(file, it + 1))
+		(numBackups - 2 downTo 0).map {
+			backupFileFor(file, it) to backupFileFor(file, it + 1)
 		}.filter {
 			it.first.toFile().exists()
 		}.forEach {
