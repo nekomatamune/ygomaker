@@ -6,7 +6,6 @@ import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 
 private val logger = KotlinLogging.logger { }
-private const val numBackups = 8
 
 class Backupper(
 	private val backupDir: Path,
