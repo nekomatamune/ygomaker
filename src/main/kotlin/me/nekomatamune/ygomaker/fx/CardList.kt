@@ -65,6 +65,11 @@ class CardList {
 			savePack()
 		}
 
+		registerEventHandler(EventName.SAVE_PACK_AS) {
+			logger.debug { "Handling SAVE_PACK_AS event" }
+			saveAsPack()
+		}
+
 		registerEventHandler(EventName.MODIFY_CARD) {
 			onModifyCard(it)
 		}
@@ -176,6 +181,11 @@ class CardList {
 
 		cardFile.toFile().writeText(packJson)
 
+		return Result.success(Unit)
+	}
+
+	private fun saveAsPack(): Result<Unit> {
+		// TODO: fill this method
 		return Result.success(Unit)
 	}
 
