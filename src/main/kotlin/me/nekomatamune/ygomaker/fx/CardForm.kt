@@ -52,8 +52,7 @@ class CardForm {
 				defTextField.isEditable = isMonsterCard
 			}
 		}
-
-
+		
 		sequenceOf(
 			cardNameTextField, atkTextField, defTextField, effectTextArea
 		).forEach {
@@ -68,13 +67,7 @@ class CardForm {
 		}
 
 		effectCheckBox.selectedProperty().addSimpleListener(::onCardValueChange)
-
-		registerEventHandler(EventName.SELECT_CARD) {
-			logger.trace { "Handling SELECT_CARD event" }
-			packDir = it.packDir!!
-			onSelectCard(it.card!!)
-			Result.success(Unit)
-		}
+		registerEventHandler(EventName.SELECT_CARD, ::onSelectCard)
 	}
 
 	private fun onCardValueChange() {
@@ -102,9 +95,12 @@ class CardForm {
 		dispatchEvent(Event(name = EventName.MODIFY_CARD, card = newCard))
 	}
 
-	private fun onSelectCard(card: Card) {
+	private fun onSelectCard(event: Event): Result<Unit> {
 		onSelectCardInProgress = true
 
+		packDir = event.packDir!!
+
+		val card = event.card!!
 		cardNameTextField.text = card.name
 		cardTypeComboBox.selectionModel.select(card.type)
 		attributeComboBox.selectionModel.select(card.monster?.attribute)
@@ -118,5 +114,7 @@ class CardForm {
 		codeTextField.text = card.code
 
 		onSelectCardInProgress = false
+
+		return Result.success(Unit)
 	}
 }
