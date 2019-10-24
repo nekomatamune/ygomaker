@@ -154,7 +154,6 @@ class CardImage {
 				return Result.failure(
 					IllegalArgumentException("Not a file: $it"))
 			}
-			logger.info { "Load here: $it" }
 
 			val image = Image(it.toURI().toString())
 			imageView.image = image
