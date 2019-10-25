@@ -15,4 +15,5 @@ fun Control.addSimpleListener(listener: () -> Unit) {
 	}.addListener { _, _, _ -> listener() }
 }
 
+fun <T : Event> (() -> Unit).asEventHandler() = EventHandler<T> { this() }
 fun <T : Event> ((T) -> Unit).asEventHandler() = EventHandler<T> { this(it) }

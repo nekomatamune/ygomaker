@@ -102,7 +102,7 @@ class CardImage {
 		return loadImage()
 	}
 
-	private fun onClickImageFile(event: MouseEvent) {
+	private fun onClickImageFile() {
 		FileChooser().apply {
 			title = "Select an Image File"
 			initialDirectory = packDir.toFile()
