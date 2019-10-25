@@ -40,10 +40,12 @@ class CardList {
 		logger.debug { "Initializing CardList" }
 
 		sequenceOf(
-			packNameTextField, packCodeTextField, languageComboBox, cardListView
+			packNameTextField, packCodeTextField, languageComboBox
 		).forEach {
 			it.addSimpleListener(::onModifyPackInfo)
 		}
+
+		cardListView.addSimpleListener(::onSelectCard)
 
 		languageComboBox.items = observableList(Language.values().toList())
 		cardListView.setCellFactory { CardListCell() }
