@@ -47,7 +47,7 @@ class CardImage {
 		imageView.onScroll = EventHandler<ScrollEvent> { onMouseScrolled(it) }
 		imageView.onZoom = EventHandler<ZoomEvent> { onZoom(it) }
 
-		registerEventHandler(EventName.SELECT_CARD, this::onSelectCard)
+		registerEventHandler(EventName.SELECT_CARD, ::onSelectCard)
 	}
 
 	private fun onSpinnerValueChange() {
