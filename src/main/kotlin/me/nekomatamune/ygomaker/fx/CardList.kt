@@ -50,21 +50,9 @@ class CardList {
 		languageComboBox.items = observableList(Language.values().toList())
 		cardListView.setCellFactory { CardListCell() }
 
-		registerEventHandler(EventName.LOAD_PACK) {
-			logger.debug { "Handling LOAD_PACK event" }
-			loadPack(it.packDir!!)
-		}
-
-		registerEventHandler(EventName.SAVE_PACK) {
-			logger.debug { "Handling SAVE_PACK event" }
-			savePack()
-		}
-
-		registerEventHandler(EventName.SAVE_PACK_AS) {
-			logger.debug { "Handling SAVE_PACK_AS event" }
-			saveAsPack(it.packDir!!)
-		}
-
+		registerEventHandler(EventName.LOAD_PACK, ::loadPack)
+		registerEventHandler(EventName.SAVE_PACK, ::savePack)
+		registerEventHandler(EventName.SAVE_PACK_AS, ::saveAsPack)
 		registerEventHandler(EventName.MODIFY_CARD, ::onModifyCard)
 		registerEventHandler(EventName.MODIFY_CARD_IMAGE, ::onModifyCardImage)
 	}
@@ -91,6 +79,10 @@ class CardList {
 	}
 
 	private fun onModifyCard(event: Event): Result<Unit> {
+		if(cardListView.selectionModel.selectedItem == null) {
+			return Result.success(Unit)
+		}
+
 
 		disableOnSelectCard = true
 
@@ -118,8 +110,11 @@ class CardList {
 	}
 
 	private fun onModifyCardImage(event: Event): Result<Unit> {
-		disableOnSelectCard = true
+		if(cardListView.selectionModel.selectedItem == null) {
+			return Result.success(Unit)
+		}
 
+		disableOnSelectCard = true
 		val mergedCard = event.image!!.let {
 			cardListView.selectionModel.selectedItem.copy(
 				image = it
@@ -136,7 +131,8 @@ class CardList {
 	}
 
 
-	private fun loadPack(packDir: Path): Result<Unit> {
+	private fun loadPack(event: Event): Result<Unit> {
+		val packDir = event.packDir!!
 		logger.debug { "Loading pack from: $packDir" }
 
 		val cardFile = packDir.resolve("pack.json")
@@ -163,7 +159,7 @@ class CardList {
 		return Result.success(Unit)
 	}
 
-	private fun savePack(): Result<Unit> {
+	private fun savePack(event: Event): Result<Unit> {
 		logger.info { "Saving pack into $packDir" }
 		val cardFile = packDir.resolve("pack.json")
 
@@ -176,7 +172,9 @@ class CardList {
 		return Result.success(Unit)
 	}
 
-	private fun saveAsPack(newPackDir: Path): Result<Unit> {
+	private fun saveAsPack(event: Event): Result<Unit> {
+		val newPackDir = event.packDir!!
+
 		Files.walkFileTree(packDir, object : SimpleFileVisitor<Path>() {
 			override fun visitFile(file: Path,
 				attrs: BasicFileAttributes): FileVisitResult {
@@ -185,16 +183,15 @@ class CardList {
 				return FileVisitResult.CONTINUE
 			}
 		})
+		this.packDir = newPackDir
 
-		packDir = newPackDir
-
-		savePack().let {
+		savePack(Event()).let {
 			if (it.isFailure) {
 				return it
 			}
 		}
 
-		return loadPack(packDir)
+		return loadPack(event)
 	}
 
 	fun updateSelectedCard(card: Card) {
