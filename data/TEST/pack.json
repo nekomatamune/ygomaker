@@ -1,6 +1,6 @@
 {
-    "name": "Testing Pack (JP)",
-    "code": "TESTSasdfasdf",
+    "name": "Testing Pack",
+    "code": "TEST",
     "language": "EN",
     "copyright": null,
     "cards": [
@@ -9,7 +9,7 @@
             "type": "NORMAL_SUMMON_MONSTER",
             "monster": {
                 "attribute": "LIGHT",
-                "level": 8,
+                "level": 2,
                 "type": "魔法使い族",
                 "ability": null,
                 "effect": false,
@@ -22,7 +22,7 @@
                 "file": "001.png",
                 "x": 261,
                 "y": 209,
-                "size": 221
+                "size": 583
             },
             "code": "001",
             "effect": "高い攻撃力を誇る伝説のドラゴン。どんな相手でも粉砕する、その破壊力は計り知れない。",
@@ -51,7 +51,12 @@
                 "pendulum": null,
                 "links": null
             },
-            "image": null,
+            "image": {
+                "file": "",
+                "x": 0,
+                "y": 0,
+                "size": 300
+            },
             "code": "002",
             "effect": "「青眼の白龍」＋「青眼の白龍」＋「青眼の白龍」",
             "serial": 0

@@ -32,7 +32,7 @@ fun dispatchEvent(event: Event) {
 typealias EventHandler = (Event) -> Result<Unit>
 
 data class Event(
-	val name: EventName,
+	val name: EventName = EventName.UNKNOWN,
 
 	// Standard JavaFX events
 	val actionEvent: ActionEvent? = null,

@@ -1,6 +1,5 @@
 package me.nekomatamune.ygomaker.fx
 
-import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.geometry.Rectangle2D
 import javafx.scene.control.Spinner
@@ -39,21 +38,18 @@ class CardImage {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
-			it.valueProperty().addListener { _, oldValue, newValue ->
-				onSpinnerValueChange(oldValue, newValue)
-			}
+			it.addSimpleListener(::onSpinnerValueChange)
 		}
-		fileTextField.onMouseClicked = EventHandler { onClickImageFile() }
-		imageView.onMousePressed = EventHandler<MouseEvent> { onMousePressed(it) }
-		imageView.onMouseDragged = EventHandler<MouseEvent> { onMouseDragged(it) }
-		imageView.onScroll = EventHandler<ScrollEvent> { onMouseScrolled(it) }
-		imageView.onZoom = EventHandler<ZoomEvent> { onZoom(it) }
+		fileTextField.onMouseClicked = ::onClickImageFile.asEventHandler()
+		imageView.onMousePressed = ::onMousePressed.asEventHandler()
+		imageView.onMouseDragged = ::onMouseDragged.asEventHandler()
+		imageView.onScroll = ::onMouseScrolled.asEventHandler()
+		imageView.onZoom = ::onZoom.asEventHandler()
 
-		registerEventHandler(EventName.SELECT_CARD, this::onSelectCard)
+		registerEventHandler(EventName.SELECT_CARD, ::onSelectCard)
 	}
 
-	private fun onSpinnerValueChange(oldValue: Int, newValue: Int) {
-		logger.trace { "onSpinnerValueChange: $oldValue -> $newValue" }
+	private fun onSpinnerValueChange() {
 		updateViewPort()
 		dispatchModifyCardImageEvent()
 	}
@@ -138,7 +134,7 @@ class CardImage {
 	}
 
 	private fun loadImage(): Result<Unit> {
-		if(fileTextField.text.isBlank()) {
+		if (fileTextField.text.isBlank()) {
 			imageView.image = null
 			return Result.success(Unit)
 		}

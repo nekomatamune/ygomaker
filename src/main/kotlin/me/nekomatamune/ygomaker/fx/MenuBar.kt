@@ -25,21 +25,12 @@ class MenuBar {
 	private fun initialize() {
 		logger.debug { "Initializing MenuBar" }
 
-		loadPackMenuItem.onAction = EventHandler<ActionEvent> {
-			onLoadPackMenuItem()
-		}
-
+		loadPackMenuItem.onAction = ::onLoadPackMenuItem.asEventHandler()
 		savePackMenuItem.onAction = EventHandler<ActionEvent> {
 			dispatchEvent(Event(name = EventName.SAVE_PACK))
 		}
-
-		savePackAsMenuItem.onAction = EventHandler<ActionEvent> {
-			onSavePackAsMenuItem()
-		}
-
-		exitMenuItem.onAction = EventHandler<ActionEvent> {
-			onExitMenuItem()
-		}
+		savePackAsMenuItem.onAction = ::onSavePackAsMenuItem.asEventHandler()
+		exitMenuItem.onAction = ::onExitMenuItem.asEventHandler()
 	}
 
 	private fun onLoadPackMenuItem() {

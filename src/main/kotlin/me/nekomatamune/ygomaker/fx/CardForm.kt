@@ -2,10 +2,7 @@ package me.nekomatamune.ygomaker.fx
 
 import javafx.collections.FXCollections.observableArrayList
 import javafx.fxml.FXML
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ComboBox
-import javafx.scene.control.TextArea
-import javafx.scene.control.TextField
+import javafx.scene.control.*
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
 import java.nio.file.Path
@@ -53,32 +50,16 @@ class CardForm {
 			}
 		}
 
-
-		sequenceOf(cardNameTextField, atkTextField, defTextField, effectTextArea)
-			.forEach {
-				it.textProperty().addListener { _, _, _ ->
-					onCardValueChange()
-				}
-			}
-
-		sequenceOf(cardTypeComboBox, attributeComboBox, levelComboBox,
-			monsterTypeComboBox, monsterAbilityComboBox)
-			.forEach {
-				it.valueProperty().addListener { _, _, _ ->
-					onCardValueChange()
-				}
-			}
-
-		effectCheckBox.selectedProperty().addListener { _, _, _ ->
-			onCardValueChange()
+		sequenceOf(
+			cardNameTextField, atkTextField, defTextField, effectTextArea,
+			cardTypeComboBox, attributeComboBox, levelComboBox,
+			monsterTypeComboBox, monsterAbilityComboBox,
+			effectCheckBox
+		).forEach {
+			it.addSimpleListener(::onCardValueChange)
 		}
 
-		registerEventHandler(EventName.SELECT_CARD) {
-			logger.trace { "Handling SELECT_CARD event" }
-			packDir = it.packDir!!
-			onSelectCard(it.card!!)
-			Result.success(Unit)
-		}
+		registerEventHandler(EventName.SELECT_CARD, ::onSelectCard)
 	}
 
 	private fun onCardValueChange() {
@@ -106,9 +87,12 @@ class CardForm {
 		dispatchEvent(Event(name = EventName.MODIFY_CARD, card = newCard))
 	}
 
-	private fun onSelectCard(card: Card) {
+	private fun onSelectCard(event: Event): Result<Unit> {
 		onSelectCardInProgress = true
 
+		packDir = event.packDir!!
+
+		val card = event.card!!
 		cardNameTextField.text = card.name
 		cardTypeComboBox.selectionModel.select(card.type)
 		attributeComboBox.selectionModel.select(card.monster?.attribute)
@@ -122,5 +106,7 @@ class CardForm {
 		codeTextField.text = card.code
 
 		onSelectCardInProgress = false
+
+		return Result.success(Unit)
 	}
 }
