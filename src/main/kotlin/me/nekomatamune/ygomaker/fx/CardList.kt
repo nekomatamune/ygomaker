@@ -65,13 +65,8 @@ class CardList {
 			saveAsPack(it.packDir!!)
 		}
 
-		registerEventHandler(EventName.MODIFY_CARD) {
-			onModifyCard(it)
-		}
-
-		registerEventHandler(EventName.MODIFY_CARD_IMAGE) {
-			onModifyCardImage(it)
-		}
+		registerEventHandler(EventName.MODIFY_CARD, ::onModifyCard)
+		registerEventHandler(EventName.MODIFY_CARD_IMAGE, ::onModifyCardImage)
 	}
 
 	private fun onModifyPackInfo() {
