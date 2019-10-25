@@ -1,6 +1,5 @@
 package me.nekomatamune.ygomaker.fx
 
-import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.geometry.Rectangle2D
 import javafx.scene.control.Spinner
@@ -41,11 +40,11 @@ class CardImage {
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
 			it.addSimpleListener(::onSpinnerValueChange)
 		}
-		fileTextField.onMouseClicked = EventHandler { onClickImageFile() }
-		imageView.onMousePressed = EventHandler<MouseEvent> { onMousePressed(it) }
-		imageView.onMouseDragged = EventHandler<MouseEvent> { onMouseDragged(it) }
-		imageView.onScroll = EventHandler<ScrollEvent> { onMouseScrolled(it) }
-		imageView.onZoom = EventHandler<ZoomEvent> { onZoom(it) }
+		fileTextField.onMouseClicked = ::onClickImageFile.asEventHandler()
+		imageView.onMousePressed = ::onMousePressed.asEventHandler()
+		imageView.onMouseDragged = ::onMouseDragged.asEventHandler()
+		imageView.onScroll = ::onMouseScrolled.asEventHandler()
+		imageView.onZoom = ::onZoom.asEventHandler()
 
 		registerEventHandler(EventName.SELECT_CARD, ::onSelectCard)
 	}
@@ -103,7 +102,7 @@ class CardImage {
 		return loadImage()
 	}
 
-	private fun onClickImageFile() {
+	private fun onClickImageFile(event: MouseEvent) {
 		FileChooser().apply {
 			title = "Select an Image File"
 			initialDirectory = packDir.toFile()

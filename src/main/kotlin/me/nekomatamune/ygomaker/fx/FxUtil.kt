@@ -1,5 +1,7 @@
 package me.nekomatamune.ygomaker.fx
 
+import javafx.event.Event
+import javafx.event.EventHandler
 import javafx.scene.control.*
 
 fun Control.addSimpleListener(listener: () -> Unit) {
@@ -12,3 +14,5 @@ fun Control.addSimpleListener(listener: () -> Unit) {
 		else -> error("Unexpected control class ${this.javaClass}")
 	}.addListener { _, _, _ -> listener() }
 }
+
+fun <T : Event> ((T) -> Unit).asEventHandler() = EventHandler<T> { this(it) }
