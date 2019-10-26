@@ -1,6 +1,5 @@
-package me.nekomatamune.ygomaker.fx
+package me.nekomatamune.ygomaker
 
-import me.nekomatamune.ygomaker.*
 import org.spekframework.spek2.Spek
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
