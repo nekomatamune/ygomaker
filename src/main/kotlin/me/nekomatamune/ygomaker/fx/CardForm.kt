@@ -59,7 +59,8 @@ class CardForm {
 			it.addSimpleListener(::onCardValueChange)
 		}
 
-		registerEventHandler(EventName.SELECT_CARD, ::onSelectCard)
+		registerEventHandler(
+			EventName.SELECT_CARD, ::onSelectCard)
 	}
 
 	private fun onCardValueChange() {
@@ -84,7 +85,8 @@ class CardForm {
 			)
 		)
 
-		dispatchEvent(Event(name = EventName.MODIFY_CARD, card = newCard))
+		dispatchEvent(Event(
+			name = EventName.MODIFY_CARD, card = newCard))
 	}
 
 	private fun onSelectCard(event: Event): Result<Unit> {

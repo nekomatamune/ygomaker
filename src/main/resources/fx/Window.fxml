@@ -4,19 +4,18 @@
 <?import javafx.scene.text.Text?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="me.nekomatamune.ygomaker.fx.AppWindow"
             prefHeight="800" prefWidth="1000">
     <top>
-        <fx:include fx:id="menuBar" source="MenuBar.fxml"/>
+        <fx:include source="MenuBar.fxml"/>
     </top>
     <left>
-        <fx:include fx:id="cardList" source="CardList.fxml"/>
+        <fx:include source="CardList.fxml"/>
     </left>
     <center>
         <Text>Center</Text>
     </center>
     <right>
-        <fx:include fx:id="cardForm" source="CardForm.fxml"/>
+        <fx:include source="CardForm.fxml"/>
     </right>
 
 </BorderPane>

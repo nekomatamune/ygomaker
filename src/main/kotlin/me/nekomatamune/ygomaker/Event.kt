@@ -1,8 +1,6 @@
-package me.nekomatamune.ygomaker.fx
+package me.nekomatamune.ygomaker
 
-import me.nekomatamune.ygomaker.Card
 import javafx.event.ActionEvent
-import me.nekomatamune.ygomaker.Image
 import mu.KotlinLogging
 import java.nio.file.Path
 
