@@ -9,6 +9,9 @@ import javafx.scene.control.ButtonType
 import javafx.scene.control.MenuItem
 import javafx.stage.DirectoryChooser
 import me.nekomatamune.ygomaker.Command
+import me.nekomatamune.ygomaker.Event
+import me.nekomatamune.ygomaker.EventName
+import me.nekomatamune.ygomaker.dispatchEvent
 import mu.KotlinLogging
 import java.nio.file.Files
 
@@ -27,7 +30,8 @@ class MenuBar {
 
 		loadPackMenuItem.onAction = ::onLoadPackMenuItem.asEventHandler()
 		savePackMenuItem.onAction = EventHandler<ActionEvent> {
-			dispatchEvent(Event(name = EventName.SAVE_PACK))
+			dispatchEvent(Event(
+				name = EventName.SAVE_PACK))
 		}
 		savePackAsMenuItem.onAction = ::onSavePackAsMenuItem.asEventHandler()
 		exitMenuItem.onAction = ::onExitMenuItem.asEventHandler()
@@ -41,7 +45,8 @@ class MenuBar {
 			initialDirectory = Command.dataDir.toFile()
 		}.showDialog(null).toPath()
 
-		dispatchEvent(Event(name = EventName.LOAD_PACK, packDir = packDir))
+		dispatchEvent(Event(
+			name = EventName.LOAD_PACK, packDir = packDir))
 	}
 
 	private fun onSavePackAsMenuItem() {
@@ -59,7 +64,9 @@ class MenuBar {
 			}.showAndWait().filter(ButtonType.OK::equals).ifPresent {
 				logger.info { "Writing pack to ${newPackDir.fileName}" }
 				dispatchEvent(
-					Event(name = EventName.SAVE_PACK_AS, packDir = newPackDir))
+					Event(
+						name = EventName.SAVE_PACK_AS,
+						packDir = newPackDir))
 			}
 		}
 

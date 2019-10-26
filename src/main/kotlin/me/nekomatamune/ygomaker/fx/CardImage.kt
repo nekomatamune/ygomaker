@@ -12,6 +12,10 @@ import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.HBox
 import javafx.stage.FileChooser
+import me.nekomatamune.ygomaker.Event
+import me.nekomatamune.ygomaker.EventName
+import me.nekomatamune.ygomaker.dispatchEvent
+import me.nekomatamune.ygomaker.registerEventHandler
 import mu.KotlinLogging
 import java.io.FileNotFoundException
 import java.nio.file.Path
@@ -46,7 +50,8 @@ class CardImage {
 		imageView.onScroll = ::onMouseScrolled.asEventHandler()
 		imageView.onZoom = ::onZoom.asEventHandler()
 
-		registerEventHandler(EventName.SELECT_CARD, ::onSelectCard)
+		registerEventHandler(
+			EventName.SELECT_CARD, ::onSelectCard)
 	}
 
 	private fun onSpinnerValueChange() {

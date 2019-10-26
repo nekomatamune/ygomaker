@@ -2,6 +2,9 @@ package me.nekomatamune.ygomaker.fx
 
 import javafx.fxml.FXML
 import me.nekomatamune.ygomaker.Command
+import me.nekomatamune.ygomaker.Event
+import me.nekomatamune.ygomaker.EventName
+import me.nekomatamune.ygomaker.dispatchEvent
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }

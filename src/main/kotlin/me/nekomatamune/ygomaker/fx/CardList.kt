@@ -50,11 +50,16 @@ class CardList {
 		languageComboBox.items = observableList(Language.values().toList())
 		cardListView.setCellFactory { CardListCell() }
 
-		registerEventHandler(EventName.LOAD_PACK, ::loadPack)
-		registerEventHandler(EventName.SAVE_PACK, ::savePack)
-		registerEventHandler(EventName.SAVE_PACK_AS, ::saveAsPack)
-		registerEventHandler(EventName.MODIFY_CARD, ::onModifyCard)
-		registerEventHandler(EventName.MODIFY_CARD_IMAGE, ::onModifyCardImage)
+		registerEventHandler(
+			EventName.LOAD_PACK, ::loadPack)
+		registerEventHandler(
+			EventName.SAVE_PACK, ::savePack)
+		registerEventHandler(
+			EventName.SAVE_PACK_AS, ::saveAsPack)
+		registerEventHandler(
+			EventName.MODIFY_CARD, ::onModifyCard)
+		registerEventHandler(
+			EventName.MODIFY_CARD_IMAGE, ::onModifyCardImage)
 	}
 
 	private fun onModifyPackInfo() {
