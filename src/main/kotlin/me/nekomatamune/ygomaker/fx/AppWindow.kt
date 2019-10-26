@@ -1,20 +1,12 @@
 package me.nekomatamune.ygomaker.fx
 
-import me.nekomatamune.ygomaker.Command
 import javafx.fxml.FXML
+import me.nekomatamune.ygomaker.Command
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
 
 class AppWindow {
-	@FXML
-	lateinit var menuBarController: MenuBar
-
-	@FXML
-	lateinit var cardListController: CardList
-
-	@FXML
-	lateinit var cardFormController: CardForm
 
 	@FXML
 	fun initialize() {
