@@ -8,13 +8,12 @@ import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 import mu.KotlinLogging
 
-
 private val logger = KotlinLogging.logger { }
 
 class App : Application() {
 	override fun start(primaryStage: Stage) {
 
-		logger.info { "Loading AppPane" }
+		logger.info { "Loading App..." }
 		val appPane = FXMLLoader().apply {
 			location = Resources.getResource("fx/Window.fxml")
 		}.load<BorderPane>()
