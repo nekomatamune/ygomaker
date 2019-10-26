@@ -6,7 +6,7 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
 
-class AppWindow {
+class Window {
 
 	@FXML
 	fun initialize() {

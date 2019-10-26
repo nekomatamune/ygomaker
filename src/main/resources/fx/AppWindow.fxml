@@ -4,7 +4,7 @@
 <?import javafx.scene.text.Text?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="me.nekomatamune.ygomaker.fx.AppWindow"
+            fx:controller="me.nekomatamune.ygomaker.fx.Window"
             prefHeight="800" prefWidth="1000">
     <top>
         <fx:include source="MenuBar.fxml"/>
