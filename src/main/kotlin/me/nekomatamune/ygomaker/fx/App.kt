@@ -16,7 +16,7 @@ class App : Application() {
 
 		logger.info { "Loading AppPane" }
 		val appPane = FXMLLoader().apply {
-			location = Resources.getResource("fx/AppWindow.fxml")
+			location = Resources.getResource("fx/Window.fxml")
 		}.load<BorderPane>()
 
 		logger.info { "Showing stage" }
