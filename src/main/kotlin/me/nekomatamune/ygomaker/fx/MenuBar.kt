@@ -1,8 +1,6 @@
 package me.nekomatamune.ygomaker.fx
 
 import javafx.application.Platform
-import javafx.event.ActionEvent
-import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
@@ -27,12 +25,8 @@ class MenuBar {
 	@FXML
 	private fun initialize() {
 		logger.debug { "Initializing MenuBar" }
-
 		loadPackMenuItem.onAction = ::onLoadPackMenuItem.asEventHandler()
-		savePackMenuItem.onAction = EventHandler<ActionEvent> {
-			dispatchEvent(Event(
-				name = EventName.SAVE_PACK))
-		}
+		savePackMenuItem.onAction = ::onSavePackMenuItem.asEventHandler()
 		savePackAsMenuItem.onAction = ::onSavePackAsMenuItem.asEventHandler()
 		exitMenuItem.onAction = ::onExitMenuItem.asEventHandler()
 	}
@@ -47,6 +41,11 @@ class MenuBar {
 
 		dispatchEvent(Event(
 			name = EventName.LOAD_PACK, packDir = packDir))
+	}
+
+	private fun onSavePackMenuItem() {
+		logger.debug { "onSavePackMenuItem()" }
+		dispatchEvent(Event(name = EventName.SAVE_PACK))
 	}
 
 	private fun onSavePackAsMenuItem() {
