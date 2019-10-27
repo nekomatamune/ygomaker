@@ -10,6 +10,7 @@ import org.spekframework.spek2.Spek
 object EventDispatcherSpec : Spek({
 
 	listOf(
+		arrayOf(listOf<EventName>(), 0, 0, 0),
 		arrayOf(listOf(LOAD_PACK), 1, 0, 1),
 		arrayOf(listOf(LOAD_PACK, SAVE_PACK), 1, 1, 2),
 		arrayOf(listOf(LOAD_PACK, SAVE_PACK, LOAD_PACK), 2, 1, 3)

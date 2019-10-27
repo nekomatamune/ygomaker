@@ -4,6 +4,9 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
 
+/**
+ * Dispatches [Event] by registering and invoking [EventHandler].
+ */
 class EventDispatcher {
 	private val handlers = mutableMapOf<EventName, MutableList<EventHandler>>()
 
@@ -11,13 +14,22 @@ class EventDispatcher {
 		handlers.getOrPut(name, ::mutableListOf).add(handler)
 	}
 
-	fun dispatch(event: Event) {
+	fun dispatch(event: Event): Result<Unit> {
 		logger.trace { "Dispatching event ${event.name}" }
 
-		handlers[event.name]?.forEach {
-			it(event).onFailure {
-				logger.error(it.cause) { "Handler fails with error: ${it.cause}" }
+		val res = handlers[event.name]
+			?.map { it(event) }
+			?.filter { it.isFailure }
+			?.onEach {
+				it.exceptionOrNull()?.let { error ->
+					logger.error(error) { "Handler fails with error" }
+				}
 			}
-		}
+			?.firstOrNull()
+
+		// TODO: Somehow `:? Result.success(Unit)` causes compilation error.
+		// Investigate why.
+		@Suppress("IfThenToElvis")
+		return if (res != null) res else Result.success(Unit)
 	}
 }
