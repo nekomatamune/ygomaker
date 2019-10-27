@@ -5,6 +5,12 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger { }
 
 /**
+ * A singleton [EventDispatcher]. The default instance to use for all event
+ * dispatching and handling.
+ */
+val dispatcher = EventDispatcher()
+
+/**
  * Dispatches [Event] by registering and invoking [EventHandler].
  */
 class EventDispatcher {

@@ -9,7 +9,7 @@ import javafx.stage.Stage
 import me.nekomatamune.ygomaker.Command
 import me.nekomatamune.ygomaker.Event
 import me.nekomatamune.ygomaker.EventName
-import me.nekomatamune.ygomaker.dispatchEvent
+import me.nekomatamune.ygomaker.dispatcher
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
@@ -22,7 +22,7 @@ class App : Application() {
 			location = Resources.getResource("fx/Window.fxml")
 		}.load<BorderPane>()
 
-		dispatchEvent(Event(
+		dispatcher.dispatch(Event(
 			name = EventName.LOAD_PACK,
 			packDir = Command.dataDir.resolve(Command.packCode)
 		))
