@@ -20,7 +20,7 @@ private val logger = KotlinLogging.logger { }
 
 class CardList {
 
-	private lateinit var pack: Pack
+	private var pack: Pack = Pack()
 	private lateinit var packDir: Path
 
 	@FXML private lateinit var packDirText: Text
@@ -48,6 +48,7 @@ class CardList {
 		cardListView.addSimpleListener(::onSelectCard)
 
 		languageComboBox.items = observableList(Language.values().toList())
+		languageComboBox.selectionModel.selectFirst()
 		cardListView.setCellFactory { CardListCell() }
 
 		dispatcher.register(EventName.LOAD_PACK, ::loadPack)
