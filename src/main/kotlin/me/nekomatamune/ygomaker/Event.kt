@@ -4,29 +4,6 @@ import javafx.event.ActionEvent
 import mu.KotlinLogging
 import java.nio.file.Path
 
-private val logger = KotlinLogging.logger { }
-
-
-private val handlers = mutableMapOf<EventName, MutableList<EventHandler>>()
-
-fun registerEventHandler(name: EventName, handler: EventHandler) {
-	handlers.getOrPut(name, ::mutableListOf).add(handler)
-}
-
-fun unregisterAllEventHandlers() {
-	handlers.clear()
-}
-
-fun dispatchEvent(event: Event) {
-	logger.trace { "Dispatching event ${event.name}" }
-
-	handlers[event.name]?.forEach {
-		it(event).onFailure {
-			logger.error(it.cause) { "Handler fails with error: ${it.cause}" }
-		}
-	}
-}
-
 typealias EventHandler = (Event) -> Result<Unit>
 
 data class Event(

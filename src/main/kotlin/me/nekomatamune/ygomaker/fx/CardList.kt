@@ -50,16 +50,11 @@ class CardList {
 		languageComboBox.items = observableList(Language.values().toList())
 		cardListView.setCellFactory { CardListCell() }
 
-		registerEventHandler(
-			EventName.LOAD_PACK, ::loadPack)
-		registerEventHandler(
-			EventName.SAVE_PACK, ::savePack)
-		registerEventHandler(
-			EventName.SAVE_PACK_AS, ::saveAsPack)
-		registerEventHandler(
-			EventName.MODIFY_CARD, ::onModifyCard)
-		registerEventHandler(
-			EventName.MODIFY_CARD_IMAGE, ::onModifyCardImage)
+		dispatcher.register(EventName.LOAD_PACK, ::loadPack)
+		dispatcher.register(EventName.SAVE_PACK, ::savePack)
+		dispatcher.register(EventName.SAVE_PACK_AS, ::saveAsPack)
+		dispatcher.register(EventName.MODIFY_CARD, ::onModifyCard)
+		dispatcher.register(EventName.MODIFY_CARD_IMAGE, ::onModifyCardImage)
 	}
 
 	private fun onModifyPackInfo() {
@@ -76,15 +71,15 @@ class CardList {
 			return
 		}
 
-		dispatchEvent(Event(
-			name = EventName.SELECT_CARD,
+		dispatcher.dispatch(Event(
+			EventName.SELECT_CARD,
 			card = cardListView.selectionModel.selectedItem,
 			packDir = packDir
 		))
 	}
 
 	private fun onModifyCard(event: Event): Result<Unit> {
-		if(cardListView.selectionModel.selectedItem == null) {
+		if (cardListView.selectionModel.selectedItem == null) {
 			return Result.success(Unit)
 		}
 
@@ -115,7 +110,7 @@ class CardList {
 	}
 
 	private fun onModifyCardImage(event: Event): Result<Unit> {
-		if(cardListView.selectionModel.selectedItem == null) {
+		if (cardListView.selectionModel.selectedItem == null) {
 			return Result.success(Unit)
 		}
 

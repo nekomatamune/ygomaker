@@ -36,6 +36,7 @@ dependencies {
 	testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVer")
 	testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVer")
 	testImplementation("io.strikt:strikt-core:0.21.1")
+	testImplementation("io.mockk:mockk:1.9")
 }
 
 tasks.clean {
