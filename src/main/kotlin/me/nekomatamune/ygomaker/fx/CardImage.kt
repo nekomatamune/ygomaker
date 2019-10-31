@@ -1,6 +1,5 @@
 package me.nekomatamune.ygomaker.fx
 
-import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.geometry.Rectangle2D
 import javafx.scene.control.Spinner
@@ -13,6 +12,9 @@ import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.HBox
 import javafx.stage.FileChooser
+import me.nekomatamune.ygomaker.Event
+import me.nekomatamune.ygomaker.EventName
+import me.nekomatamune.ygomaker.dispatcher
 import mu.KotlinLogging
 import java.io.FileNotFoundException
 import java.nio.file.Path
@@ -39,21 +41,18 @@ class CardImage {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
-			it.valueProperty().addListener { _, oldValue, newValue ->
-				onSpinnerValueChange(oldValue, newValue)
-			}
+			it.addSimpleListener(::onSpinnerValueChange)
 		}
-		fileTextField.onMouseClicked = EventHandler { onClickImageFile() }
-		imageView.onMousePressed = EventHandler<MouseEvent> { onMousePressed(it) }
-		imageView.onMouseDragged = EventHandler<MouseEvent> { onMouseDragged(it) }
-		imageView.onScroll = EventHandler<ScrollEvent> { onMouseScrolled(it) }
-		imageView.onZoom = EventHandler<ZoomEvent> { onZoom(it) }
+		fileTextField.onMouseClicked = ::onClickImageFile.asEventHandler()
+		imageView.onMousePressed = ::onMousePressed.asEventHandler()
+		imageView.onMouseDragged = ::onMouseDragged.asEventHandler()
+		imageView.onScroll = ::onMouseScrolled.asEventHandler()
+		imageView.onZoom = ::onZoom.asEventHandler()
 
-		registerEventHandler(EventName.SELECT_CARD, this::onSelectCard)
+		dispatcher.register(EventName.SELECT_CARD, ::onSelectCard)
 	}
 
-	private fun onSpinnerValueChange(oldValue: Int, newValue: Int) {
-		logger.trace { "onSpinnerValueChange: $oldValue -> $newValue" }
+	private fun onSpinnerValueChange() {
 		updateViewPort()
 		dispatchModifyCardImageEvent()
 	}
@@ -126,8 +125,8 @@ class CardImage {
 	}
 
 	private fun dispatchModifyCardImageEvent() {
-		dispatchEvent(Event(
-			name = EventName.MODIFY_CARD_IMAGE,
+		dispatcher.dispatch(Event(
+			EventName.MODIFY_CARD_IMAGE,
 			image = me.nekomatamune.ygomaker.Image(
 				file = fileTextField.text,
 				x = xSpinner.value,
@@ -138,7 +137,7 @@ class CardImage {
 	}
 
 	private fun loadImage(): Result<Unit> {
-		if(fileTextField.text.isBlank()) {
+		if (fileTextField.text.isBlank()) {
 			imageView.image = null
 			return Result.success(Unit)
 		}

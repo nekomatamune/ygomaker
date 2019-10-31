@@ -53,32 +53,17 @@ class CardForm {
 			}
 		}
 
-
-		sequenceOf(cardNameTextField, atkTextField, defTextField, effectTextArea)
-			.forEach {
-				it.textProperty().addListener { _, _, _ ->
-					onCardValueChange()
-				}
-			}
-
-		sequenceOf(cardTypeComboBox, attributeComboBox, levelComboBox,
-			monsterTypeComboBox, monsterAbilityComboBox)
-			.forEach {
-				it.valueProperty().addListener { _, _, _ ->
-					onCardValueChange()
-				}
-			}
-
-		effectCheckBox.selectedProperty().addListener { _, _, _ ->
-			onCardValueChange()
+		sequenceOf(
+			cardNameTextField, atkTextField, defTextField, effectTextArea,
+			cardTypeComboBox, attributeComboBox, levelComboBox,
+			monsterTypeComboBox, monsterAbilityComboBox,
+			effectCheckBox
+		).forEach {
+			it.addSimpleListener(::onCardValueChange)
 		}
 
-		registerEventHandler(EventName.SELECT_CARD) {
-			logger.trace { "Handling SELECT_CARD event" }
-			packDir = it.packDir!!
-			onSelectCard(it.card!!)
-			Result.success(Unit)
-		}
+		dispatcher.register(
+			EventName.SELECT_CARD, ::onSelectCard)
 	}
 
 	private fun onCardValueChange() {
@@ -103,12 +88,15 @@ class CardForm {
 			)
 		)
 
-		dispatchEvent(Event(name = EventName.MODIFY_CARD, card = newCard))
+		dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = newCard))
 	}
 
-	private fun onSelectCard(card: Card) {
+	private fun onSelectCard(event: Event): Result<Unit> {
 		onSelectCardInProgress = true
 
+		packDir = event.packDir!!
+
+		val card = event.card!!
 		cardNameTextField.text = card.name
 		cardTypeComboBox.selectionModel.select(card.type)
 		attributeComboBox.selectionModel.select(card.monster?.attribute)
@@ -122,5 +110,7 @@ class CardForm {
 		codeTextField.text = card.code
 
 		onSelectCardInProgress = false
+
+		return Result.success(Unit)
 	}
 }

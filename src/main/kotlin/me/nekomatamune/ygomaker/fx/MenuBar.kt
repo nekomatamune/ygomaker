@@ -1,14 +1,12 @@
 package me.nekomatamune.ygomaker.fx
 
 import javafx.application.Platform
-import javafx.event.ActionEvent
-import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.MenuItem
 import javafx.stage.DirectoryChooser
-import me.nekomatamune.ygomaker.Command
+import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
 import java.nio.file.Files
 
@@ -24,22 +22,10 @@ class MenuBar {
 	@FXML
 	private fun initialize() {
 		logger.debug { "Initializing MenuBar" }
-
-		loadPackMenuItem.onAction = EventHandler<ActionEvent> {
-			onLoadPackMenuItem()
-		}
-
-		savePackMenuItem.onAction = EventHandler<ActionEvent> {
-			dispatchEvent(Event(name = EventName.SAVE_PACK))
-		}
-
-		savePackAsMenuItem.onAction = EventHandler<ActionEvent> {
-			onSavePackAsMenuItem()
-		}
-
-		exitMenuItem.onAction = EventHandler<ActionEvent> {
-			onExitMenuItem()
-		}
+		loadPackMenuItem.onAction = ::onLoadPackMenuItem.asEventHandler()
+		savePackMenuItem.onAction = ::onSavePackMenuItem.asEventHandler()
+		savePackAsMenuItem.onAction = ::onSavePackAsMenuItem.asEventHandler()
+		exitMenuItem.onAction = ::onExitMenuItem.asEventHandler()
 	}
 
 	private fun onLoadPackMenuItem() {
@@ -50,7 +36,12 @@ class MenuBar {
 			initialDirectory = Command.dataDir.toFile()
 		}.showDialog(null).toPath()
 
-		dispatchEvent(Event(name = EventName.LOAD_PACK, packDir = packDir))
+		dispatcher.dispatch(Event(EventName.LOAD_PACK, packDir = packDir))
+	}
+
+	private fun onSavePackMenuItem() {
+		logger.debug { "onSavePackMenuItem()" }
+		dispatcher.dispatch(Event(EventName.SAVE_PACK))
 	}
 
 	private fun onSavePackAsMenuItem() {
@@ -67,8 +58,7 @@ class MenuBar {
 				contentText = "This will overwrite the existing pack ${newPackDir.fileName}. Proceed?"
 			}.showAndWait().filter(ButtonType.OK::equals).ifPresent {
 				logger.info { "Writing pack to ${newPackDir.fileName}" }
-				dispatchEvent(
-					Event(name = EventName.SAVE_PACK_AS, packDir = newPackDir))
+				dispatcher.dispatch(Event(EventName.SAVE_PACK_AS, packDir = newPackDir))
 			}
 		}
 
