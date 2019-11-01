@@ -39,31 +39,37 @@ class CardForm {
 		monsterTypeComboBox.items = observableArrayList(MONSTER_TYPE_PRESETS)
 		monsterAbilityComboBox.items = observableArrayList(MONSTER_ABILITY_PRESETS)
 
+		// Group fields together for ease of reference later
+		val monsterComboBoxes = sequenceOf(
+			attributeComboBox, levelComboBox,
+			monsterTypeComboBox, monsterAbilityComboBox
+		)
+		val monsterFields = monsterComboBoxes.plus(
+			sequenceOf(effectCheckBox, atkTextField, defTextField)
+		)
+
+		// Set the first value to be the default
+		monsterComboBoxes.plus(cardTypeComboBox).forEach {
+			it.selectionModel.selectFirst()
+		}
+
+		// Special rules to apply when CardType changes
 		cardTypeComboBox.valueProperty().addListener { _, oldValue, newValue ->
 			logger.trace { "Card type changed from $oldValue to $newValue" }
 
 			val isMonsterType = (newValue in MONSTER_CARD_TYPES)
 
-			sequenceOf(
-				attributeComboBox, levelComboBox, monsterTypeComboBox,
-				monsterAbilityComboBox, effectCheckBox, atkTextField, defTextField
-			).forEach {
+			monsterFields.forEach {
 				it.isDisable = !isMonsterType
 			}
 
 			if (oldValue !in MONSTER_CARD_TYPES && isMonsterType) {
-				sequenceOf(
-					attributeComboBox, levelComboBox, monsterTypeComboBox,
-					monsterAbilityComboBox
-				).forEach { it.selectionModel.selectFirst() }
+				monsterComboBoxes.forEach { it.selectionModel.selectFirst() }
 			}
 		}
 
-		sequenceOf(
-			cardNameTextField, atkTextField, defTextField, effectTextArea,
-			cardTypeComboBox, attributeComboBox, levelComboBox,
-			monsterTypeComboBox, monsterAbilityComboBox,
-			effectCheckBox
+		monsterFields.plus(
+			sequenceOf(cardNameTextField, cardTypeComboBox)
 		).forEach {
 			it.addSimpleListener(::onCardValueChange)
 		}
