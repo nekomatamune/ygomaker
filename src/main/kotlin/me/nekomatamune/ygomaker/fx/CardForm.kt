@@ -39,17 +39,23 @@ class CardForm {
 		monsterTypeComboBox.items = observableArrayList(MONSTER_TYPE_PRESETS)
 		monsterAbilityComboBox.items = observableArrayList(MONSTER_ABILITY_PRESETS)
 
-		cardTypeComboBox.valueProperty().addListener { _, _, newValue ->
-			logger.trace { "Card type changed to $newValue" }
+		cardTypeComboBox.valueProperty().addListener { _, oldValue, newValue ->
+			logger.trace { "Card type changed from $oldValue to $newValue" }
 
-			(newValue in MONSTER_CARD_TYPES).let { isMonsterCard ->
-				attributeComboBox.isDisable = !isMonsterCard
-				levelComboBox.isDisable = !isMonsterCard
-				monsterTypeComboBox.isDisable = !isMonsterCard
-				monsterAbilityComboBox.isDisable = !isMonsterCard
-				effectCheckBox.isDisable = !isMonsterCard
-				atkTextField.isEditable = isMonsterCard
-				defTextField.isEditable = isMonsterCard
+			val isMonsterType = (newValue in MONSTER_CARD_TYPES)
+
+			sequenceOf(
+				attributeComboBox, levelComboBox, monsterTypeComboBox,
+				monsterAbilityComboBox, effectCheckBox, atkTextField, defTextField
+			).forEach {
+				it.isDisable = !isMonsterType
+			}
+
+			if (oldValue !in MONSTER_CARD_TYPES && isMonsterType) {
+				sequenceOf(
+					attributeComboBox, levelComboBox, monsterTypeComboBox,
+					monsterAbilityComboBox
+				).forEach { it.selectionModel.selectFirst() }
 			}
 		}
 
