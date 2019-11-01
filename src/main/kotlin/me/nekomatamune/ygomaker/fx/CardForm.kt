@@ -54,16 +54,14 @@ class CardForm {
 		}
 
 		// Special rules to apply when CardType changes
-		cardTypeComboBox.valueProperty().addListener { _, oldValue, newValue ->
-			logger.trace { "Card type changed from $oldValue to $newValue" }
-
-			val isMonsterType = (newValue in MONSTER_CARD_TYPES)
+		cardTypeComboBox.valueProperty().addListener { _, oldCardType, newCardType ->
+			logger.trace { "Card type changed from $oldCardType to $newCardType" }
 
 			monsterFields.forEach {
-				it.isDisable = !isMonsterType
+				it.isDisable = !newCardType.isMonster()
 			}
 
-			if (oldValue !in MONSTER_CARD_TYPES && isMonsterType) {
+			if (!oldCardType.isMonster() && newCardType.isMonster()) {
 				monsterComboBoxes.forEach { it.selectionModel.selectFirst() }
 			}
 		}
