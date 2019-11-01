@@ -10,10 +10,10 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.path
 import com.google.common.io.Resources
-import me.nekomatamune.ygomaker.fx.App
 import javafx.application.Application.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
+import me.nekomatamune.ygomaker.fx.App
 import mu.KotlinLogging
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.core.config.Configurator
@@ -34,8 +34,8 @@ object Command : CliktCommand(
 			|containing a "pack.json" file.
 			|""".trimMargin())
 
-	val guiMode: Boolean by option(
-		"--gui", metavar = "GUI_MODE", help = "Run in GUI mode"
+	val noGui: Boolean by option(
+		"--no-gui", metavar = "NO_GUI_MODE", help = "Do not show the GUI."
 	).flag(default = false)
 
 	val dataDir: Path by option(
@@ -60,13 +60,14 @@ object Command : CliktCommand(
 
 		Resources.getResource("banner.txt").readText().lines().forEach(logger::info)
 
-		if (guiMode) {
-			launch(App::class.java)
-		} else {
+		if (noGui) {
 			val pack = Json(JsonConfiguration.Stable).parse(Pack.serializer(),
 				dataDir.resolve(packCode).resolve("pack.json").toFile().readText())
 			echo(pack)
+			return
 		}
 
+		launch(App::class.java)
 	}
 }
+
