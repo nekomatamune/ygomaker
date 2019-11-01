@@ -29,18 +29,14 @@
 
     <!-- Row 2 -->
     <ComboBox fx:id="attributeComboBox"
-              promptText="Attribute"
               GridPane.rowIndex="2" GridPane.columnIndex="0"/>
     <ComboBox fx:id="levelComboBox"
-              promptText="Level"
               GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
     <!-- Row 3 -->
     <ComboBox fx:id="monsterTypeComboBox"
-              promptText="Type"
               GridPane.rowIndex="3" GridPane.columnIndex="0"/>
     <ComboBox fx:id="monsterAbilityComboBox"
-              promptText="Ability"
               GridPane.rowIndex="3" GridPane.columnIndex="1"/>
     <CheckBox fx:id="effectCheckBox"
               text="Effect"
