@@ -96,7 +96,7 @@ class CardList {
 				effect = it.effect
 			)
 		}
-		
+
 		val cards = cardListView.items
 		val selectIdx = cardListView.selectionModel.selectedIndex
 		cards[selectIdx] = mergedCard
