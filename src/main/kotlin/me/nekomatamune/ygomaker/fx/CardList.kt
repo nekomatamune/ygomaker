@@ -83,7 +83,7 @@ class CardList {
 
 	private fun onModifyCard(event: Event): Result<Unit> {
 		if (cardListView.selectionModel.selectedItem == null) {
-			return Result.success(Unit)
+			return Result.success()
 		}
 
 		disableOnSelectCard = true
@@ -104,12 +104,12 @@ class CardList {
 		pack = pack.copy(cards = cards)
 
 		disableOnSelectCard = false
-		return Result.success(Unit)
+		return Result.success()
 	}
 
 	private fun onModifyCardImage(event: Event): Result<Unit> {
 		if (cardListView.selectionModel.selectedItem == null) {
-			return Result.success(Unit)
+			return Result.success()
 		}
 
 		disableOnSelectCard = true
@@ -125,7 +125,7 @@ class CardList {
 		pack = pack.copy(cards = cards)
 
 		disableOnSelectCard = false
-		return Result.success(Unit)
+		return Result.success()
 	}
 
 	private fun loadPack(event: Event): Result<Unit> {
@@ -153,7 +153,7 @@ class CardList {
 			selectionModel.selectFirst()
 		}
 
-		return Result.success(Unit)
+		return Result.success()
 	}
 
 	private fun savePack(): Result<Unit> {
@@ -166,7 +166,7 @@ class CardList {
 
 		cardFile.toFile().writeText(packJson)
 
-		return Result.success(Unit)
+		return Result.success()
 	}
 
 	private fun saveAsPack(event: Event): Result<Unit> {
