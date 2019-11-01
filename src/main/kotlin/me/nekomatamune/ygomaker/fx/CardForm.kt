@@ -16,17 +16,17 @@ class CardForm {
 	private lateinit var packDir: Path
 	private var onSelectCardInProgress: Boolean = false
 
-	@FXML lateinit var cardNameTextField: TextField
-	@FXML lateinit var cardTypeComboBox: ComboBox<CardType>
-	@FXML lateinit var attributeComboBox: ComboBox<Attribute>
-	@FXML lateinit var levelComboBox: ComboBox<Int>
-	@FXML lateinit var monsterTypeComboBox: ComboBox<String>
-	@FXML lateinit var monsterAbilityComboBox: ComboBox<String>
-	@FXML lateinit var effectCheckBox: CheckBox
-	@FXML lateinit var effectTextArea: TextArea
-	@FXML lateinit var atkTextField: TextField
-	@FXML lateinit var defTextField: TextField
-	@FXML lateinit var codeTextField: TextField
+	@FXML private lateinit var cardNameTextField: TextField
+	@FXML private lateinit var cardTypeComboBox: ComboBox<CardType>
+	@FXML private lateinit var attributeComboBox: ComboBox<Attribute>
+	@FXML private lateinit var levelComboBox: ComboBox<Int>
+	@FXML private lateinit var monsterTypeComboBox: ComboBox<String>
+	@FXML private lateinit var monsterAbilityComboBox: ComboBox<String>
+	@FXML private lateinit var effectCheckBox: CheckBox
+	@FXML private lateinit var effectTextArea: TextArea
+	@FXML private lateinit var atkTextField: TextField
+	@FXML private lateinit var defTextField: TextField
+	@FXML private lateinit var codeTextField: TextField
 
 	@FXML
 	fun initialize() {
