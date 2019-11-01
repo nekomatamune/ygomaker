@@ -2,7 +2,10 @@ package me.nekomatamune.ygomaker.fx
 
 import javafx.collections.FXCollections.observableArrayList
 import javafx.fxml.FXML
-import javafx.scene.control.*
+import javafx.scene.control.CheckBox
+import javafx.scene.control.ComboBox
+import javafx.scene.control.TextArea
+import javafx.scene.control.TextField
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
 import java.nio.file.Path
@@ -49,18 +52,17 @@ class CardForm {
 				defTextField.isEditable = isMonsterCard
 			}
 		}
-		
+
 		sequenceOf(
 			cardNameTextField, atkTextField, defTextField, effectTextArea,
 			cardTypeComboBox, attributeComboBox, levelComboBox,
 			monsterTypeComboBox, monsterAbilityComboBox,
 			effectCheckBox
 		).forEach {
-			it.addSimpleListener(::onCardValueChange)
+			it.addSimpleListener { onCardValueChange() }
 		}
 
-		dispatcher.register(
-			EventName.SELECT_CARD, ::onSelectCard)
+		dispatcher.register(EventName.SELECT_CARD) { onSelectCard(it) }
 	}
 
 	private fun onCardValueChange() {
