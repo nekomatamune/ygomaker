@@ -86,7 +86,6 @@ class CardList {
 			return Result.success(Unit)
 		}
 
-
 		disableOnSelectCard = true
 
 		val mergedCard = event.card?.let {
@@ -128,8 +127,7 @@ class CardList {
 		disableOnSelectCard = false
 		return Result.success(Unit)
 	}
-
-
+	
 	private fun loadPack(event: Event): Result<Unit> {
 		val packDir = event.packDir!!
 		logger.debug { "Loading pack from: $packDir" }
@@ -186,13 +184,6 @@ class CardList {
 
 		return savePack().continueOnSuccess {
 			loadPack(event)
-		}
-	}
-
-	fun updateSelectedCard(card: Card) {
-		// TODO fill in card code
-		cardListView.apply {
-			items[selectionModel.selectedIndex] = card
 		}
 	}
 }
