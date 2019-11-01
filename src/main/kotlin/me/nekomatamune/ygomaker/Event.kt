@@ -11,7 +11,7 @@ typealias EventHandler = (Event) -> Result<Unit>
  */
 data class Event(
 	val name: EventName = EventName.UNKNOWN,
-	
+
 	// The following fields are payloads of various EventName
 	val packDir: Path? = null,
 	val card: Card? = null,

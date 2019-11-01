@@ -72,11 +72,13 @@ class CardList {
 			return
 		}
 
-		dispatcher.dispatch(Event(
-			EventName.SELECT_CARD,
-			card = cardListView.selectionModel.selectedItem,
-			packDir = packDir
-		))
+		cardListView.selectionModel.selectedItem?.let {
+			dispatcher.dispatch(Event(
+				EventName.SELECT_CARD,
+				card = it,
+				packDir = packDir
+			))
+		}
 	}
 
 	private fun onModifyCard(event: Event): Result<Unit> {
