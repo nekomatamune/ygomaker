@@ -36,12 +36,12 @@ class MenuBar {
 			initialDirectory = Command.dataDir.toFile()
 		}.showDialog(null).toPath()
 
-		dispatcher.dispatch(Event(EventName.LOAD_PACK, packDir = packDir))
+		dispatcher.dispatch(Event(EventType.LOAD_PACK, packDir = packDir))
 	}
 
 	private fun onSavePackMenuItem() {
 		logger.debug { "onSavePackMenuItem()" }
-		dispatcher.dispatch(Event(EventName.SAVE_PACK))
+		dispatcher.dispatch(Event(EventType.SAVE_PACK))
 	}
 
 	private fun onSavePackAsMenuItem() {
@@ -58,7 +58,7 @@ class MenuBar {
 				contentText = "This will overwrite the existing pack ${newPackDir.fileName}. Proceed?"
 			}.showAndWait().filter(ButtonType.OK::equals).ifPresent {
 				logger.info { "Writing pack to ${newPackDir.fileName}" }
-				dispatcher.dispatch(Event(EventName.SAVE_PACK_AS, packDir = newPackDir))
+				dispatcher.dispatch(Event(EventType.SAVE_PACK_AS, packDir = newPackDir))
 			}
 		}
 	}
