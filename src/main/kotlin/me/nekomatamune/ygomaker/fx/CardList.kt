@@ -85,25 +85,29 @@ class CardList {
 			return Result.success()
 		}
 
-		disableOnSelectCard = true
+		try {
+			disableOnSelectCard = true
 
-		val mergedCard = event.card?.let {
-			cardListView.selectionModel.selectedItem.copy(
-				name = it.name,
-				type = it.type,
-				monster = it.monster,
-				code = it.code,
-				effect = it.effect
-			)
+			val mergedCard = event.card?.let {
+				cardListView.selectionModel.selectedItem.copy(
+					name = it.name,
+					type = it.type,
+					monster = it.monster,
+					code = it.code,
+					effect = it.effect
+				)
+			}
+
+			val cards = cardListView.items
+			val selectIdx = cardListView.selectionModel.selectedIndex
+			cards[selectIdx] = mergedCard
+			pack = pack.copy(cards = cards)
+
+			return Result.success()
+
+		} finally {
+			disableOnSelectCard = false
 		}
-
-		val cards = cardListView.items
-		val selectIdx = cardListView.selectionModel.selectedIndex
-		cards[selectIdx] = mergedCard
-		pack = pack.copy(cards = cards)
-
-		disableOnSelectCard = false
-		return Result.success()
 	}
 
 	private fun onModifyCardImage(event: Event): Result<Unit> {
@@ -111,20 +115,24 @@ class CardList {
 			return Result.success()
 		}
 
-		disableOnSelectCard = true
-		val mergedCard = event.image!!.let {
-			cardListView.selectionModel.selectedItem.copy(
-				image = it
-			)
+		try {
+			disableOnSelectCard = true
+			val mergedCard = event.image!!.let {
+				cardListView.selectionModel.selectedItem.copy(
+					image = it
+				)
+			}
+
+			val cards = cardListView.items
+			val selectIdx = cardListView.selectionModel.selectedIndex
+			cards[selectIdx] = mergedCard
+			pack = pack.copy(cards = cards)
+
+			return Result.success()
+
+		} finally {
+			disableOnSelectCard = false
 		}
-
-		val cards = cardListView.items
-		val selectIdx = cardListView.selectionModel.selectedIndex
-		cards[selectIdx] = mergedCard
-		pack = pack.copy(cards = cards)
-
-		disableOnSelectCard = false
-		return Result.success()
 	}
 
 	private fun loadPack(event: Event): Result<Unit> {
