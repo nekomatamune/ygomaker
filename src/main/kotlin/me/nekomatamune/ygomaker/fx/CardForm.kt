@@ -59,7 +59,7 @@ class CardForm {
 			monsterTypeComboBox, monsterAbilityComboBox,
 			effectCheckBox
 		).forEach {
-			it.addSimpleListener(::onCardValueChange)
+			it.addSimpleListener { onCardValueChange() }
 		}
 
 		dispatcher.register(EventName.SELECT_CARD) { onSelectCard(it) }

@@ -41,7 +41,7 @@ class CardImage {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
-			it.addSimpleListener(::onSpinnerValueChange)
+			it.addSimpleListener { onSpinnerValueChange() }
 		}
 		fileTextField.onMouseClicked = ::onClickImageFile.asEventHandler()
 		imageView.onMousePressed = ::onMousePressed.asEventHandler()

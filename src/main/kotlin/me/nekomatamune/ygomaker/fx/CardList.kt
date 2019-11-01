@@ -42,10 +42,10 @@ class CardList {
 		sequenceOf(
 			packNameTextField, packCodeTextField, languageComboBox
 		).forEach {
-			it.addSimpleListener(::onModifyPackInfo)
+			it.addSimpleListener { onModifyPackInfo() }
 		}
 
-		cardListView.addSimpleListener(::onSelectCard)
+		cardListView.addSimpleListener { onSelectCard() }
 
 		languageComboBox.items = observableList(Language.values().toList())
 		languageComboBox.selectionModel.selectFirst()
