@@ -42,20 +42,20 @@ class CardList {
 		sequenceOf(
 			packNameTextField, packCodeTextField, languageComboBox
 		).forEach {
-			it.addSimpleListener(::onModifyPackInfo)
+			it.addSimpleListener { onModifyPackInfo() }
 		}
 
-		cardListView.addSimpleListener(::onSelectCard)
+		cardListView.addSimpleListener { onSelectCard() }
+		cardListView.setCellFactory { CardListCell() }
 
 		languageComboBox.items = observableList(Language.values().toList())
 		languageComboBox.selectionModel.selectFirst()
-		cardListView.setCellFactory { CardListCell() }
 
-		dispatcher.register(EventName.LOAD_PACK, ::loadPack)
-		dispatcher.register(EventName.SAVE_PACK, ::savePack)
-		dispatcher.register(EventName.SAVE_PACK_AS, ::saveAsPack)
-		dispatcher.register(EventName.MODIFY_CARD, ::onModifyCard)
-		dispatcher.register(EventName.MODIFY_CARD_IMAGE, ::onModifyCardImage)
+		dispatcher.register(EventName.LOAD_PACK) { loadPack(it) }
+		dispatcher.register(EventName.SAVE_PACK) { savePack() }
+		dispatcher.register(EventName.SAVE_PACK_AS) { saveAsPack(it) }
+		dispatcher.register(EventName.MODIFY_CARD) { onModifyCard(it) }
+		dispatcher.register(EventName.MODIFY_CARD_IMAGE) { onModifyCardImage(it) }
 	}
 
 	private fun onModifyPackInfo() {
@@ -72,18 +72,19 @@ class CardList {
 			return
 		}
 
-		dispatcher.dispatch(Event(
-			EventName.SELECT_CARD,
-			card = cardListView.selectionModel.selectedItem,
-			packDir = packDir
-		))
+		cardListView.selectionModel.selectedItem?.let {
+			dispatcher.dispatch(Event(
+				EventName.SELECT_CARD,
+				card = it,
+				packDir = packDir
+			))
+		}
 	}
 
 	private fun onModifyCard(event: Event): Result<Unit> {
 		if (cardListView.selectionModel.selectedItem == null) {
-			return Result.success(Unit)
+			return Result.success()
 		}
-
 
 		disableOnSelectCard = true
 
@@ -97,22 +98,18 @@ class CardList {
 			)
 		}
 
-		logger.debug { "Merged card: $mergedCard" }
-		logger.debug { "selected idx: ${cardListView.selectionModel.selectedIndex}" }
-		logger.debug { "selected size: ${cardListView.items.size}" }
-
 		val cards = cardListView.items
 		val selectIdx = cardListView.selectionModel.selectedIndex
 		cards[selectIdx] = mergedCard
 		pack = pack.copy(cards = cards)
 
 		disableOnSelectCard = false
-		return Result.success(Unit)
+		return Result.success()
 	}
 
 	private fun onModifyCardImage(event: Event): Result<Unit> {
 		if (cardListView.selectionModel.selectedItem == null) {
-			return Result.success(Unit)
+			return Result.success()
 		}
 
 		disableOnSelectCard = true
@@ -128,9 +125,8 @@ class CardList {
 		pack = pack.copy(cards = cards)
 
 		disableOnSelectCard = false
-		return Result.success(Unit)
+		return Result.success()
 	}
-
 
 	private fun loadPack(event: Event): Result<Unit> {
 		val packDir = event.packDir!!
@@ -157,10 +153,10 @@ class CardList {
 			selectionModel.selectFirst()
 		}
 
-		return Result.success(Unit)
+		return Result.success()
 	}
 
-	private fun savePack(event: Event): Result<Unit> {
+	private fun savePack(): Result<Unit> {
 		logger.info { "Saving pack into $packDir" }
 		val cardFile = packDir.resolve("pack.json")
 
@@ -170,35 +166,27 @@ class CardList {
 
 		cardFile.toFile().writeText(packJson)
 
-		return Result.success(Unit)
+		return Result.success()
 	}
 
 	private fun saveAsPack(event: Event): Result<Unit> {
 		val newPackDir = event.packDir!!
 
 		Files.walkFileTree(packDir, object : SimpleFileVisitor<Path>() {
-			override fun visitFile(file: Path,
-				attrs: BasicFileAttributes): FileVisitResult {
-				Files.copy(file, newPackDir.resolve(file.fileName),
-					StandardCopyOption.REPLACE_EXISTING)
+			override fun visitFile(
+				file: Path, attrs: BasicFileAttributes
+			): FileVisitResult {
+				Files.copy(file,
+					newPackDir.resolve(file.fileName),
+					StandardCopyOption.REPLACE_EXISTING
+				)
 				return FileVisitResult.CONTINUE
 			}
 		})
 		this.packDir = newPackDir
 
-		savePack(Event()).let {
-			if (it.isFailure) {
-				return it
-			}
-		}
-
-		return loadPack(event)
-	}
-
-	fun updateSelectedCard(card: Card) {
-		// TODO fill in card code
-		cardListView.apply {
-			items[selectionModel.selectedIndex] = card
+		return savePack().continueOnSuccess {
+			loadPack(event)
 		}
 	}
 }

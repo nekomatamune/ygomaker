@@ -61,8 +61,6 @@ class MenuBar {
 				dispatcher.dispatch(Event(EventName.SAVE_PACK_AS, packDir = newPackDir))
 			}
 		}
-
-
 	}
 
 	private fun onExitMenuItem() {

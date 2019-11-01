@@ -15,6 +15,7 @@ import javafx.stage.FileChooser
 import me.nekomatamune.ygomaker.Event
 import me.nekomatamune.ygomaker.EventName
 import me.nekomatamune.ygomaker.dispatcher
+import me.nekomatamune.ygomaker.success
 import mu.KotlinLogging
 import java.io.FileNotFoundException
 import java.nio.file.Path
@@ -41,7 +42,7 @@ class CardImage {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
-			it.addSimpleListener(::onSpinnerValueChange)
+			it.addSimpleListener { onSpinnerValueChange() }
 		}
 		fileTextField.onMouseClicked = ::onClickImageFile.asEventHandler()
 		imageView.onMousePressed = ::onMousePressed.asEventHandler()
@@ -49,7 +50,7 @@ class CardImage {
 		imageView.onScroll = ::onMouseScrolled.asEventHandler()
 		imageView.onZoom = ::onZoom.asEventHandler()
 
-		dispatcher.register(EventName.SELECT_CARD, ::onSelectCard)
+		dispatcher.register(EventName.SELECT_CARD) { onSelectCard(it) }
 	}
 
 	private fun onSpinnerValueChange() {
@@ -139,7 +140,7 @@ class CardImage {
 	private fun loadImage(): Result<Unit> {
 		if (fileTextField.text.isBlank()) {
 			imageView.image = null
-			return Result.success(Unit)
+			return Result.success()
 		}
 
 		val imagePath = packDir.resolve(fileTextField.text)
@@ -172,6 +173,6 @@ class CardImage {
 			sizeSpinner.value.toDouble(),
 			sizeSpinner.value.toDouble())
 
-		return Result.success(Unit)
+		return Result.success()
 	}
 }

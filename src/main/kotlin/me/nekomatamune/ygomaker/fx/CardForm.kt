@@ -39,31 +39,40 @@ class CardForm {
 		monsterTypeComboBox.items = observableArrayList(MONSTER_TYPE_PRESETS)
 		monsterAbilityComboBox.items = observableArrayList(MONSTER_ABILITY_PRESETS)
 
-		cardTypeComboBox.valueProperty().addListener { _, _, newValue ->
-			logger.trace { "Card type changed to $newValue" }
+		// Group fields together for ease of reference later
+		val monsterComboBoxes = sequenceOf(
+			attributeComboBox, levelComboBox,
+			monsterTypeComboBox, monsterAbilityComboBox
+		)
+		val monsterFields = monsterComboBoxes.plus(
+			sequenceOf(effectCheckBox, atkTextField, defTextField)
+		)
 
-			(newValue in MONSTER_CARD_TYPES).let { isMonsterCard ->
-				attributeComboBox.isDisable = !isMonsterCard
-				levelComboBox.isDisable = !isMonsterCard
-				monsterTypeComboBox.isDisable = !isMonsterCard
-				monsterAbilityComboBox.isDisable = !isMonsterCard
-				effectCheckBox.isDisable = !isMonsterCard
-				atkTextField.isEditable = isMonsterCard
-				defTextField.isEditable = isMonsterCard
+		// Set the first value to be the default
+		monsterComboBoxes.plus(cardTypeComboBox).forEach {
+			it.selectionModel.selectFirst()
+		}
+
+		// Special rules to apply when CardType changes
+		cardTypeComboBox.valueProperty().addListener { _, oldCardType, newCardType ->
+			logger.trace { "Card type changed from $oldCardType to $newCardType" }
+
+			monsterFields.forEach {
+				it.isDisable = !newCardType.isMonster()
+			}
+
+			if (!oldCardType.isMonster() && newCardType.isMonster()) {
+				monsterComboBoxes.forEach { it.selectionModel.selectFirst() }
 			}
 		}
 
-		sequenceOf(
-			cardNameTextField, atkTextField, defTextField, effectTextArea,
-			cardTypeComboBox, attributeComboBox, levelComboBox,
-			monsterTypeComboBox, monsterAbilityComboBox,
-			effectCheckBox
+		monsterFields.plus(
+			sequenceOf(cardNameTextField, cardTypeComboBox)
 		).forEach {
-			it.addSimpleListener(::onCardValueChange)
+			it.addSimpleListener { onCardValueChange() }
 		}
 
-		dispatcher.register(
-			EventName.SELECT_CARD, ::onSelectCard)
+		dispatcher.register(EventName.SELECT_CARD) { onSelectCard(it) }
 	}
 
 	private fun onCardValueChange() {
@@ -81,7 +90,7 @@ class CardForm {
 				attribute = attributeComboBox.value,
 				level = levelComboBox.value,
 				type = monsterTypeComboBox.value,
-				ability = monsterAbilityComboBox.value.ifEmpty { null },
+				ability = monsterAbilityComboBox.value,
 				effect = effectCheckBox.isSelected,
 				atk = atkTextField.text,
 				def = defTextField.text
@@ -111,6 +120,6 @@ class CardForm {
 
 		onSelectCardInProgress = false
 
-		return Result.success(Unit)
+		return Result.success()
 	}
 }

@@ -1,7 +1,7 @@
 {
     "name": "Testing Pack",
-    "code": "TEST",
-    "language": "EN",
+    "code": "",
+    "language": "JP",
     "copyright": null,
     "cards": [
         {
@@ -9,9 +9,9 @@
             "type": "NORMAL_SUMMON_MONSTER",
             "monster": {
                 "attribute": "LIGHT",
-                "level": 2,
+                "level": 5,
                 "type": "魔法使い族",
-                "ability": null,
+                "ability": "",
                 "effect": false,
                 "atk": "3000",
                 "def": "2500",
@@ -30,9 +30,14 @@
         },
         {
             "name": "滅びの爆裂疾風弾",
-            "type": "NORMAL_SPELL",
+            "type": "CONTINUOUS_SPELL",
             "monster": null,
-            "image": null,
+            "image": {
+                "file": "",
+                "x": 0,
+                "y": 0,
+                "size": 300
+            },
             "code": "003",
             "effect": "このカードを発動するターン、自分の「青眼の白龍」は攻撃できない。①：自分フィールドに「青眼の白龍」が存在する場合に発動できる。相手フィールドのモンスターを全て破壊する。",
             "serial": 0
@@ -44,7 +49,7 @@
                 "attribute": "LIGHT",
                 "level": 12,
                 "type": "ドラゴン族",
-                "ability": null,
+                "ability": "",
                 "effect": false,
                 "atk": "4500",
                 "def": "3800",
@@ -68,7 +73,7 @@
                 "attribute": "LIGHT",
                 "level": 8,
                 "type": "ドラゴン族",
-                "ability": null,
+                "ability": "スピリット",
                 "effect": true,
                 "atk": "3000",
                 "def": "2500",
