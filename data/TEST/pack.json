@@ -30,7 +30,7 @@
         },
         {
             "name": "滅びの爆裂疾風弾",
-            "type": "NORMAL_SPELL",
+            "type": "CONTINUOUS_SPELL",
             "monster": null,
             "image": {
                 "file": "",

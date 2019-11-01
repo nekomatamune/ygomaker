@@ -7,11 +7,17 @@ import java.nio.file.StandardCopyOption
 
 private val logger = KotlinLogging.logger { }
 
+/**
+ * A class to handle the backing up and rotation of files.
+ */
 class Backupper(
 	private val backupDir: Path,
 	private val numBackups: Int
 ) {
 
+	/**
+	 * Creates a backup files for [file] and rotates previous backups.
+	 */
 	fun backup(file: Path) {
 		check(numBackups > 0)
 

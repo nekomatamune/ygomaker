@@ -58,7 +58,9 @@ object Command : CliktCommand(
 			in 3..Int.MAX_VALUE -> Configurator.setRootLevel(Level.TRACE)
 		}
 
-		Resources.getResource("banner.txt").readText().lines().forEach(logger::info)
+		Resources.getResource("banner.txt").readText().lines().forEach {
+			logger.info(it)
+		}
 
 		if (noGui) {
 			val pack = Json(JsonConfiguration.Stable).parse(Pack.serializer(),

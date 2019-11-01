@@ -120,6 +120,6 @@ class CardForm {
 
 		onSelectCardInProgress = false
 
-		return Result.success(Unit)
+		return Result.success()
 	}
 }
