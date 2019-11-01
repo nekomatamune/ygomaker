@@ -42,20 +42,20 @@ class CardList {
 		sequenceOf(
 			packNameTextField, packCodeTextField, languageComboBox
 		).forEach {
-			it.addSimpleListener(::onModifyPackInfo)
+			it.addSimpleListener { onModifyPackInfo() }
 		}
 
-		cardListView.addSimpleListener(::onSelectCard)
+		cardListView.addSimpleListener { onSelectCard() }
 
 		languageComboBox.items = observableList(Language.values().toList())
 		languageComboBox.selectionModel.selectFirst()
 		cardListView.setCellFactory { CardListCell() }
 
-		dispatcher.register(EventName.LOAD_PACK, ::loadPack)
-		dispatcher.register(EventName.SAVE_PACK, ::savePack)
-		dispatcher.register(EventName.SAVE_PACK_AS, ::saveAsPack)
-		dispatcher.register(EventName.MODIFY_CARD, ::onModifyCard)
-		dispatcher.register(EventName.MODIFY_CARD_IMAGE, ::onModifyCardImage)
+		dispatcher.register(EventName.LOAD_PACK) { loadPack(it) }
+		dispatcher.register(EventName.SAVE_PACK) { savePack(it) }
+		dispatcher.register(EventName.SAVE_PACK_AS) { saveAsPack(it) }
+		dispatcher.register(EventName.MODIFY_CARD) { onModifyCard(it) }
+		dispatcher.register(EventName.MODIFY_CARD_IMAGE) { onModifyCardImage(it) }
 	}
 
 	private fun onModifyPackInfo() {
