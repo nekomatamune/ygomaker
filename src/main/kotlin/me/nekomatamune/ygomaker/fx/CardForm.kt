@@ -49,18 +49,7 @@ class CardForm {
 				defTextField.isEditable = isMonsterCard
 			}
 		}
-
-		monsterAbilityComboBox.setCellFactory {
-			object : ListCell<String>() {
-				override fun updateItem(item: String?, empty: Boolean) {
-					super.updateItem(item, empty)
-					if (!empty) {
-						text = item ?: ""
-					}
-				}
-			}
-		}
-
+		
 		sequenceOf(
 			cardNameTextField, atkTextField, defTextField, effectTextArea,
 			cardTypeComboBox, attributeComboBox, levelComboBox,

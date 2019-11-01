@@ -24,7 +24,7 @@ data class Monster(
 	val attribute: Attribute = Attribute.LIGHT,
 	val level: Int = 1,
 	val type: String = "",
-	val ability: String? = null,
+	val ability: String = "",
 	val effect: Boolean = false,
 	val atk: String = "",
 	val def: String = "",
@@ -108,7 +108,7 @@ val MONSTER_TYPE_PRESETS = listOf("ドラゴン族", "魔法使い族", "戦士�
  * Predefined value for [Monster.ability]
  */
 val MONSTER_ABILITY_PRESETS = listOf(
-	null, "リーバス", "トゥーン ", "スピリット", "ユニオン", "デュアル", "チューナー")
+	"", "リーバス", "トゥーン ", "スピリット", "ユニオン", "デュアル", "チューナー")
 
 val MONSTER_CARD_TYPES = setOf(CardType.NORMAL_SUMMON_MONSTER,
 	CardType.SPECIAL_SUMMON_MONSTER, CardType.TOKEN_MONSTER,
