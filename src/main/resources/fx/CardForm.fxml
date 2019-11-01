@@ -40,7 +40,6 @@
               promptText="Type"
               GridPane.rowIndex="3" GridPane.columnIndex="0"/>
     <ComboBox fx:id="monsterAbilityComboBox"
-              promptText="Ability"
               GridPane.rowIndex="3" GridPane.columnIndex="1"/>
     <CheckBox fx:id="effectCheckBox"
               text="Effect"

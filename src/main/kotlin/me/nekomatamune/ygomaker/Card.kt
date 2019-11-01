@@ -24,7 +24,7 @@ data class Monster(
 	val attribute: Attribute = Attribute.LIGHT,
 	val level: Int = 1,
 	val type: String = "",
-	val ability: String? = null,
+	val ability: String = "",
 	val effect: Boolean = false,
 	val atk: String = "",
 	val def: String = "",
