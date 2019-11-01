@@ -22,18 +22,17 @@ class CardList {
 
 	private var pack: Pack = Pack()
 	private lateinit var packDir: Path
+	private var disableOnSelectCard = false
+	private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
+	private val backupper by lazy {
+		Backupper(Command.dataDir.resolve("bak"), 10)
+	}
 
 	@FXML private lateinit var packDirText: Text
 	@FXML private lateinit var packNameTextField: TextField
 	@FXML private lateinit var packCodeTextField: TextField
 	@FXML private lateinit var languageComboBox: ComboBox<Language>
 	@FXML private lateinit var cardListView: ListView<Card>
-
-	private var disableOnSelectCard = false
-	private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
-	private val backupper by lazy {
-		Backupper(Command.dataDir.resolve("bak"), 10)
-	}
 
 	@FXML
 	private fun initialize() {
