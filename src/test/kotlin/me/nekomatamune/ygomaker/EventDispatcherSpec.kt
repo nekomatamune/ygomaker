@@ -23,9 +23,9 @@ object EventDispatcherSpec : Spek({
 		test("Should invoke event handler for: $events") {
 			val dispatcher = EventDispatcher()
 
-			val spyLoadPackHandler: EventHandler = spyk({ _ -> Result.success(Unit) })
-			val spySavePackHandler: EventHandler = spyk({ _ -> Result.success(Unit) })
-			val spyCatchAllHandler: EventHandler = spyk({ _ -> Result.success(Unit) })
+			val spyLoadPackHandler: EventHandler = spyk({ _ -> Result.success() })
+			val spySavePackHandler: EventHandler = spyk({ _ -> Result.success() })
+			val spyCatchAllHandler: EventHandler = spyk({ _ -> Result.success() })
 
 			dispatcher.register(LOAD_PACK, spyLoadPackHandler)
 			dispatcher.register(SAVE_PACK, spySavePackHandler)
