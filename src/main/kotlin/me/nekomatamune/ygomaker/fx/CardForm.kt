@@ -14,19 +14,20 @@ private val logger = KotlinLogging.logger { }
 
 class CardForm {
 	private lateinit var packDir: Path
-	private var onSelectCardInProgress: Boolean = false
 
-	@FXML private lateinit var cardNameTextField: TextField
-	@FXML private lateinit var cardTypeComboBox: ComboBox<CardType>
-	@FXML private lateinit var attributeComboBox: ComboBox<Attribute>
-	@FXML private lateinit var levelComboBox: ComboBox<Int>
-	@FXML private lateinit var monsterTypeComboBox: ComboBox<String>
-	@FXML private lateinit var monsterAbilityComboBox: ComboBox<String>
-	@FXML private lateinit var effectCheckBox: CheckBox
-	@FXML private lateinit var effectTextArea: TextArea
-	@FXML private lateinit var atkTextField: TextField
-	@FXML private lateinit var defTextField: TextField
-	@FXML private lateinit var codeTextField: TextField
+	@FXML lateinit var cardNameTextField: TextField
+	@FXML lateinit var cardTypeComboBox: ComboBox<CardType>
+	@FXML lateinit var attributeComboBox: ComboBox<Attribute>
+	@FXML lateinit var levelComboBox: ComboBox<Int>
+	@FXML lateinit var monsterTypeComboBox: ComboBox<String>
+	@FXML lateinit var monsterAbilityComboBox: ComboBox<String>
+	@FXML lateinit var effectCheckBox: CheckBox
+	@FXML lateinit var effectTextArea: TextArea
+	@FXML lateinit var atkTextField: TextField
+	@FXML lateinit var defTextField: TextField
+	@FXML lateinit var codeTextField: TextField
+
+	var onSelectCardInProgress: Boolean = false
 
 	@FXML
 	fun initialize() {
@@ -71,7 +72,7 @@ class CardForm {
 			it.addSimpleListener { onCardValueChange() }
 		}
 
-		dispatcher.register(EventType.SELECT_CARD) { onSelectCard(it) }
+		dispatcher.register(EventName.SELECT_CARD) { onSelectCard(it) }
 	}
 
 	private fun onCardValueChange() {
@@ -96,32 +97,29 @@ class CardForm {
 			)
 		)
 
-		dispatcher.dispatch(Event(EventType.MODIFY_CARD, card = newCard))
+		dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = newCard))
 	}
 
 	private fun onSelectCard(event: Event): Result<Unit> {
-		try {
-			onSelectCardInProgress = true
+		onSelectCardInProgress = true
 
-			packDir = event.packDir!!
+		packDir = event.packDir!!
 
-			val card = event.card!!
-			cardNameTextField.text = card.name
-			cardTypeComboBox.selectionModel.select(card.type)
-			attributeComboBox.selectionModel.select(card.monster?.attribute)
-			levelComboBox.selectionModel.select(card.monster?.level)
-			monsterTypeComboBox.selectionModel.select(card.monster?.type)
-			monsterAbilityComboBox.selectionModel.select(card.monster?.ability ?: "")
-			effectCheckBox.isSelected = card.monster?.effect ?: false
-			effectTextArea.text = card.effect
-			atkTextField.text = card.monster?.atk ?: ""
-			defTextField.text = card.monster?.def ?: ""
-			codeTextField.text = card.code
+		val card = event.card!!
+		cardNameTextField.text = card.name
+		cardTypeComboBox.selectionModel.select(card.type)
+		attributeComboBox.selectionModel.select(card.monster?.attribute)
+		levelComboBox.selectionModel.select(card.monster?.level)
+		monsterTypeComboBox.selectionModel.select(card.monster?.type)
+		monsterAbilityComboBox.selectionModel.select(card.monster?.ability ?: "")
+		effectCheckBox.isSelected = card.monster?.effect ?: false
+		effectTextArea.text = card.effect
+		atkTextField.text = card.monster?.atk ?: ""
+		defTextField.text = card.monster?.def ?: ""
+		codeTextField.text = card.code
 
-			return Result.success()
+		onSelectCardInProgress = false
 
-		} finally {
-			onSelectCardInProgress = false
-		}
+		return Result.success()
 	}
 }
