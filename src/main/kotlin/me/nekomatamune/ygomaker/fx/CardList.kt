@@ -46,10 +46,10 @@ class CardList {
 		}
 
 		cardListView.addSimpleListener { onSelectCard() }
+		cardListView.setCellFactory { CardListCell() }
 
 		languageComboBox.items = observableList(Language.values().toList())
 		languageComboBox.selectionModel.selectFirst()
-		cardListView.setCellFactory { CardListCell() }
 
 		dispatcher.register(EventName.LOAD_PACK) { loadPack(it) }
 		dispatcher.register(EventName.SAVE_PACK) { savePack() }
