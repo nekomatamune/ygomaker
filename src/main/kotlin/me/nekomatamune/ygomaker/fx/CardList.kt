@@ -96,11 +96,7 @@ class CardList {
 				effect = it.effect
 			)
 		}
-
-		logger.debug { "Merged card: $mergedCard" }
-		logger.debug { "selected idx: ${cardListView.selectionModel.selectedIndex}" }
-		logger.debug { "selected size: ${cardListView.items.size}" }
-
+		
 		val cards = cardListView.items
 		val selectIdx = cardListView.selectionModel.selectedIndex
 		cards[selectIdx] = mergedCard
