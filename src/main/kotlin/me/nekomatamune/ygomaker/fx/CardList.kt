@@ -50,11 +50,11 @@ class CardList {
 		languageComboBox.items = observableList(Language.values().toList())
 		languageComboBox.selectionModel.selectFirst()
 
-		dispatcher.register(EventName.LOAD_PACK) { loadPack(it) }
-		dispatcher.register(EventName.SAVE_PACK) { savePack() }
-		dispatcher.register(EventName.SAVE_PACK_AS) { saveAsPack(it) }
-		dispatcher.register(EventName.MODIFY_CARD) { onModifyCard(it) }
-		dispatcher.register(EventName.MODIFY_CARD_IMAGE) { onModifyCardImage(it) }
+		dispatcher.register(EventType.LOAD_PACK) { loadPack(it) }
+		dispatcher.register(EventType.SAVE_PACK) { savePack() }
+		dispatcher.register(EventType.SAVE_PACK_AS) { saveAsPack(it) }
+		dispatcher.register(EventType.MODIFY_CARD) { onModifyCard(it) }
+		dispatcher.register(EventType.MODIFY_CARD_IMAGE) { onModifyCardImage(it) }
 	}
 
 	private fun onModifyPackInfo() {
@@ -73,7 +73,7 @@ class CardList {
 
 		cardListView.selectionModel.selectedItem?.let {
 			dispatcher.dispatch(Event(
-				EventName.SELECT_CARD,
+				EventType.SELECT_CARD,
 				card = it,
 				packDir = packDir
 			))

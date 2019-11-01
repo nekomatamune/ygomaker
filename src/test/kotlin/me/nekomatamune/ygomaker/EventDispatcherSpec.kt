@@ -3,14 +3,14 @@ package me.nekomatamune.ygomaker
 import io.mockk.confirmVerified
 import io.mockk.spyk
 import io.mockk.verify
-import me.nekomatamune.ygomaker.EventName.LOAD_PACK
-import me.nekomatamune.ygomaker.EventName.SAVE_PACK
+import me.nekomatamune.ygomaker.EventType.LOAD_PACK
+import me.nekomatamune.ygomaker.EventType.SAVE_PACK
 import org.spekframework.spek2.Spek
 
 object EventDispatcherSpec : Spek({
 
 	listOf(
-		arrayOf(listOf<EventName>(), 0, 0, 0),
+		arrayOf(listOf<EventType>(), 0, 0, 0),
 		arrayOf(listOf(LOAD_PACK), 1, 0, 1),
 		arrayOf(listOf(LOAD_PACK, SAVE_PACK), 1, 1, 2),
 		arrayOf(listOf(LOAD_PACK, SAVE_PACK, LOAD_PACK), 2, 1, 3)
@@ -32,7 +32,7 @@ object EventDispatcherSpec : Spek({
 			dispatcher.register(LOAD_PACK, spyCatchAllHandler)
 			dispatcher.register(SAVE_PACK, spyCatchAllHandler)
 
-			(events as List<EventName>).forEach { dispatcher.dispatch(Event(it)) }
+			(events as List<EventType>).forEach { dispatcher.dispatch(Event(it)) }
 
 			verify(exactly = expectedLoadPackCount as Int) {
 				spyLoadPackHandler(Event(LOAD_PACK))

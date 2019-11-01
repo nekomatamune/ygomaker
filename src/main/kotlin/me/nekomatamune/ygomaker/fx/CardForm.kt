@@ -71,7 +71,7 @@ class CardForm {
 			it.addSimpleListener { onCardValueChange() }
 		}
 
-		dispatcher.register(EventName.SELECT_CARD) { onSelectCard(it) }
+		dispatcher.register(EventType.SELECT_CARD) { onSelectCard(it) }
 	}
 
 	private fun onCardValueChange() {
@@ -96,7 +96,7 @@ class CardForm {
 			)
 		)
 
-		dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = newCard))
+		dispatcher.dispatch(Event(EventType.MODIFY_CARD, card = newCard))
 	}
 
 	private fun onSelectCard(event: Event): Result<Unit> {
