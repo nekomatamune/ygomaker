@@ -108,7 +108,7 @@ val MONSTER_TYPE_PRESETS = listOf("ドラゴン族", "魔法使い族", "戦士�
  * Predefined value for [Monster.ability]
  */
 val MONSTER_ABILITY_PRESETS = listOf(
-	"", "リーバス", "トゥーン ", "スピリット", "ユニオン", "デュアル", "チューナー")
+	null, "リーバス", "トゥーン ", "スピリット", "ユニオン", "デュアル", "チューナー")
 
 val MONSTER_CARD_TYPES = setOf(CardType.NORMAL_SUMMON_MONSTER,
 	CardType.SPECIAL_SUMMON_MONSTER, CardType.TOKEN_MONSTER,
