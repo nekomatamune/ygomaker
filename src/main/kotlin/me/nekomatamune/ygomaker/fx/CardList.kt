@@ -127,7 +127,7 @@ class CardList {
 		disableOnSelectCard = false
 		return Result.success(Unit)
 	}
-	
+
 	private fun loadPack(event: Event): Result<Unit> {
 		val packDir = event.packDir!!
 		logger.debug { "Loading pack from: $packDir" }
@@ -173,10 +173,13 @@ class CardList {
 		val newPackDir = event.packDir!!
 
 		Files.walkFileTree(packDir, object : SimpleFileVisitor<Path>() {
-			override fun visitFile(file: Path,
-				attrs: BasicFileAttributes): FileVisitResult {
-				Files.copy(file, newPackDir.resolve(file.fileName),
-					StandardCopyOption.REPLACE_EXISTING)
+			override fun visitFile(
+				file: Path, attrs: BasicFileAttributes
+			): FileVisitResult {
+				Files.copy(file,
+					newPackDir.resolve(file.fileName),
+					StandardCopyOption.REPLACE_EXISTING
+				)
 				return FileVisitResult.CONTINUE
 			}
 		})
