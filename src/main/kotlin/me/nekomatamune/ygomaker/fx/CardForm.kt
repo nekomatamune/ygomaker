@@ -14,6 +14,7 @@ private val logger = KotlinLogging.logger { }
 
 class CardForm {
 	private lateinit var packDir: Path
+	private var onSelectCardInProgress: Boolean = false
 
 	@FXML lateinit var cardNameTextField: TextField
 	@FXML lateinit var cardTypeComboBox: ComboBox<CardType>
@@ -26,8 +27,6 @@ class CardForm {
 	@FXML lateinit var atkTextField: TextField
 	@FXML lateinit var defTextField: TextField
 	@FXML lateinit var codeTextField: TextField
-
-	var onSelectCardInProgress: Boolean = false
 
 	@FXML
 	fun initialize() {
@@ -120,7 +119,7 @@ class CardForm {
 			codeTextField.text = card.code
 
 			return Result.success()
-			
+
 		} finally {
 			onSelectCardInProgress = false
 		}
