@@ -101,25 +101,28 @@ class CardForm {
 	}
 
 	private fun onSelectCard(event: Event): Result<Unit> {
-		onSelectCardInProgress = true
+		try {
+			onSelectCardInProgress = true
 
-		packDir = event.packDir!!
+			packDir = event.packDir!!
 
-		val card = event.card!!
-		cardNameTextField.text = card.name
-		cardTypeComboBox.selectionModel.select(card.type)
-		attributeComboBox.selectionModel.select(card.monster?.attribute)
-		levelComboBox.selectionModel.select(card.monster?.level)
-		monsterTypeComboBox.selectionModel.select(card.monster?.type)
-		monsterAbilityComboBox.selectionModel.select(card.monster?.ability ?: "")
-		effectCheckBox.isSelected = card.monster?.effect ?: false
-		effectTextArea.text = card.effect
-		atkTextField.text = card.monster?.atk ?: ""
-		defTextField.text = card.monster?.def ?: ""
-		codeTextField.text = card.code
+			val card = event.card!!
+			cardNameTextField.text = card.name
+			cardTypeComboBox.selectionModel.select(card.type)
+			attributeComboBox.selectionModel.select(card.monster?.attribute)
+			levelComboBox.selectionModel.select(card.monster?.level)
+			monsterTypeComboBox.selectionModel.select(card.monster?.type)
+			monsterAbilityComboBox.selectionModel.select(card.monster?.ability ?: "")
+			effectCheckBox.isSelected = card.monster?.effect ?: false
+			effectTextArea.text = card.effect
+			atkTextField.text = card.monster?.atk ?: ""
+			defTextField.text = card.monster?.def ?: ""
+			codeTextField.text = card.code
 
-		onSelectCardInProgress = false
-
-		return Result.success()
+			return Result.success()
+			
+		} finally {
+			onSelectCardInProgress = false
+		}
 	}
 }
