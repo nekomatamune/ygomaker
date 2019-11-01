@@ -58,10 +58,11 @@
                GridPane.rowIndex="5" GridPane.columnIndex="1"/>
     <TextField fx:id="codeTextField"
                promptText="Code" prefColumnCount="5"
-               GridPane.rowIndex="5" GridPane.columnIndex="2"/>
+               GridPane.rowIndex="5" GridPane.columnIndex="2" />
 
     <!-- Row 6 -->
-    <fx:include source="CardImage.fxml"
+    <fx:include fx:id="cardImage"
+                source="CardImage.fxml"
                 GridPane.rowIndex="6" GridPane.columnIndex="0"
                 GridPane.columnSpan="4"/>
 </GridPane>

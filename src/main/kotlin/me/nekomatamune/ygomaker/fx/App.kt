@@ -8,7 +8,7 @@ import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
 import me.nekomatamune.ygomaker.Command
 import me.nekomatamune.ygomaker.Event
-import me.nekomatamune.ygomaker.EventType
+import me.nekomatamune.ygomaker.EventName
 import me.nekomatamune.ygomaker.dispatcher
 import mu.KotlinLogging
 
@@ -23,7 +23,7 @@ class App : Application() {
 		}.load<BorderPane>()
 
 		dispatcher.dispatch(Event(
-			type = EventType.LOAD_PACK,
+			name = EventName.LOAD_PACK,
 			packDir = Command.dataDir.resolve(Command.packCode)
 		))
 
