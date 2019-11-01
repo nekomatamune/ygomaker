@@ -52,7 +52,7 @@ class CardList {
 		cardListView.setCellFactory { CardListCell() }
 
 		dispatcher.register(EventName.LOAD_PACK) { loadPack(it) }
-		dispatcher.register(EventName.SAVE_PACK) { savePack(it) }
+		dispatcher.register(EventName.SAVE_PACK) { savePack() }
 		dispatcher.register(EventName.SAVE_PACK_AS) { saveAsPack(it) }
 		dispatcher.register(EventName.MODIFY_CARD) { onModifyCard(it) }
 		dispatcher.register(EventName.MODIFY_CARD_IMAGE) { onModifyCardImage(it) }
@@ -158,7 +158,7 @@ class CardList {
 		return Result.success(Unit)
 	}
 
-	private fun savePack(event: Event): Result<Unit> {
+	private fun savePack(): Result<Unit> {
 		logger.info { "Saving pack into $packDir" }
 		val cardFile = packDir.resolve("pack.json")
 
@@ -184,13 +184,9 @@ class CardList {
 		})
 		this.packDir = newPackDir
 
-		savePack(Event()).let {
-			if (it.isFailure) {
-				return it
-			}
+		return savePack().continueOnSuccess {
+			loadPack(event)
 		}
-
-		return loadPack(event)
 	}
 
 	fun updateSelectedCard(card: Card) {
