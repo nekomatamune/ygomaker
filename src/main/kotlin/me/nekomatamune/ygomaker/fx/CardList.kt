@@ -51,11 +51,11 @@ class CardList {
 		languageComboBox.selectionModel.selectFirst()
 		cardListView.setCellFactory { CardListCell() }
 
-		dispatcher.register(EventName.LOAD_PACK, ::loadPack)
-		dispatcher.register(EventName.SAVE_PACK, ::savePack)
-		dispatcher.register(EventName.SAVE_PACK_AS, ::saveAsPack)
-		dispatcher.register(EventName.MODIFY_CARD, ::onModifyCard)
-		dispatcher.register(EventName.MODIFY_CARD_IMAGE, ::onModifyCardImage)
+		dispatcher.register(EventName.LOAD_PACK) { loadPack(it) }
+		dispatcher.register(EventName.SAVE_PACK) { savePack(it) }
+		dispatcher.register(EventName.SAVE_PACK_AS) { saveAsPack(it) }
+		dispatcher.register(EventName.MODIFY_CARD) { onModifyCard(it) }
+		dispatcher.register(EventName.MODIFY_CARD_IMAGE) { onModifyCardImage(it) }
 	}
 
 	private fun onModifyPackInfo() {

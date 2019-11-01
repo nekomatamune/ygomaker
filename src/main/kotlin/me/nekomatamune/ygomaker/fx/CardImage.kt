@@ -49,7 +49,7 @@ class CardImage {
 		imageView.onScroll = ::onMouseScrolled.asEventHandler()
 		imageView.onZoom = ::onZoom.asEventHandler()
 
-		dispatcher.register(EventName.SELECT_CARD, ::onSelectCard)
+		dispatcher.register(EventName.SELECT_CARD) { onSelectCard(it) }
 	}
 
 	private fun onSpinnerValueChange() {
