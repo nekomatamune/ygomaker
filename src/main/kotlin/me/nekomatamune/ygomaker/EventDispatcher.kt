@@ -36,6 +36,6 @@ class EventDispatcher {
 		// TODO: Somehow `:? Result.success(Unit)` causes compilation error.
 		// Investigate why.
 		@Suppress("IfThenToElvis")
-		return if (res != null) res else Result.success(Unit)
+		return if (res != null) res else Result.success()
 	}
 }
