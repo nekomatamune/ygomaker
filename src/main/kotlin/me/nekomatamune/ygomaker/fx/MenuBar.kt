@@ -6,7 +6,10 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.MenuItem
 import javafx.stage.DirectoryChooser
-import me.nekomatamune.ygomaker.*
+import me.nekomatamune.ygomaker.Command
+import me.nekomatamune.ygomaker.Event
+import me.nekomatamune.ygomaker.EventType
+import me.nekomatamune.ygomaker.dispatcher
 import mu.KotlinLogging
 import java.nio.file.Files
 
@@ -22,10 +25,11 @@ class MenuBar {
 	@FXML
 	private fun initialize() {
 		logger.debug { "Initializing MenuBar" }
-		loadPackMenuItem.onAction = ::onLoadPackMenuItem.asEventHandler()
-		savePackMenuItem.onAction = ::onSavePackMenuItem.asEventHandler()
-		savePackAsMenuItem.onAction = ::onSavePackAsMenuItem.asEventHandler()
-		exitMenuItem.onAction = ::onExitMenuItem.asEventHandler()
+		loadPackMenuItem.setOnAction { onLoadPackMenuItem() }
+		loadPackMenuItem.setOnAction { onLoadPackMenuItem() }
+		savePackMenuItem.setOnAction { onSavePackMenuItem() }
+		savePackAsMenuItem.setOnAction { onSavePackAsMenuItem() }
+		exitMenuItem.setOnAction { onExitMenuItem() }
 	}
 
 	private fun onLoadPackMenuItem() {
