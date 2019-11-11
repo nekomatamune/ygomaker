@@ -38,6 +38,9 @@ class CardRenderer {
 			render()
 		}
 
+		dispatcher.register(EventType.RENDER) {
+			render()
+		}
 	}
 
 	private fun render(): Result<Unit> {

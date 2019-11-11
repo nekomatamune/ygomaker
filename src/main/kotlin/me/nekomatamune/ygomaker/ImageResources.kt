@@ -5,7 +5,7 @@ import javafx.scene.image.Image
 
 fun getCardFrame(card: Card): Result<Image> {
 
-	val frameUrl = when (card.type) {
+	val frameTag = when (card.type) {
 		CardType.NORMAL_SUMMON_MONSTER ->
 			if (card.monster!!.effect) "effect"
 			else "normal"
@@ -16,13 +16,13 @@ fun getCardFrame(card: Card): Result<Image> {
 		CardType.XYZ_MONSTER -> "xyz"
 		in SPELL_CARD_TYPES -> "spell"
 		in TRAP_CARD_TYPES -> "trap"
-		else -> "UNKNOWN"
-	}.let {
-		Resources.getResource("img/frame.${it}.png")
+		else -> return Result.failure(
+			IllegalArgumentException("MonsterType ${card.type} is not supported yet.")
+		)
 	}
 
 	try {
-		frameUrl.openStream().use {
+		Resources.getResource("img/frame.${frameTag}.png").openStream().use {
 			val frameImage = Image(it)
 			return Result.success(frameImage)
 		}
