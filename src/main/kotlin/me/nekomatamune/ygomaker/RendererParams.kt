@@ -5,7 +5,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RendererParams(
 	val frameOrigin: Point,
-	val frameSize: Size
+	val frameSize: Size,
+
+	val nameOrigin: Point,
+	val nameFont: Font
 )
 
 @Serializable
@@ -18,4 +21,12 @@ data class Size(
 data class Point(
 	val x: Double,
 	val y: Double
+)
+
+@Serializable
+data class Font(
+	val name: String,
+	val size: Int,
+	val bold: Boolean = false,
+	val italic: Boolean = false
 )
