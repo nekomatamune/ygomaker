@@ -26,7 +26,7 @@ data class Point(
 @Serializable
 data class Font(
 	val name: String,
-	val size: Int,
+	val size: Double,
 	val bold: Boolean = false,
 	val italic: Boolean = false
 )

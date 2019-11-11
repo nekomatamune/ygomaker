@@ -65,7 +65,14 @@ class CardRenderer {
 				p.frameOrigin.y,
 				p.frameSize.w, p.frameSize.h)
 		}
-		
+
+		logger.info{"supposed font is ${p.nameFont}"}
+
+		gc.font = javafx.scene.text.Font(p.nameFont.name, p.nameFont.size)
+		gc.fillText(card.name, p.nameOrigin.x, p.nameOrigin.y)
+
+		logger.info{"font is ${gc.font.toString()}"}
+
 
 		rootPane.center = canvas
 
