@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.text.Text?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             prefHeight="800" prefWidth="1000">
@@ -12,7 +11,7 @@
         <fx:include source="CardList.fxml"/>
     </left>
     <center>
-        <Text>Center</Text>
+        <fx:include source="CardRenderer.fxml"/>
     </center>
     <right>
         <fx:include source="CardForm.fxml"/>

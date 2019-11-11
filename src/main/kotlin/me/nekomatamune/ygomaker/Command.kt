@@ -43,6 +43,10 @@ object Command : CliktCommand(
 	).path(exists = true, fileOkay = false, readable = true
 	).default(value = Paths.get(".", "data"))
 
+	val rendererParamFile: Path? by option(
+		"--renderer_param_file", metavar = "RENDERER_PARAM_FILE", help = "The paramters for renderer"
+	).path(exists = true, folderOkay = false, readable = true)
+
 	private val verbose: Int by option(
 		"-v", help = "Increase verbosity"
 	).counted()

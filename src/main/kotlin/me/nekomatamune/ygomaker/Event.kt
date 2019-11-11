@@ -34,5 +34,7 @@ enum class EventType {
 	MODIFY_CARD,
 	/** Should also set [Event.image] */
 	MODIFY_CARD_IMAGE,
+	/** Does not contain payload */
+	RENDER,
 }
 
