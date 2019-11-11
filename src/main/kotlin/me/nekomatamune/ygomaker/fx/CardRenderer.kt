@@ -57,16 +57,19 @@ class CardRenderer {
 		)
 		val gc = canvas.graphicsContext2D
 
-		val cardFrameImage = getCardFrame(card).onFailure {
+		getCardFrame(card).onFailure {
 			return Result.failure(it)
+
+		}.onSuccess { cardFrameImage ->
+			gc.drawImage(cardFrameImage, p.frameOrigin.x,
+				p.frameOrigin.y,
+				p.frameSize.w, p.frameSize.h)
+
+			rootPane.center = canvas
+
+			return Result.success()
 		}
 
-		gc.drawImage(cardFrameImage.getOrNull()!!, p.frameOrigin.x, p.frameOrigin.y,
-			p.frameSize.w, p.frameSize.h)
-
-		rootPane.center = canvas
-
-		return Result.success()
-
+		throw AssertionError("Should not reach here")
 	}
 }
