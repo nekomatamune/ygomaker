@@ -1,13 +1,17 @@
 package me.nekomatamune.ygomaker.fx
 
+import com.google.common.io.Resources
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
 import javafx.scene.layout.BorderPane
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
 
 
 private val logger = KotlinLogging.logger { }
+private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
 class CardRenderer {
 
@@ -39,6 +43,11 @@ class CardRenderer {
 	private fun render(): Result<Unit> {
 		logger.info { "Render card" }
 
+		val paramUrl = Resources.getResource("renderer_params.json")
+		logger.info { "paramFile: $paramUrl" }
+		val p = json.parse(RendererParams.serializer(), paramUrl.readText())
+
+
 		val canvas = Canvas(400.0, 570.0)
 		val gc = canvas.graphicsContext2D
 
@@ -46,7 +55,8 @@ class CardRenderer {
 			return Result.failure(it)
 		}
 
-		gc.drawImage(cardFrameImage.getOrNull()!!, 0.0, 0.0, 400.0, 570.0)
+		gc.drawImage(cardFrameImage.getOrNull()!!, p.frameOrigin.x, p.frameOrigin.y,
+			p.frameSize.w, p.frameSize.h)
 
 		rootPane.center = canvas
 
