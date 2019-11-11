@@ -48,8 +48,10 @@ class CardRenderer {
 
 		val p = json.parse(RendererParams.serializer(), paramText)
 
-
-		val canvas = Canvas(400.0, 570.0)
+		val canvas = Canvas(
+			p.frameOrigin.x + p.frameSize.w,
+			p.frameOrigin.y + p.frameSize.h
+		)
 		val gc = canvas.graphicsContext2D
 
 		val cardFrameImage = getCardFrame(card).onFailure {
