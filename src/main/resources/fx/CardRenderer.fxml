@@ -6,12 +6,9 @@
 <?import javafx.scene.image.ImageView?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
+            fx:id="rootPane"
             fx:controller="me.nekomatamune.ygomaker.fx.CardRenderer">
 
-    <center>
-        <ImageView fx:id="imageView"
-        />
-    </center>
     <bottom><Text>Renderer</Text></bottom>
 
 </BorderPane>
