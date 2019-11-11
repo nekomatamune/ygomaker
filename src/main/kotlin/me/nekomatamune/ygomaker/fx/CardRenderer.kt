@@ -43,9 +43,10 @@ class CardRenderer {
 	private fun render(): Result<Unit> {
 		logger.info { "Render card" }
 
-		val paramUrl = Resources.getResource("renderer_params.json")
-		logger.info { "paramFile: $paramUrl" }
-		val p = json.parse(RendererParams.serializer(), paramUrl.readText())
+		val paramText = Command.rendererParamFile?.toFile()?.readText()
+			?: Resources.getResource("renderer_params.json").readText()
+
+		val p = json.parse(RendererParams.serializer(), paramText)
 
 
 		val canvas = Canvas(400.0, 570.0)
