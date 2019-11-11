@@ -20,6 +20,7 @@ class MenuBar {
 	@FXML private lateinit var loadPackMenuItem: MenuItem
 	@FXML private lateinit var savePackMenuItem: MenuItem
 	@FXML private lateinit var savePackAsMenuItem: MenuItem
+	@FXML private lateinit var renderMenuItem: MenuItem
 	@FXML private lateinit var exitMenuItem: MenuItem
 
 	@FXML
@@ -29,6 +30,9 @@ class MenuBar {
 		loadPackMenuItem.setOnAction { onLoadPackMenuItem() }
 		savePackMenuItem.setOnAction { onSavePackMenuItem() }
 		savePackAsMenuItem.setOnAction { onSavePackAsMenuItem() }
+		renderMenuItem.setOnAction {
+			dispatcher.dispatch(Event(EventType.RENDER))
+		}
 		exitMenuItem.setOnAction { onExitMenuItem() }
 	}
 
