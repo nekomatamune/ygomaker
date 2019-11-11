@@ -64,12 +64,11 @@ class CardRenderer {
 			gc.drawImage(cardFrameImage, p.frameOrigin.x,
 				p.frameOrigin.y,
 				p.frameSize.w, p.frameSize.h)
-
-			rootPane.center = canvas
-
-			return Result.success()
 		}
+		
 
-		throw AssertionError("Should not reach here")
+		rootPane.center = canvas
+
+		return Result.success()
 	}
 }
