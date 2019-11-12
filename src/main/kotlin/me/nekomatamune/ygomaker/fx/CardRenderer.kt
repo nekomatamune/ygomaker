@@ -72,8 +72,7 @@ class CardRenderer {
 		gc.fillText(card.name, p.nameOrigin.x, p.nameOrigin.y)
 
 		logger.info{"font is ${gc.font.toString()}"}
-
-
+		
 		rootPane.center = canvas
 
 		return Result.success()

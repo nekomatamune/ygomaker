@@ -8,6 +8,7 @@ data class RendererParams(
 	val frameSize: Size,
 
 	val nameOrigin: Point,
+	val nameEnd: Point,
 	val nameFont: Font
 )
 

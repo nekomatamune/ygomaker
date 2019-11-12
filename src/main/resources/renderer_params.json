@@ -8,11 +8,15 @@
 		"h": 570
 	},
 	"nameOrigin": {
-		"x": 40,
-		"y": 65
+		"x": 42,
+		"y": 67
 	},
+	"nameEnd": {
+		"x": 40,
+		"y": 0
+		},
 	"nameFont": {
-		"name": "DFKakuTaiHi-W4",
-		"size": 26
+		"name": "DFLiShu Std W5",
+		"size": 30
 	}
 }
