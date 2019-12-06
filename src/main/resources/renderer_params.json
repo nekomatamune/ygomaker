@@ -1,20 +1,20 @@
 {
 	"frameOrigin": {
-		"x": 10,
-		"y": 10
+		"x": 0,
+		"y": 0
 	},
 	"frameSize": {
 		"w": 400,
 		"h": 570
 	},
 	"nameOrigin": {
-		"x": 42,
-		"y": 67
+		"x": 32,
+		"y": 57
 	},
 	"nameEnd": {
 		"x": 40,
 		"y": 0
-		},
+	},
 	"nameFont": {
 		"name": "Yu-Gi-Oh! DF Leisho 1",
 		"size": 30

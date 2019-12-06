@@ -1,9 +1,11 @@
 package me.nekomatamune.ygomaker.fx
 
 import com.google.common.io.Resources
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
 import javafx.scene.layout.BorderPane
+import javafx.scene.text.Text
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.*
@@ -16,6 +18,7 @@ private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 class CardRenderer {
 
 	@FXML private lateinit var rootPane: BorderPane
+	@FXML private lateinit var infoText: Text
 
 	private lateinit var card: Card
 
@@ -74,6 +77,8 @@ class CardRenderer {
 		logger.info{"font is ${gc.font.toString()}"}
 
 		rootPane.center = canvas
+
+		canvas.setOnMouseMoved { infoText.text = "(${it.x}, ${it.y})" }
 
 		return Result.success()
 	}
