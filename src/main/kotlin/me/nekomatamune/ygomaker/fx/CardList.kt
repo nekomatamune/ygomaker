@@ -22,17 +22,18 @@ class CardList {
 
 	private var pack: Pack = Pack()
 	private lateinit var packDir: Path
-	private var disableOnSelectCard = false
-	private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
-	private val backupper by lazy {
-		Backupper(Command.dataDir.resolve("bak"), 10)
-	}
 
 	@FXML private lateinit var packDirText: Text
 	@FXML private lateinit var packNameTextField: TextField
 	@FXML private lateinit var packCodeTextField: TextField
 	@FXML private lateinit var languageComboBox: ComboBox<Language>
 	@FXML private lateinit var cardListView: ListView<Card>
+
+	private var disableOnSelectCard = false
+	private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
+	private val backupper by lazy {
+		Backupper(Command.dataDir.resolve("bak"), 10)
+	}
 
 	@FXML
 	private fun initialize() {
@@ -74,7 +75,7 @@ class CardList {
 
 		cardListView.selectionModel.selectedItem?.let {
 			dispatcher.dispatch(Event(
-				EventType.SELECT_CARD,
+				EventName.SELECT_CARD,
 				card = it,
 				packDir = packDir
 			))
@@ -86,29 +87,25 @@ class CardList {
 			return Result.success()
 		}
 
-		try {
-			disableOnSelectCard = true
+		disableOnSelectCard = true
 
-			val mergedCard = event.card?.let {
-				cardListView.selectionModel.selectedItem.copy(
-					name = it.name,
-					type = it.type,
-					monster = it.monster,
-					code = it.code,
-					effect = it.effect
-				)
-			}
-
-			val cards = cardListView.items
-			val selectIdx = cardListView.selectionModel.selectedIndex
-			cards[selectIdx] = mergedCard
-			pack = pack.copy(cards = cards)
-
-			return Result.success()
-
-		} finally {
-			disableOnSelectCard = false
+		val mergedCard = event.card?.let {
+			cardListView.selectionModel.selectedItem.copy(
+				name = it.name,
+				type = it.type,
+				monster = it.monster,
+				code = it.code,
+				effect = it.effect
+			)
 		}
+
+		val cards = cardListView.items
+		val selectIdx = cardListView.selectionModel.selectedIndex
+		cards[selectIdx] = mergedCard
+		pack = pack.copy(cards = cards)
+
+		disableOnSelectCard = false
+		return Result.success()
 	}
 
 	private fun onModifyCardImage(event: Event): Result<Unit> {
@@ -116,24 +113,20 @@ class CardList {
 			return Result.success()
 		}
 
-		try {
-			disableOnSelectCard = true
-			val mergedCard = event.image!!.let {
-				cardListView.selectionModel.selectedItem.copy(
-					image = it
-				)
-			}
-
-			val cards = cardListView.items
-			val selectIdx = cardListView.selectionModel.selectedIndex
-			cards[selectIdx] = mergedCard
-			pack = pack.copy(cards = cards)
-
-			return Result.success()
-
-		} finally {
-			disableOnSelectCard = false
+		disableOnSelectCard = true
+		val mergedCard = event.image!!.let {
+			cardListView.selectionModel.selectedItem.copy(
+				image = it
+			)
 		}
+
+		val cards = cardListView.items
+		val selectIdx = cardListView.selectionModel.selectedIndex
+		cards[selectIdx] = mergedCard
+		pack = pack.copy(cards = cards)
+
+		disableOnSelectCard = false
+		return Result.success()
 	}
 
 	private fun loadPack(event: Event): Result<Unit> {

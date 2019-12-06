@@ -1,15 +1,16 @@
 package me.nekomatamune.ygomaker
 
+import javafx.event.ActionEvent
 import java.nio.file.Path
 
 typealias EventHandler = (Event) -> Result<Unit>
 
 /**
  * Encapsulates the type and payloads of an event. What payloads are set depends
- * on the [Event.type].
+ * on the [Event.name].
  */
 data class Event(
-	val type: EventType = EventType.UNKNOWN,
+	val name: EventName = EventName.UNKNOWN,
 
 	// The following fields are payloads of various EventName
 	val packDir: Path? = null,
@@ -20,7 +21,7 @@ data class Event(
 /**
  * List of events that can be fired by the UI components.
  */
-enum class EventType {
+enum class EventName {
 	UNKNOWN,
 	/** Should also set [Event.packDir] */
 	LOAD_PACK,
