@@ -29,5 +29,6 @@ data class Font(
 	val name: String,
 	val size: Double,
 	val bold: Boolean = false,
-	val italic: Boolean = false
+	val italic: Boolean = false,
+	val tracking: Int = 0
 )
