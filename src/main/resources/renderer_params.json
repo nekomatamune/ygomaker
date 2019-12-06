@@ -31,5 +31,13 @@
 		"w": 24,
 		"h": 24
 	},
-	"levelSpacing": 2
+	"levelSpacing": 2,
+
+	"rankRect": {
+		"x": 44,
+		"y": 69,
+		"w": 24,
+		"h": 24
+	},
+	"rankSpacing": 2
 }

@@ -91,7 +91,12 @@ class CardRenderer {
 		}.onSuccess { symbolImage ->
 			when (card.type) {
 				CardType.XYZ_MONSTER -> {
-
+					for (i in 0 until card.monster!!.level) {
+						gc.drawImage(symbolImage!!,
+							p.rankRect.x + i * (p.rankRect.w + p.rankSpacing),
+							p.rankRect.y,
+							p.rankRect.w, p.rankRect.h)
+					}
 				}
 				in MONSTER_CARD_TYPES -> {
 					for (i in 0 until card.monster!!.level) {
