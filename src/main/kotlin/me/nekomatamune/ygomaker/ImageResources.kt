@@ -65,3 +65,27 @@ fun getAttribute(card: Card): Result<Image> {
 		return Result.failure(e)
 	}
 }
+
+fun getSymbol(card: Card): Result<Image?> {
+	val tag = when(card.type) {
+		CardType.CONTINUOUS_SPELL -> "continuous"
+		CardType.CONTINUOUS_TRAP -> "continuous"
+		CardType.EQUIP_SPELL -> "equip"
+		CardType.QUICK_SPELL -> "quickplay"
+		CardType.FIELD_SPELL -> "field"
+		CardType.RITUAL_SPELL -> "ritual"
+		CardType.XYZ_MONSTER -> "rank"
+		in MONSTER_CARD_TYPES -> "level"
+		else -> return Result.success(null)
+	}
+
+	try {
+		Resources.getResource("img/symbol.${tag}.png").openStream().use {
+			val symbolImage = Image(it)
+			return Result.success(symbolImage)
+		}
+	} catch(e: Exception) {
+		return Result.failure(e)
+	}
+
+}

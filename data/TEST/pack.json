@@ -9,7 +9,7 @@
             "type": "NORMAL_SUMMON_MONSTER",
             "monster": {
                 "attribute": "LIGHT",
-                "level": 5,
+                "level": 8,
                 "type": "魔法使い族",
                 "ability": "",
                 "effect": false,

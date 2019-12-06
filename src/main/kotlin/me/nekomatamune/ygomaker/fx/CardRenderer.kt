@@ -1,7 +1,6 @@
 package me.nekomatamune.ygomaker.fx
 
 import com.google.common.io.Resources
-import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
 import javafx.scene.layout.BorderPane
@@ -69,13 +68,14 @@ class CardRenderer {
 				p.frameSize.w, p.frameSize.h)
 		}
 
-		logger.info{"supposed font is ${p.nameFont}"}
+		logger.info { "supposed font is ${p.nameFont}" }
 
 		gc.font = javafx.scene.text.Font(p.nameFont.name, p.nameFont.size)
 		gc.fill = getCardNameColor(card)
-		gc.fillText(card.name, p.nameRect.x, p.nameRect.y + p.nameRect.h, p.nameRect.w)
+		gc.fillText(card.name, p.nameRect.x, p.nameRect.y + p.nameRect.h,
+			p.nameRect.w)
 
-		logger.info{"font is ${gc.font.toString()}"}
+		logger.info { "font is ${gc.font.toString()}" }
 
 
 		getAttribute(card).onFailure {
@@ -86,6 +86,26 @@ class CardRenderer {
 				p.attributeRect.w, p.attributeRect.h)
 		}
 
+		getSymbol(card).onFailure {
+			return Result.failure(it)
+		}.onSuccess { symbolImage ->
+			when (card.type) {
+				CardType.XYZ_MONSTER -> {
+
+				}
+				in MONSTER_CARD_TYPES -> {
+					for (i in 0 until card.monster!!.level) {
+						gc.drawImage(symbolImage!!,
+							p.levelRect.x - i * (p.levelRect.w + p.levelSpacing),
+							p.levelRect.y,
+							p.levelRect.w, p.levelRect.h)
+					}
+				}
+				else -> {
+
+				}
+			}
+		}
 
 
 		rootPane.center = canvas

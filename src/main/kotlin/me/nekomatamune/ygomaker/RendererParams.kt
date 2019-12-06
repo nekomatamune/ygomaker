@@ -10,7 +10,10 @@ data class RendererParams(
 	val nameRect: Rect,
 	val nameFont: Font,
 
-	val attributeRect: Rect
+	val attributeRect: Rect,
+
+  val levelRect: Rect,
+	val levelSpacing: Int
 )
 
 @Serializable
