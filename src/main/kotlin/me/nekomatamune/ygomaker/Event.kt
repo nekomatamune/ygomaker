@@ -36,5 +36,7 @@ enum class EventType {
 	MODIFY_CARD_IMAGE,
 	/** Does not contain payload */
 	RENDER,
+	/** Does not contain payload */
+	NEW_CARD,
 }
 
