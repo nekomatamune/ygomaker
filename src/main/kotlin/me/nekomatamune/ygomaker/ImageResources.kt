@@ -2,6 +2,7 @@ package me.nekomatamune.ygomaker
 
 import com.google.common.io.Resources
 import javafx.scene.image.Image
+import javafx.scene.paint.Color
 
 fun getCardFrame(card: Card): Result<Image> {
 
@@ -28,6 +29,15 @@ fun getCardFrame(card: Card): Result<Image> {
 		}
 	} catch (e: Exception) {
 		return Result.failure(e)
+	}
+}
+
+fun getCardNameColor(card: Card): Color {
+	return when(card.type) {
+		in SPELL_CARD_TYPES -> Color.WHITE
+		in TRAP_CARD_TYPES -> Color.WHITE
+		CardType.XYZ_MONSTER -> Color.WHITE
+		else -> Color.BLACK
 	}
 }
 
