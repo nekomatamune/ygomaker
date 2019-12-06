@@ -55,6 +55,7 @@ class CardList {
 		dispatcher.register(EventType.SAVE_PACK_AS) { saveAsPack(it) }
 		dispatcher.register(EventType.MODIFY_CARD) { onModifyCard(it) }
 		dispatcher.register(EventType.MODIFY_CARD_IMAGE) { onModifyCardImage(it) }
+		dispatcher.register(EventType.NEW_CARD) { newCard() }
 	}
 
 	private fun onModifyPackInfo() {
@@ -195,6 +196,17 @@ class CardList {
 		return savePack().continueOnSuccess {
 			loadPack(event)
 		}
+	}
+
+	private fun newCard(): Result<Unit> {
+		val newCard = Card()
+		pack = pack.copy(cards = pack.cards + newCard)
+
+		cardListView.items.add(newCard)
+		cardListView.selectionModel.selectFirst()
+
+
+		return Result.success()
 	}
 }
 

@@ -20,7 +20,7 @@ class MenuBar {
 	@FXML private lateinit var loadPackMenuItem: MenuItem
 	@FXML private lateinit var savePackMenuItem: MenuItem
 	@FXML private lateinit var savePackAsMenuItem: MenuItem
-	@FXML private lateinit var newCardMenuITem: MenuItem
+	@FXML private lateinit var newCardMenuItem: MenuItem
 	@FXML private lateinit var renderMenuItem: MenuItem
 	@FXML private lateinit var exitMenuItem: MenuItem
 
@@ -31,7 +31,7 @@ class MenuBar {
 		loadPackMenuItem.setOnAction { onLoadPackMenuItem() }
 		savePackMenuItem.setOnAction { onSavePackMenuItem() }
 		savePackAsMenuItem.setOnAction { onSavePackAsMenuItem() }
-		newCardMenuITem.setOnAction {
+		newCardMenuItem.setOnAction {
 			dispatcher.dispatch(Event(EventType.NEW_CARD))
 		}
 		renderMenuItem.setOnAction {

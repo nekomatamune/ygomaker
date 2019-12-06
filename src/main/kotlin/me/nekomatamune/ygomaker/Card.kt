@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class Card(
 	val name: String = "",
 	val type: CardType = CardType.NORMAL_SUMMON_MONSTER,
-	val monster: Monster? = null,
+	val monster: Monster? = Monster(),
 	val image: Image? = null,
 	val code: String = "",
 	val effect: String = "",
