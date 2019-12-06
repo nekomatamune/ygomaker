@@ -72,7 +72,7 @@ class CardRenderer {
 		logger.info{"supposed font is ${p.nameFont}"}
 
 		gc.font = javafx.scene.text.Font(p.nameFont.name, p.nameFont.size)
-		gc.fillText(card.name, p.nameOrigin.x, p.nameOrigin.y)
+		gc.fillText(card.name, p.nameRect.x, p.nameRect.y + p.nameRect.h, p.nameRect.w)
 
 		logger.info{"font is ${gc.font.toString()}"}
 

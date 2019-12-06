@@ -7,13 +7,11 @@
 		"w": 400,
 		"h": 570
 	},
-	"nameOrigin": {
+	"nameRect": {
 		"x": 32,
-		"y": 57
-	},
-	"nameEnd": {
-		"x": 40,
-		"y": 0
+		"y": 32,
+		"w": 302,
+		"h": 24
 	},
 	"nameFont": {
 		"name": "Yu-Gi-Oh! DF Leisho 1",
@@ -22,7 +20,7 @@
 
 	"attributeRect": {
 		"x": 341,
-		"y": 29,
+		"y": 28,
 		"w": 33,
 		"h": 33
 	}
