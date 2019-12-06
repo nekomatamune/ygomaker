@@ -19,7 +19,8 @@ data class RendererParams(
 	val rankSpacing: Int,
 
 	val spellTrapTypeRect: Rect,
-	val spellTrapTypeFont: Font
+	val spellTrapTypeFont: Font,
+	val spellTrapTypeSymbolRect: Rect
 )
 
 @Serializable

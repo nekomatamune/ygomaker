@@ -93,6 +93,8 @@ fun getSpellTrapText(card: Card): String? {
 	return when(card.type) {
 		CardType.NORMAL_SPELL -> "【魔法カード】"
 		CardType.NORMAL_TRAP -> "【罠カード】"
+		in SPELL_CARD_TYPES -> "【魔法カード　　】"
+		in TRAP_CARD_TYPES ->  "【罠カード　　】"
 		else -> null
 	}
 }

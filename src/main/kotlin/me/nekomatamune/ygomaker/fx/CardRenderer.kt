@@ -5,8 +5,8 @@ import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
-import javafx.scene.text.Text
 import javafx.scene.text.Font
+import javafx.scene.text.Text
 import javafx.scene.text.TextAlignment
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
@@ -110,17 +110,26 @@ class CardRenderer {
 							p.levelRect.w, p.levelRect.h)
 					}
 				}
+
 				else -> {
+					getSpellTrapText(card)?.let { spellTrapText ->
+						gc.fill = Color.BLACK
+						gc.font = Font(p.spellTrapTypeFont.name, p.spellTrapTypeFont.size)
+						gc.textAlign = TextAlignment.RIGHT
+						gc.fillText(spellTrapText, p.spellTrapTypeRect.x,
+							p.spellTrapTypeRect.y + p.spellTrapTypeRect.h)
+					}
+
+					symbolImage?.let {
+						gc.drawImage(it, p.spellTrapTypeSymbolRect.x,
+							p.spellTrapTypeSymbolRect.y, p.spellTrapTypeSymbolRect.w,
+							p.spellTrapTypeSymbolRect.h)
+					}
 				}
 			}
 		}
 
-		getSpellTrapText(card)?.let { spellTrapText ->
-			gc.fill = Color.BLACK
-			gc.font = Font(p.spellTrapTypeFont.name, p.spellTrapTypeFont.size)
-			gc.textAlign = TextAlignment.RIGHT
-			gc.fillText(spellTrapText, p.spellTrapTypeRect.x, p.spellTrapTypeRect.y + p.spellTrapTypeRect.h)
-		}
+
 
 
 		rootPane.center = canvas

@@ -45,6 +45,12 @@
 	},
 	"spellTrapTypeFont": {
 		"name": "Yu-Gi-Oh! DF Leisho 1",
-		"size": 21
+		"size": 20
+	},
+	"spellTrapTypeSymbolRect": {
+		"x": 331,
+		"y": 72,
+		"w": 22,
+		"h": 22
 	}
 }
