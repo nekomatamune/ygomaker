@@ -9,6 +9,6 @@
             fx:id="rootPane"
             fx:controller="me.nekomatamune.ygomaker.fx.CardRenderer">
 
-    <bottom><Text>Renderer</Text></bottom>
+    <bottom><Text fx:id="infoText">Renderer</Text></bottom>
 
 </BorderPane>

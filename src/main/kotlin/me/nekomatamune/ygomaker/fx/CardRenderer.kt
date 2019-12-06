@@ -1,9 +1,11 @@
 package me.nekomatamune.ygomaker.fx
 
 import com.google.common.io.Resources
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
 import javafx.scene.layout.BorderPane
+import javafx.scene.text.Text
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.*
@@ -16,6 +18,7 @@ private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 class CardRenderer {
 
 	@FXML private lateinit var rootPane: BorderPane
+	@FXML private lateinit var infoText: Text
 
 	private lateinit var card: Card
 
@@ -64,12 +67,32 @@ class CardRenderer {
 			gc.drawImage(cardFrameImage, p.frameOrigin.x,
 				p.frameOrigin.y,
 				p.frameSize.w, p.frameSize.h)
-
-			rootPane.center = canvas
-
-			return Result.success()
 		}
 
-		throw AssertionError("Should not reach here")
+		logger.info{"supposed font is ${p.nameFont}"}
+
+		gc.font = javafx.scene.text.Font(p.nameFont.name, p.nameFont.size)
+		gc.fill = getCardNameColor(card)
+		gc.fillText(card.name, p.nameRect.x, p.nameRect.y + p.nameRect.h, p.nameRect.w)
+
+		logger.info{"font is ${gc.font.toString()}"}
+
+
+		getAttribute(card).onFailure {
+			return Result.failure(it)
+
+		}.onSuccess { attributeImage ->
+			gc.drawImage(attributeImage, p.attributeRect.x, p.attributeRect.y,
+				p.attributeRect.w, p.attributeRect.h)
+		}
+
+
+
+		rootPane.center = canvas
+
+		canvas.setOnMouseMoved { infoText.text = "(${it.x}, ${it.y})" }
+
+		return Result.success()
 	}
+
 }
