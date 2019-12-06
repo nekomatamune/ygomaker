@@ -30,3 +30,28 @@ fun getCardFrame(card: Card): Result<Image> {
 		return Result.failure(e)
 	}
 }
+
+fun getAttribute(card: Card): Result<Image> {
+	val tag = when(card.type) {
+		in SPELL_CARD_TYPES -> "spell"
+		in TRAP_CARD_TYPES -> "trap"
+		else -> when(card.monster!!.attribute) {
+			Attribute.LIGHT -> "light"
+			Attribute.DARK -> "dark"
+			Attribute.WATER -> "water"
+			Attribute.FIRE -> "fire"
+			Attribute.EARTH -> "earth"
+			Attribute.WIND -> "wind"
+			Attribute.DIVINE -> "divine"
+		}
+	}
+
+	try {
+		Resources.getResource("img/attribute.${tag}.png").openStream().use {
+			val attributeImage = Image(it)
+			return Result.success(attributeImage)
+		}
+	} catch(e: Exception) {
+		return Result.failure(e)
+	}
+}

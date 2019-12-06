@@ -9,7 +9,17 @@ data class RendererParams(
 
 	val nameOrigin: Point,
 	val nameEnd: Point,
-	val nameFont: Font
+	val nameFont: Font,
+
+	val attributeRect: Rect
+)
+
+@Serializable
+data class Rect(
+	val x: Double,
+	val y: Double,
+	val w: Double,
+	val h: Double
 )
 
 @Serializable

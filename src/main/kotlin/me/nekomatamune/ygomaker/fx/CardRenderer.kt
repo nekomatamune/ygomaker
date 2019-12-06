@@ -76,10 +76,22 @@ class CardRenderer {
 
 		logger.info{"font is ${gc.font.toString()}"}
 
+
+		getAttribute(card).onFailure {
+			return Result.failure(it)
+
+		}.onSuccess { attributeImage ->
+			gc.drawImage(attributeImage, p.attributeRect.x, p.attributeRect.y,
+				p.attributeRect.w, p.attributeRect.h)
+		}
+
+
+
 		rootPane.center = canvas
 
 		canvas.setOnMouseMoved { infoText.text = "(${it.x}, ${it.y})" }
 
 		return Result.success()
 	}
+
 }
