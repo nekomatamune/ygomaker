@@ -28,22 +28,22 @@ class CardRenderer {
 	fun initialize() {
 		logger.debug { "Initializing CardRenderer" }
 
-		dispatcher.register(EventType.SELECT_CARD) {
+		dispatcher.register(EventName.SELECT_CARD) {
 			card = it.card!!
 			render()
 		}
 
-		dispatcher.register(EventType.MODIFY_CARD) {
+		dispatcher.register(EventName.MODIFY_CARD) {
 			card = it.card!!.copy(image = card.image)
 			render()
 		}
 
-		dispatcher.register(EventType.MODIFY_CARD_IMAGE) {
+		dispatcher.register(EventName.MODIFY_CARD_IMAGE) {
 			card = card.copy(image = it.image!!)
 			render()
 		}
 
-		dispatcher.register(EventType.RENDER) {
+		dispatcher.register(EventName.RENDER) {
 			render()
 		}
 	}
