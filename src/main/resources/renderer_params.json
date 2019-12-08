@@ -17,11 +17,40 @@
 		"name": "Yu-Gi-Oh! DF Leisho 1",
 		"size": 30
 	},
-
 	"attributeRect": {
 		"x": 341,
 		"y": 28,
 		"w": 33,
 		"h": 33
+	},
+	"levelRect": {
+		"x": 333,
+		"y": 69,
+		"w": 24,
+		"h": 24
+	},
+	"levelSpacing": 2,
+	"rankRect": {
+		"x": 44,
+		"y": 69,
+		"w": 24,
+		"h": 24
+	},
+	"rankSpacing": 2,
+	"spellTrapTypeRect": {
+		"x": 373,
+		"y": 72,
+		"w": 60,
+		"h": 19
+	},
+	"spellTrapTypeFont": {
+		"name": "Yu-Gi-Oh! DF Leisho 1",
+		"size": 20
+	},
+	"spellTrapTypeSymbolRect": {
+		"x": 331,
+		"y": 72,
+		"w": 22,
+		"h": 22
 	}
 }
