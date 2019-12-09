@@ -41,7 +41,7 @@ class CardRenderer {
 
 		dispatcher.register(EventName.MODIFY_CARD_IMAGE) {
 			card = card.copy(image = it.image!!)
-			render()
+			Result.success()
 		}
 
 		dispatcher.register(EventName.RENDER) {
