@@ -3,6 +3,7 @@ package me.nekomatamune.ygomaker.fx
 import com.google.common.io.Resources
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
+import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
@@ -28,22 +29,22 @@ class CardRenderer {
 	fun initialize() {
 		logger.debug { "Initializing CardRenderer" }
 
-		dispatcher.register(EventType.SELECT_CARD) {
+		dispatcher.register(EventName.SELECT_CARD) {
 			card = it.card!!
 			render()
 		}
 
-		dispatcher.register(EventType.MODIFY_CARD) {
+		dispatcher.register(EventName.MODIFY_CARD) {
 			card = it.card!!.copy(image = card.image)
 			render()
 		}
 
-		dispatcher.register(EventType.MODIFY_CARD_IMAGE) {
+		dispatcher.register(EventName.MODIFY_CARD_IMAGE) {
 			card = card.copy(image = it.image!!)
 			render()
 		}
 
-		dispatcher.register(EventType.RENDER) {
+		dispatcher.register(EventName.RENDER) {
 			render()
 		}
 	}
@@ -129,7 +130,18 @@ class CardRenderer {
 			}
 		}
 
+		card.image?.let {
+			val imagePath = Command.dataDir.resolve(Command.packCode).resolve(it.file)
+			logger.info { "Image: $imagePath" }
+			val image = Image(imagePath.toUri().toString())
+			logger.info {"image: $image" }
 
+
+			gc.drawImage(image, it.x.toDouble(), it.y.toDouble(), it.size.toDouble(),
+				it.size.toDouble(),
+				p.imageRect.x, p.imageRect.y, p.imageRect.w,
+				p.imageRect.h)
+		}
 
 
 		rootPane.center = canvas

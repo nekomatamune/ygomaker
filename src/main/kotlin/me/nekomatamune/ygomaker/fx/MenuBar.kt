@@ -6,10 +6,7 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.MenuItem
 import javafx.stage.DirectoryChooser
-import me.nekomatamune.ygomaker.Command
-import me.nekomatamune.ygomaker.Event
-import me.nekomatamune.ygomaker.EventType
-import me.nekomatamune.ygomaker.dispatcher
+import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
 import java.nio.file.Files
 
@@ -32,10 +29,10 @@ class MenuBar {
 		savePackMenuItem.setOnAction { onSavePackMenuItem() }
 		savePackAsMenuItem.setOnAction { onSavePackAsMenuItem() }
 		newCardMenuItem.setOnAction {
-			dispatcher.dispatch(Event(EventType.NEW_CARD))
+			dispatcher.dispatch(Event(EventName.NEW_CARD))
 		}
 		renderMenuItem.setOnAction {
-			dispatcher.dispatch(Event(EventType.RENDER))
+			dispatcher.dispatch(Event(EventName.RENDER))
 		}
 		exitMenuItem.setOnAction { onExitMenuItem() }
 	}

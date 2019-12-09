@@ -3,6 +3,8 @@ package me.nekomatamune.ygomaker
 import com.google.common.io.Resources
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
+import java.nio.file.Paths
+import javax.imageio.stream.FileImageInputStream
 
 fun getCardFrame(card: Card): Result<Image> {
 
@@ -98,3 +100,4 @@ fun getSpellTrapText(card: Card): String? {
 		else -> null
 	}
 }
+
