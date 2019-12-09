@@ -17,15 +17,24 @@ class MenuBar {
 	@FXML private lateinit var loadPackMenuItem: MenuItem
 	@FXML private lateinit var savePackMenuItem: MenuItem
 	@FXML private lateinit var savePackAsMenuItem: MenuItem
+	@FXML private lateinit var newCardMenuItem: MenuItem
+	@FXML private lateinit var renderMenuItem: MenuItem
 	@FXML private lateinit var exitMenuItem: MenuItem
 
 	@FXML
 	private fun initialize() {
 		logger.debug { "Initializing MenuBar" }
-		loadPackMenuItem.onAction = ::onLoadPackMenuItem.asEventHandler()
-		savePackMenuItem.onAction = ::onSavePackMenuItem.asEventHandler()
-		savePackAsMenuItem.onAction = ::onSavePackAsMenuItem.asEventHandler()
-		exitMenuItem.onAction = ::onExitMenuItem.asEventHandler()
+		loadPackMenuItem.setOnAction { onLoadPackMenuItem() }
+		loadPackMenuItem.setOnAction { onLoadPackMenuItem() }
+		savePackMenuItem.setOnAction { onSavePackMenuItem() }
+		savePackAsMenuItem.setOnAction { onSavePackAsMenuItem() }
+		newCardMenuItem.setOnAction {
+			dispatcher.dispatch(Event(EventName.NEW_CARD))
+		}
+		renderMenuItem.setOnAction {
+			dispatcher.dispatch(Event(EventName.RENDER))
+		}
+		exitMenuItem.setOnAction { onExitMenuItem() }
 	}
 
 	private fun onLoadPackMenuItem() {

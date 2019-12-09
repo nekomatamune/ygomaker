@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class Card(
 	val name: String = "",
 	val type: CardType = CardType.NORMAL_SUMMON_MONSTER,
-	val monster: Monster? = null,
+	val monster: Monster? = Monster(),
 	val image: Image? = null,
 	val code: String = "",
 	val effect: String = "",
@@ -118,6 +118,21 @@ val MONSTER_CARD_TYPES = setOf(CardType.NORMAL_SUMMON_MONSTER,
 	CardType.SPECIAL_SUMMON_MONSTER, CardType.TOKEN_MONSTER,
 	CardType.RITUAL_MONSTER, CardType.FUSION_MONSTER, CardType.SYNCHRO_MONSTER,
 	CardType.XYZ_MONSTER, CardType.PENDULUM_MONSTER, CardType.LINK_MONSTER)
+
+val SPELL_CARD_TYPES = setOf(
+	CardType.NORMAL_SPELL,
+	CardType.CONTINUOUS_SPELL,
+	CardType.EQUIP_SPELL,
+	CardType.QUICK_SPELL,
+	CardType.FIELD_SPELL,
+	CardType.RITUAL_SPELL
+)
+
+val TRAP_CARD_TYPES = setOf(
+	CardType.NORMAL_TRAP,
+	CardType.CONTINUOUS_TRAP,
+	CardType.COUNTER_TRAP
+)
 
 
 

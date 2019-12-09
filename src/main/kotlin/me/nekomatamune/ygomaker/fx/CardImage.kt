@@ -44,11 +44,11 @@ class CardImage {
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
 			it.addSimpleListener { onSpinnerValueChange() }
 		}
-		fileTextField.onMouseClicked = ::onClickImageFile.asEventHandler()
-		imageView.onMousePressed = ::onMousePressed.asEventHandler()
-		imageView.onMouseDragged = ::onMouseDragged.asEventHandler()
-		imageView.onScroll = ::onMouseScrolled.asEventHandler()
-		imageView.onZoom = ::onZoom.asEventHandler()
+		fileTextField.setOnMouseClicked { onClickImageFile() }
+		imageView.setOnMousePressed { onMousePressed(it) }
+		imageView.setOnMouseDragged { onMouseDragged(it) }
+		imageView.setOnScroll { onMouseScrolled(it) }
+		imageView.setOnZoom { onZoom(it) }
 
 		dispatcher.register(EventName.SELECT_CARD) { onSelectCard(it) }
 	}

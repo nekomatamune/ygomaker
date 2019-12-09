@@ -16,6 +16,15 @@
 
         <SeparatorMenuItem/>
 
+        <MenuItem fx:id="newCardMenuItem" text="New Card" accelerator="Shortcut+N" />
+
+        <SeparatorMenuItem/>
+
+        <MenuItem fx:id="renderMenuItem"
+                  text="Render" accelerator="Shortcut+R"/>
+
+        <SeparatorMenuItem/>
+
         <MenuItem fx:id="exitMenuItem"
                   text="Exit" accelerator="Shortcut+Q"/>
     </Menu>

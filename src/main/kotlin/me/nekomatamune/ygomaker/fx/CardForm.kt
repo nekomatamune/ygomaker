@@ -67,7 +67,8 @@ class CardForm {
 		}
 
 		monsterFields.plus(
-			sequenceOf(cardNameTextField, cardTypeComboBox)
+			sequenceOf(cardNameTextField, cardTypeComboBox, effectTextArea,
+				codeTextField)
 		).forEach {
 			it.addSimpleListener { onCardValueChange() }
 		}
