@@ -1,6 +1,7 @@
 package me.nekomatamune.ygomaker.fx
 
 import com.google.common.io.Resources
+import com.sun.javafx.tk.Toolkit
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
@@ -134,7 +135,7 @@ class CardRenderer {
 			val imagePath = Command.dataDir.resolve(Command.packCode).resolve(it.file)
 			logger.info { "Image: $imagePath" }
 			val image = Image(imagePath.toUri().toString())
-			logger.info {"image: $image" }
+			logger.info { "image: $image" }
 
 
 			gc.drawImage(image, it.x.toDouble(), it.y.toDouble(), it.size.toDouble(),
@@ -143,7 +144,36 @@ class CardRenderer {
 				p.imageRect.h)
 		}
 
+		if (card.type in SPELL_CARD_TYPES || card.type in TRAP_CARD_TYPES) {
+			val multilineText = toMultilineText(card.effect,
+				(p.spellTrapEffectFont.size.toInt() downTo 1).toList(),
+				p.spellTrapEffectRect.w.toInt(),
+				p.spellTrapEffectRect.h.toInt(),
+				{
+					logger.info { "metrics for size $it" }
+					Toolkit.getToolkit().fontLoader.getFontMetrics(
+						Font(p.spellTrapEffectFont.name, it.toDouble()))::computeStringWidth
+				},
+				{
+					Toolkit.getToolkit().fontLoader.getFontMetrics(
+						Font(p.spellTrapEffectFont.name, it.toDouble()))::getLineHeight
+				}
+			)
 
+			val h = Toolkit.getToolkit().fontLoader.getFontMetrics(
+				Font(p.spellTrapEffectFont.name,
+					multilineText.size.toDouble()))::getLineHeight
+
+			gc.fill = Color.BLACK
+			gc.font = Font(p.spellTrapEffectFont.name, multilineText.size.toDouble())
+			gc.textAlign = TextAlignment.LEFT
+
+			for (i in multilineText.lines.indices) {
+				gc.fillText(multilineText.lines[i], p.spellTrapEffectRect.x,
+					p.spellTrapEffectRect.y + ((i+1) * h()).toDouble(), p.spellTrapEffectRect.w)
+			}
+
+		}
 		rootPane.center = canvas
 
 		canvas.setOnMouseMoved { infoText.text = "(${it.x}, ${it.y})" }
