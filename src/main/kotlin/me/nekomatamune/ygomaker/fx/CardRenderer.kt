@@ -144,36 +144,48 @@ class CardRenderer {
 				p.imageRect.h)
 		}
 
-		if (card.type in SPELL_CARD_TYPES || card.type in TRAP_CARD_TYPES) {
-			val multilineText = toMultilineText(card.effect,
-				(p.spellTrapEffectFont.size.toInt() downTo 1).toList(),
-				p.spellTrapEffectRect.w.toInt(),
-				p.spellTrapEffectRect.h.toInt(),
-				{
-					logger.info { "metrics for size $it" }
-					Toolkit.getToolkit().fontLoader.getFontMetrics(
-						Font(p.spellTrapEffectFont.name, it.toDouble()))::computeStringWidth
-				},
-				{
-					Toolkit.getToolkit().fontLoader.getFontMetrics(
-						Font(p.spellTrapEffectFont.name, it.toDouble()))::getLineHeight
-				}
-			)
 
-			val h = Toolkit.getToolkit().fontLoader.getFontMetrics(
-				Font(p.spellTrapEffectFont.name,
-					multilineText.size.toDouble()))::getLineHeight
-
+		if (card.type.isMonster()) {
+			val text = getMonsterTypeText(card)
 			gc.fill = Color.BLACK
-			gc.font = Font(p.spellTrapEffectFont.name, multilineText.size.toDouble())
+			gc.font = Font(p.monsterTypeFont.name, p.monsterTypeFont.size)
 			gc.textAlign = TextAlignment.LEFT
-
-			for (i in multilineText.lines.indices) {
-				gc.fillText(multilineText.lines[i], p.spellTrapEffectRect.x,
-					p.spellTrapEffectRect.y + ((i+1) * h()).toDouble(), p.spellTrapEffectRect.w)
-			}
-
+			gc.fillText(text, p.monsterTypeRect.x, p.monsterTypeRect.y)
 		}
+
+		val effectFont = if (card.type.isMonster()) p.monsterEffectFont else p.spellTrapEffectFont
+		val effectRect = if (card.type.isMonster()) p.monsterEffectRect else p.spellTrapEffectRect
+
+		val multilineText = toMultilineText(card.effect,
+			(effectFont.size.toInt() downTo 1).toList(),
+			effectRect.w.toInt(),
+			effectRect.h.toInt(),
+			{
+				logger.info { "metrics for size $it" }
+				Toolkit.getToolkit().fontLoader.getFontMetrics(
+					Font(effectFont.name, it.toDouble()))::computeStringWidth
+			},
+			{
+				Toolkit.getToolkit().fontLoader.getFontMetrics(
+					Font(effectFont.name, it.toDouble()))::getLineHeight
+			}
+		)
+
+		val h = Toolkit.getToolkit().fontLoader.getFontMetrics(
+			Font(effectFont.name,
+				multilineText.size.toDouble()))::getLineHeight
+
+		gc.fill = Color.BLACK
+		gc.font = Font(effectFont.name, multilineText.size.toDouble())
+		gc.textAlign = TextAlignment.LEFT
+
+		for (i in multilineText.lines.indices) {
+			gc.fillText(multilineText.lines[i], effectRect.x,
+				effectRect.y + ((i + 1) * h()).toDouble(),
+				effectRect.w)
+		}
+
+
 		rootPane.center = canvas
 
 		canvas.setOnMouseMoved { infoText.text = "(${it.x}, ${it.y})" }

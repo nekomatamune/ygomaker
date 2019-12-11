@@ -67,6 +67,27 @@
 	},
 	"spellTrapEffectFont": {
 		"name": "Yu-Gi-Oh! DF Leisho 1",
-		"size": 10
+		"size": 12
+	},
+
+	"monsterTypeRect": {
+		"x": 25,
+		"y": 442,
+		"w": 340,
+		"h": 30
+	},
+	"monsterTypeFont": {
+		"name": "Yu-Gi-Oh! DF Leisho 1",
+		"size": 13
+	},
+	"monsterEffectRect": {
+		"x": 30,
+		"y": 445,
+		"w": 340,
+		"h": 75
+	},
+	"monsterEffectFont": {
+		"name": "Yu-Gi-Oh! DF Leisho 1",
+		"size": 12
 	}
 }
