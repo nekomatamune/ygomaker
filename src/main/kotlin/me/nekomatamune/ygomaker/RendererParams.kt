@@ -30,7 +30,12 @@ data class RendererParams(
 	val monsterTypeRect: Rect,
 	val monsterTypeFont: Font,
 	val monsterEffectRect: Rect,
-	val monsterEffectFont: Font
+	val monsterEffectFont: Font,
+
+	val atkRect: Rect,
+	val defRect: Rect,
+	val atkDefFont: Font
+
 )
 
 @Serializable

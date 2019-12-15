@@ -68,8 +68,9 @@ fun getAttribute(card: Card): Result<Image> {
 
 fun getSymbol(card: Card): Result<Image?> {
 	val tag = when (card.type) {
-		CardType.CONTINUOUS_SPELL -> "continuous"
 		CardType.CONTINUOUS_TRAP -> "continuous"
+		CardType.COUNTER_TRAP -> "counter"
+		CardType.CONTINUOUS_SPELL -> "continuous"
 		CardType.EQUIP_SPELL -> "equip"
 		CardType.QUICK_SPELL -> "quickplay"
 		CardType.FIELD_SPELL -> "field"

@@ -8,13 +8,13 @@ import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import javafx.scene.text.FontWeight
 import javafx.scene.text.Text
 import javafx.scene.text.TextAlignment
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
-
 
 private val logger = KotlinLogging.logger { }
 private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
@@ -151,6 +151,10 @@ class CardRenderer {
 			gc.font = Font(p.monsterTypeFont.name, p.monsterTypeFont.size)
 			gc.textAlign = TextAlignment.LEFT
 			gc.fillText(text, p.monsterTypeRect.x, p.monsterTypeRect.y)
+
+			gc.font = Font.font(p.atkDefFont.name, FontWeight.BOLD, p.atkDefFont.size)
+			gc.fillText("ATK/${card.monster!!.atk}", p.atkRect.x, p.atkRect.y)
+			gc.fillText("DEF/${card.monster!!.def}", p.defRect.x, p.defRect.y)
 		}
 
 		val effectFont = if (card.type.isMonster()) p.monsterEffectFont else p.spellTrapEffectFont
