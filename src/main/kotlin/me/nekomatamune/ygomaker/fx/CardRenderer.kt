@@ -75,8 +75,7 @@ class CardRenderer {
 		gc.setFont(p.nameFont)
 		gc.fill = getCardNameColor(card)
 		gc.textAlign = TextAlignment.LEFT
-		gc.fillText(card.name, p.nameRect.x, p.nameRect.y + p.nameRect.h,
-			p.nameRect.w)
+		gc.fillText(card.name, p.nameRect)
 
 
 		getAttribute(card).onFailure {
@@ -113,8 +112,7 @@ class CardRenderer {
 						gc.fill = Color.BLACK
 						gc.setFont(p.spellTrapTypeFont)
 						gc.textAlign = TextAlignment.RIGHT
-						gc.fillText(spellTrapText, p.spellTrapTypeRect.x,
-							p.spellTrapTypeRect.y + p.spellTrapTypeRect.h)
+						gc.fillText(spellTrapText, p.spellTrapTypeRect)
 					}
 
 					symbolImage?.let {
@@ -143,11 +141,11 @@ class CardRenderer {
 			gc.fill = Color.BLACK
 			gc.setFont(p.monsterTypeFont)
 			gc.textAlign = TextAlignment.LEFT
-			gc.fillText(text, p.monsterTypeRect.x, p.monsterTypeRect.y)
+			gc.fillText(text, p.monsterTypeRect)
 
 			gc.setFont(p.atkDefFont)
-			gc.fillText("ATK/${card.monster!!.atk}", p.atkRect.x, p.atkRect.y)
-			gc.fillText("DEF/${card.monster!!.def}", p.defRect.x, p.defRect.y)
+			gc.fillText("ATK/${card.monster!!.atk}", p.atkRect)
+			gc.fillText("DEF/${card.monster!!.def}", p.defRect)
 		}
 
 		val effectFont = if (card.type.isMonster()) p.monsterEffectFont else p.spellTrapEffectFont
@@ -195,4 +193,8 @@ private fun GraphicsContext.setFont(font: me.nekomatamune.ygomaker.Font) {
 	val weight = if (font.bold) FontWeight.BOLD else FontWeight.NORMAL
 	val posture = if (font.italic) FontPosture.ITALIC else FontPosture.REGULAR
 	this.font = Font.font(font.name, weight, posture, font.size)
+}
+
+private fun GraphicsContext.fillText(text: String, rect: Rect) {
+	this.fillText(text, rect.x, rect.y + rect.h, rect.w)
 }
