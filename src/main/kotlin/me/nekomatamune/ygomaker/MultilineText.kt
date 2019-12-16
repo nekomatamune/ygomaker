@@ -45,7 +45,6 @@ private fun split(
 		}
 
 		val nextCurrentLine = currentLine + ch
-		logger.info { "nextCurrentLine: $nextCurrentLine" }
 		if (widthMeasure(nextCurrentLine) > width) {
 			lines.add(currentLine)
 			currentLine = ch.toString()
