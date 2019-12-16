@@ -72,10 +72,11 @@ class CardRenderer {
 				p.frameSize.w, p.frameSize.h)
 		}
 
-		gc.setFont(p.nameFont)
-		gc.fill = getCardNameColor(card)
-		gc.textAlign = TextAlignment.LEFT
-		gc.fillText(card.name, p.nameRect)
+		gc.apply {
+			font = p.nameFont.toFxFont()
+			fill = getCardNameColor(card)
+			textAlign = TextAlignment.LEFT
+		}.fillText(card.name, p.nameRect)
 
 
 		getAttribute(card).onFailure {
@@ -109,10 +110,12 @@ class CardRenderer {
 
 				else -> {
 					getSpellTrapText(card)?.let { spellTrapText ->
-						gc.fill = Color.BLACK
-						gc.setFont(p.spellTrapTypeFont)
-						gc.textAlign = TextAlignment.RIGHT
-						gc.fillText(spellTrapText, p.spellTrapTypeRect)
+
+						gc.apply {
+							fill = Color.BLACK
+							textAlign = TextAlignment.RIGHT
+							font = p.spellTrapTypeFont.toFxFont()
+						}.fillText(spellTrapText, p.spellTrapTypeRect)
 					}
 
 					symbolImage?.let {
@@ -138,14 +141,21 @@ class CardRenderer {
 
 		if (card.type.isMonster()) {
 			val text = getMonsterTypeText(card)
-			gc.fill = Color.BLACK
-			gc.setFont(p.monsterTypeFont)
-			gc.textAlign = TextAlignment.LEFT
-			gc.fillText(text, p.monsterTypeRect)
 
-			gc.setFont(p.atkDefFont)
-			gc.fillText("ATK/${card.monster!!.atk}", p.atkRect)
-			gc.fillText("DEF/${card.monster!!.def}", p.defRect)
+			gc.apply {
+				fill = Color.BLACK
+				textAlign = TextAlignment.LEFT
+				font = p.monsterTypeFont.toFxFont()
+			}.fillText(text, p.monsterTypeRect)
+
+			gc.apply {
+				fill = Color.BLACK
+				textAlign = TextAlignment.LEFT
+				font = p.atkDefFont.toFxFont()
+
+				fillText("ATK/${card.monster!!.atk}", p.atkRect)
+				fillText("DEF/${card.monster!!.def}", p.defRect)
+			}
 		}
 
 		val effectFont = if (card.type.isMonster()) p.monsterEffectFont else p.spellTrapEffectFont
@@ -169,12 +179,14 @@ class CardRenderer {
 			Font(effectFont.name,
 				multilineText.size.toDouble()))::getLineHeight
 
-		gc.fill = Color.BLACK
-		gc.setFont(effectFont.copy(size = multilineText.size.toDouble()))
-		gc.textAlign = TextAlignment.LEFT
+
 
 		for (i in multilineText.lines.indices) {
-			gc.fillText(multilineText.lines[i], effectRect.x,
+			gc.apply {
+				fill = Color.BLACK
+				textAlign = TextAlignment.LEFT
+				font = effectFont.copy(size = multilineText.size.toDouble()).toFxFont()
+			}.fillText(multilineText.lines[i], effectRect.x,
 				effectRect.y + ((i + 1) * h()).toDouble(),
 				effectRect.w)
 		}
@@ -189,11 +201,12 @@ class CardRenderer {
 
 }
 
-private fun GraphicsContext.setFont(font: me.nekomatamune.ygomaker.Font) {
-	val weight = if (font.bold) FontWeight.BOLD else FontWeight.NORMAL
-	val posture = if (font.italic) FontPosture.ITALIC else FontPosture.REGULAR
-	this.font = Font.font(font.name, weight, posture, font.size)
+private fun me.nekomatamune.ygomaker.Font.toFxFont(): Font {
+	val weight = if (this.bold) FontWeight.BOLD else FontWeight.NORMAL
+	val posture = if (this.italic) FontPosture.ITALIC else FontPosture.REGULAR
+	return Font.font(this.name, weight, posture, this.size)
 }
+
 
 private fun GraphicsContext.fillText(text: String, rect: Rect) {
 	this.fillText(text, rect.x, rect.y + rect.h, rect.w)
