@@ -102,7 +102,33 @@ enum class LinkMarker {
 /**
  * Predefined value for [Monster.type]
  */
-val MONSTER_TYPE_PRESETS = listOf("ドラゴン族", "魔法使い族", "戦士族")
+val MONSTER_TYPE_PRESETS = listOf(
+	"ドラゴン族",
+	"魔法使い族",
+	"戦士族",
+	"獣戦士族",
+	"獣族",
+	"鳥獣族",
+	"アンデット族",
+	"悪魔族",
+	"天使族",
+	"昆虫族",
+	"恐竜族",
+	"爬虫類族",
+	"魚族",
+	"海竜族",
+	"機械族",
+	"雷族",
+	"水族",
+	"炎族",
+	"岩石族",
+	"植物族",
+	"サイキック族",
+	"幻竜族",
+	"サイバース族",
+	"幻神獣族",
+	"創造神族"
+)
 
 /**
  * Predefined value for [Monster.ability]
