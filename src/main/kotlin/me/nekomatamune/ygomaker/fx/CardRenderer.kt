@@ -73,15 +73,11 @@ class CardRenderer {
 				p.frameSize.w, p.frameSize.h)
 		}
 
-		logger.info { "supposed font is ${p.nameFont}" }
-
 		gc.font = Font(p.nameFont.name, p.nameFont.size)
 		gc.fill = getCardNameColor(card)
 		gc.textAlign = TextAlignment.LEFT
 		gc.fillText(card.name, p.nameRect.x, p.nameRect.y + p.nameRect.h,
 			p.nameRect.w)
-
-		logger.info { "font is ${gc.font.toString()}" }
 
 
 		getAttribute(card).onFailure {
@@ -133,9 +129,7 @@ class CardRenderer {
 
 		card.image?.let {
 			val imagePath = Command.dataDir.resolve(Command.packCode).resolve(it.file)
-			logger.info { "Image: $imagePath" }
 			val image = Image(imagePath.toUri().toString())
-			logger.info { "image: $image" }
 
 
 			gc.drawImage(image, it.x.toDouble(), it.y.toDouble(), it.size.toDouble(),
@@ -165,7 +159,6 @@ class CardRenderer {
 			effectRect.w.toInt(),
 			effectRect.h.toInt(),
 			{
-				logger.info { "metrics for size $it" }
 				Toolkit.getToolkit().fontLoader.getFontMetrics(
 					Font(effectFont.name, it.toDouble()))::computeStringWidth
 			},

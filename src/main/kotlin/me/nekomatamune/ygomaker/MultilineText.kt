@@ -21,7 +21,6 @@ fun toMultilineText(
 
 	var lines = listOf<String>()
 	for (size in sizes) {
-		logger.info { "Trying size $size" }
 		lines = split(text, width, getWidthMeasure(size))
 		if (lines.size * getHeightMeasure(size)() < height) {
 			return MultilineText(size, lines)
