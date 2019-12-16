@@ -1,19 +1,20 @@
 package me.nekomatamune.ygomaker.fx
 
 import com.google.common.io.Resources
+import com.sun.javafx.tk.Toolkit
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import javafx.scene.text.FontWeight
 import javafx.scene.text.Text
 import javafx.scene.text.TextAlignment
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
-
 
 private val logger = KotlinLogging.logger { }
 private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
@@ -134,13 +135,58 @@ class CardRenderer {
 			val imagePath = Command.dataDir.resolve(Command.packCode).resolve(it.file)
 			logger.info { "Image: $imagePath" }
 			val image = Image(imagePath.toUri().toString())
-			logger.info {"image: $image" }
+			logger.info { "image: $image" }
 
 
 			gc.drawImage(image, it.x.toDouble(), it.y.toDouble(), it.size.toDouble(),
 				it.size.toDouble(),
 				p.imageRect.x, p.imageRect.y, p.imageRect.w,
 				p.imageRect.h)
+		}
+
+
+		if (card.type.isMonster()) {
+			val text = getMonsterTypeText(card)
+			gc.fill = Color.BLACK
+			gc.font = Font(p.monsterTypeFont.name, p.monsterTypeFont.size)
+			gc.textAlign = TextAlignment.LEFT
+			gc.fillText(text, p.monsterTypeRect.x, p.monsterTypeRect.y)
+
+			gc.font = Font.font(p.atkDefFont.name, FontWeight.BOLD, p.atkDefFont.size)
+			gc.fillText("ATK/${card.monster!!.atk}", p.atkRect.x, p.atkRect.y)
+			gc.fillText("DEF/${card.monster!!.def}", p.defRect.x, p.defRect.y)
+		}
+
+		val effectFont = if (card.type.isMonster()) p.monsterEffectFont else p.spellTrapEffectFont
+		val effectRect = if (card.type.isMonster()) p.monsterEffectRect else p.spellTrapEffectRect
+
+		val multilineText = toMultilineText(card.effect,
+			(effectFont.size.toInt() downTo 1).toList(),
+			effectRect.w.toInt(),
+			effectRect.h.toInt(),
+			{
+				logger.info { "metrics for size $it" }
+				Toolkit.getToolkit().fontLoader.getFontMetrics(
+					Font(effectFont.name, it.toDouble()))::computeStringWidth
+			},
+			{
+				Toolkit.getToolkit().fontLoader.getFontMetrics(
+					Font(effectFont.name, it.toDouble()))::getLineHeight
+			}
+		)
+
+		val h = Toolkit.getToolkit().fontLoader.getFontMetrics(
+			Font(effectFont.name,
+				multilineText.size.toDouble()))::getLineHeight
+
+		gc.fill = Color.BLACK
+		gc.font = Font(effectFont.name, multilineText.size.toDouble())
+		gc.textAlign = TextAlignment.LEFT
+
+		for (i in multilineText.lines.indices) {
+			gc.fillText(multilineText.lines[i], effectRect.x,
+				effectRect.y + ((i + 1) * h()).toDouble(),
+				effectRect.w)
 		}
 
 

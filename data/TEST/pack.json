@@ -10,7 +10,7 @@
             "monster": {
                 "attribute": "LIGHT",
                 "level": 8,
-                "type": "魔法使い族",
+                "type": "ドラゴン族",
                 "ability": "",
                 "effect": false,
                 "atk": "3000",
@@ -20,8 +20,8 @@
             },
             "image": {
                 "file": "001.png",
-                "x": 252,
-                "y": 179,
+                "x": 254,
+                "y": 182,
                 "size": 520
             },
             "code": "001",
