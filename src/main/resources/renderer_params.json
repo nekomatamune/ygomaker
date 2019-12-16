@@ -101,6 +101,7 @@
 
 	"atkDefFont": {
 		"name": "Times New Roman",
-		"size": 14
+		"size": 14,
+		"bold": true
 	}
 }

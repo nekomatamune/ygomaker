@@ -4,13 +4,12 @@ import com.google.common.io.Resources
 import com.sun.javafx.tk.Toolkit
 import javafx.fxml.FXML
 import javafx.scene.canvas.Canvas
+import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.paint.Color
+import javafx.scene.text.*
 import javafx.scene.text.Font
-import javafx.scene.text.FontWeight
-import javafx.scene.text.Text
-import javafx.scene.text.TextAlignment
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.*
@@ -73,7 +72,7 @@ class CardRenderer {
 				p.frameSize.w, p.frameSize.h)
 		}
 
-		gc.font = Font(p.nameFont.name, p.nameFont.size)
+		gc.setFont(p.nameFont)
 		gc.fill = getCardNameColor(card)
 		gc.textAlign = TextAlignment.LEFT
 		gc.fillText(card.name, p.nameRect.x, p.nameRect.y + p.nameRect.h,
@@ -112,7 +111,7 @@ class CardRenderer {
 				else -> {
 					getSpellTrapText(card)?.let { spellTrapText ->
 						gc.fill = Color.BLACK
-						gc.font = Font(p.spellTrapTypeFont.name, p.spellTrapTypeFont.size)
+						gc.setFont(p.spellTrapTypeFont)
 						gc.textAlign = TextAlignment.RIGHT
 						gc.fillText(spellTrapText, p.spellTrapTypeRect.x,
 							p.spellTrapTypeRect.y + p.spellTrapTypeRect.h)
@@ -142,11 +141,11 @@ class CardRenderer {
 		if (card.type.isMonster()) {
 			val text = getMonsterTypeText(card)
 			gc.fill = Color.BLACK
-			gc.font = Font(p.monsterTypeFont.name, p.monsterTypeFont.size)
+			gc.setFont(p.monsterTypeFont)
 			gc.textAlign = TextAlignment.LEFT
 			gc.fillText(text, p.monsterTypeRect.x, p.monsterTypeRect.y)
 
-			gc.font = Font.font(p.atkDefFont.name, FontWeight.BOLD, p.atkDefFont.size)
+			gc.setFont(p.atkDefFont)
 			gc.fillText("ATK/${card.monster!!.atk}", p.atkRect.x, p.atkRect.y)
 			gc.fillText("DEF/${card.monster!!.def}", p.defRect.x, p.defRect.y)
 		}
@@ -173,7 +172,7 @@ class CardRenderer {
 				multilineText.size.toDouble()))::getLineHeight
 
 		gc.fill = Color.BLACK
-		gc.font = Font(effectFont.name, multilineText.size.toDouble())
+		gc.setFont(effectFont.copy(size = multilineText.size.toDouble()))
 		gc.textAlign = TextAlignment.LEFT
 
 		for (i in multilineText.lines.indices) {
@@ -190,4 +189,10 @@ class CardRenderer {
 		return Result.success()
 	}
 
+}
+
+private fun GraphicsContext.setFont(font: me.nekomatamune.ygomaker.Font) {
+	val weight = if (font.bold) FontWeight.BOLD else FontWeight.NORMAL
+	val posture = if (font.italic) FontPosture.ITALIC else FontPosture.REGULAR
+	this.font = Font.font(font.name, weight, posture, font.size)
 }
