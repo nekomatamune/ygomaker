@@ -40,7 +40,7 @@
 	"spellTrapTypeRect": {
 		"x": 373,
 		"y": 72,
-		"w": 60,
+		"w": 160,
 		"h": 19
 	},
 	"spellTrapTypeFont": {
@@ -71,10 +71,10 @@
 	},
 
 	"monsterTypeRect": {
-		"x": 25,
-		"y": 442,
+		"x": 24,
+		"y": 430,
 		"w": 340,
-		"h": 30
+		"h": 12
 	},
 	"monsterTypeFont": {
 		"name": "Yu-Gi-Oh! DF Leisho 1",
@@ -92,15 +92,16 @@
 	},
 
 	"atkRect": {
-		"x": 237, "y": 531, "w": 303, "h": 10
+		"x": 237, "y": 520, "w": 303, "h": 11
 	},
 
 	"defRect": {
-		"x": 309, "y": 531, "w": 303, "h": 10
+		"x": 309, "y": 520, "w": 303, "h": 11
 	},
 
 	"atkDefFont": {
 		"name": "Times New Roman",
-		"size": 14
+		"size": 14,
+		"bold": true
 	}
 }
