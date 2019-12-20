@@ -18,5 +18,8 @@ class Window {
 		dispatcher.register(EventName.SELECT_CARD) {
 			cardFormController.setCard(it.card!!, it.packDir!!)
 		}
+		dispatcher.register(EventName.LOAD_PACK) {
+			cardListController.loadPack(it.packDir!!)
+		}
 	}
 }

@@ -51,7 +51,6 @@ class CardListController {
 		languageComboBox.items = observableList(Language.values().toList())
 		languageComboBox.selectionModel.selectFirst()
 
-		dispatcher.register(EventName.LOAD_PACK) { loadPack(it) }
 		dispatcher.register(EventName.SAVE_PACK) { savePack() }
 		dispatcher.register(EventName.SAVE_PACK_AS) { saveAsPack(it) }
 		dispatcher.register(EventName.MODIFY_CARD) { onModifyCard(it) }
@@ -129,8 +128,7 @@ class CardListController {
 		return Result.success()
 	}
 
-	private fun loadPack(event: Event): Result<Unit> {
-		val packDir = event.packDir!!
+	fun loadPack(packDir: Path): Result<Unit> {
 		logger.debug { "Loading pack from: $packDir" }
 
 		val cardFile = packDir.resolve("pack.json")
@@ -187,7 +185,7 @@ class CardListController {
 		this.packDir = newPackDir
 
 		return savePack().continueOnSuccess {
-			loadPack(event)
+			loadPack(event.packDir)
 		}
 	}
 
