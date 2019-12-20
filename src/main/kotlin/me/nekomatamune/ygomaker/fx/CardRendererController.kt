@@ -18,7 +18,7 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger { }
 private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
-class CardRenderer {
+class CardRendererController {
 
 	@FXML private lateinit var rootPane: BorderPane
 	@FXML private lateinit var infoText: Text

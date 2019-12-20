@@ -7,7 +7,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:id="rootPane"
-            fx:controller="me.nekomatamune.ygomaker.fx.CardRenderer">
+            fx:controller="me.nekomatamune.ygomaker.fx.CardRendererController">
 
     <bottom><Text fx:id="infoText">Renderer</Text></bottom>
 
