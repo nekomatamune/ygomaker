@@ -12,7 +12,7 @@
         <fx:include fx:id="cardList" source="CardList.fxml"/>
     </left>
     <center>
-        <fx:include source="CardRenderer.fxml"/>
+        <fx:include fx:id="cardRenderer" source="CardRenderer.fxml"/>
     </center>
     <right>
         <fx:include fx:id="cardForm" source="CardForm.fxml"/>
