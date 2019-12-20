@@ -18,7 +18,7 @@ import java.nio.file.attribute.BasicFileAttributes
 
 private val logger = KotlinLogging.logger { }
 
-class CardList {
+class CardListController {
 
 	private var pack: Pack = Pack()
 	private lateinit var packDir: Path
