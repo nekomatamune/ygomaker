@@ -21,5 +21,6 @@ class Window {
 		dispatcher.register(EventName.LOAD_PACK) {
 			cardListController.loadPack(it.packDir!!)
 		}
+		dispatcher.register(EventName.SAVE_PACK) { cardListController.savePack() }
 	}
 }

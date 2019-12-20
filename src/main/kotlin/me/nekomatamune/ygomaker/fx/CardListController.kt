@@ -51,7 +51,6 @@ class CardListController {
 		languageComboBox.items = observableList(Language.values().toList())
 		languageComboBox.selectionModel.selectFirst()
 
-		dispatcher.register(EventName.SAVE_PACK) { savePack() }
 		dispatcher.register(EventName.SAVE_PACK_AS) { saveAsPack(it) }
 		dispatcher.register(EventName.MODIFY_CARD) { onModifyCard(it) }
 		dispatcher.register(EventName.MODIFY_CARD_IMAGE) { onModifyCardImage(it) }
@@ -155,7 +154,7 @@ class CardListController {
 		return Result.success()
 	}
 
-	private fun savePack(): Result<Unit> {
+	fun savePack(): Result<Unit> {
 		logger.info { "Saving pack into $packDir" }
 		val cardFile = packDir.resolve("pack.json")
 
