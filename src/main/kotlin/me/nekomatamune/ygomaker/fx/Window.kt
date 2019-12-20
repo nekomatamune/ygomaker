@@ -15,7 +15,7 @@ class Window {
 		logger.info { "Init Window..." }
 
 		dispatcher.register(EventName.SELECT_CARD) {
-			cardFormController.setCard(it.card!!)
+			cardFormController.setCard(it.card!!, it.packDir!!)
 		}
 	}
 }

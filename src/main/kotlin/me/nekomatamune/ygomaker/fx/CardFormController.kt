@@ -8,6 +8,7 @@ import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
+import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 
@@ -73,7 +74,7 @@ class CardFormController {
 		}
 	}
 
-	fun setCard(card: Card): Result<Unit> {
+	fun setCard(card: Card, packDir: Path): Result<Unit> {
 		onSelectCardInProgress = true
 
 		cardNameTextField.text = card.name
@@ -87,6 +88,8 @@ class CardFormController {
 		atkTextField.text = card.monster?.atk ?: ""
 		defTextField.text = card.monster?.def ?: ""
 		codeTextField.text = card.code
+
+		cardImageController.setImage(card.image ?: Image(), packDir)
 
 		onSelectCardInProgress = false
 		return Result.success()
