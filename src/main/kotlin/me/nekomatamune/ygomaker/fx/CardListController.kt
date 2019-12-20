@@ -51,8 +51,6 @@ class CardListController {
 		languageComboBox.items = observableList(Language.values().toList())
 		languageComboBox.selectionModel.selectFirst()
 
-		dispatcher.register(EventName.MODIFY_CARD) { onModifyCard(it) }
-		dispatcher.register(EventName.MODIFY_CARD_IMAGE) { onModifyCardImage(it) }
 		dispatcher.register(EventName.NEW_CARD) { newCard() }
 	}
 
@@ -79,14 +77,14 @@ class CardListController {
 		}
 	}
 
-	private fun onModifyCard(event: Event): Result<Unit> {
+	fun onModifyCard(card: Card?): Result<Unit> {
 		if (cardListView.selectionModel.selectedItem == null) {
 			return Result.success()
 		}
 
 		disableOnSelectCard = true
 
-		val mergedCard = event.card?.let {
+		val mergedCard = card?.let {
 			cardListView.selectionModel.selectedItem.copy(
 				name = it.name,
 				type = it.type,
@@ -105,13 +103,13 @@ class CardListController {
 		return Result.success()
 	}
 
-	private fun onModifyCardImage(event: Event): Result<Unit> {
+	fun onModifyCardImage(image: Image?): Result<Unit> {
 		if (cardListView.selectionModel.selectedItem == null) {
 			return Result.success()
 		}
 
 		disableOnSelectCard = true
-		val mergedCard = event.image!!.let {
+		val mergedCard = image!!.let {
 			cardListView.selectionModel.selectedItem.copy(
 				image = it
 			)
