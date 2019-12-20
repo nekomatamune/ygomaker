@@ -25,7 +25,7 @@ import me.nekomatamune.ygomaker.Image as CardImage
 
 private val logger = KotlinLogging.logger { }
 
-class CardImage {
+class CardImageController {
 
 	private lateinit var packDir: Path
 	private var mouseClickX: Int = 0
