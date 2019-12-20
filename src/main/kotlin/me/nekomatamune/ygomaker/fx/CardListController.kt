@@ -51,7 +51,6 @@ class CardListController {
 		languageComboBox.items = observableList(Language.values().toList())
 		languageComboBox.selectionModel.selectFirst()
 
-		dispatcher.register(EventName.SAVE_PACK_AS) { saveAsPack(it) }
 		dispatcher.register(EventName.MODIFY_CARD) { onModifyCard(it) }
 		dispatcher.register(EventName.MODIFY_CARD_IMAGE) { onModifyCardImage(it) }
 		dispatcher.register(EventName.NEW_CARD) { newCard() }
@@ -167,9 +166,7 @@ class CardListController {
 		return Result.success()
 	}
 
-	private fun saveAsPack(event: Event): Result<Unit> {
-		val newPackDir = event.packDir!!
-
+	fun saveAsPack(newPackDir: Path): Result<Unit> {
 		Files.walkFileTree(packDir, object : SimpleFileVisitor<Path>() {
 			override fun visitFile(
 				file: Path, attrs: BasicFileAttributes
@@ -184,7 +181,7 @@ class CardListController {
 		this.packDir = newPackDir
 
 		return savePack().continueOnSuccess {
-			loadPack(event.packDir)
+			loadPack(packDir)
 		}
 	}
 
