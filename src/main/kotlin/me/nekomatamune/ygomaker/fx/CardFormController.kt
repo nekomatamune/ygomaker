@@ -8,12 +8,10 @@ import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
-import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 
-class CardForm {
-	private lateinit var packDir: Path
+class CardFormController {
 
 	@FXML lateinit var cardNameTextField: TextField
 	@FXML lateinit var cardTypeComboBox: ComboBox<CardType>
@@ -72,8 +70,25 @@ class CardForm {
 		).forEach {
 			it.addSimpleListener { onCardValueChange() }
 		}
+	}
 
-		dispatcher.register(EventName.SELECT_CARD) { onSelectCard(it) }
+	fun setCard(card: Card): Result<Unit> {
+		onSelectCardInProgress = true
+
+		cardNameTextField.text = card.name
+		cardTypeComboBox.selectionModel.select(card.type)
+		attributeComboBox.selectionModel.select(card.monster?.attribute)
+		levelComboBox.selectionModel.select(card.monster?.level)
+		monsterTypeComboBox.selectionModel.select(card.monster?.type)
+		monsterAbilityComboBox.selectionModel.select(card.monster?.ability ?: "")
+		effectCheckBox.isSelected = card.monster?.effect ?: false
+		effectTextArea.text = card.effect
+		atkTextField.text = card.monster?.atk ?: ""
+		defTextField.text = card.monster?.def ?: ""
+		codeTextField.text = card.code
+
+		onSelectCardInProgress = false
+		return Result.success()
 	}
 
 	private fun onCardValueChange() {
@@ -99,28 +114,5 @@ class CardForm {
 		)
 
 		dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = newCard))
-	}
-
-	private fun onSelectCard(event: Event): Result<Unit> {
-		onSelectCardInProgress = true
-
-		packDir = event.packDir!!
-
-		val card = event.card!!
-		cardNameTextField.text = card.name
-		cardTypeComboBox.selectionModel.select(card.type)
-		attributeComboBox.selectionModel.select(card.monster?.attribute)
-		levelComboBox.selectionModel.select(card.monster?.level)
-		monsterTypeComboBox.selectionModel.select(card.monster?.type)
-		monsterAbilityComboBox.selectionModel.select(card.monster?.ability ?: "")
-		effectCheckBox.isSelected = card.monster?.effect ?: false
-		effectTextArea.text = card.effect
-		atkTextField.text = card.monster?.atk ?: ""
-		defTextField.text = card.monster?.def ?: ""
-		codeTextField.text = card.code
-
-		onSelectCardInProgress = false
-
-		return Result.success()
 	}
 }
