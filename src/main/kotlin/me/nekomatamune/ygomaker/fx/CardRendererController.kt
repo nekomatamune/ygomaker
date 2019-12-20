@@ -35,12 +35,7 @@ class CardRendererController {
 		}
 
 		dispatcher.register(EventName.MODIFY_CARD) {
-			card = it.card!!.copy(image = card.image)
-			render()
-		}
-
-		dispatcher.register(EventName.MODIFY_CARD_IMAGE) {
-			card = card.copy(image = it.image!!)
+			card = it.card!!
 			Result.success()
 		}
 

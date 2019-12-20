@@ -29,6 +29,8 @@ class CardFormController {
 
 	var onSelectCardInProgress: Boolean = false
 
+	private var card = Card()
+
 	@FXML
 	fun initialize() {
 		logger.debug { "Initializing CardForm" }
@@ -72,9 +74,17 @@ class CardFormController {
 		).forEach {
 			it.addSimpleListener { onCardValueChange() }
 		}
+
+		dispatcher.register(EventName.MODIFY_CARD_IMAGE) {
+			dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = card.copy(
+				image = it.image
+			)))
+		}
 	}
 
 	fun setCard(card: Card, packDir: Path): Result<Unit> {
+		this.card = card.copy()
+
 		onSelectCardInProgress = true
 
 		cardNameTextField.text = card.name
@@ -101,7 +111,7 @@ class CardFormController {
 			return
 		}
 
-		val newCard = Card(
+		val updatedCard = this.card.copy(
 			name = cardNameTextField.text,
 			type = cardTypeComboBox.value,
 			code = codeTextField.text,
@@ -117,6 +127,6 @@ class CardFormController {
 			)
 		)
 
-		dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = newCard))
+		dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = updatedCard))
 	}
 }

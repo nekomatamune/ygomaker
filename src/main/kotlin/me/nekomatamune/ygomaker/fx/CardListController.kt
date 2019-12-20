@@ -89,28 +89,8 @@ class CardListController {
 				type = it.type,
 				monster = it.monster,
 				code = it.code,
-				effect = it.effect
-			)
-		}
-
-		val cards = cardListView.items
-		val selectIdx = cardListView.selectionModel.selectedIndex
-		cards[selectIdx] = mergedCard
-		pack = pack.copy(cards = cards)
-
-		disableOnSelectCard = false
-		return Result.success()
-	}
-
-	fun onModifyCardImage(image: Image?): Result<Unit> {
-		if (cardListView.selectionModel.selectedItem == null) {
-			return Result.success()
-		}
-
-		disableOnSelectCard = true
-		val mergedCard = image!!.let {
-			cardListView.selectionModel.selectedItem.copy(
-				image = it
+				effect = it.effect,
+				image = it.image
 			)
 		}
 
