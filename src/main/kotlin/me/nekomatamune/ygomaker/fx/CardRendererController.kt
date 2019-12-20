@@ -29,22 +29,15 @@ class CardRendererController {
 	fun initialize() {
 		logger.debug { "Initializing CardRenderer" }
 
-		dispatcher.register(EventName.SELECT_CARD) {
-			card = it.card!!
-			render()
-		}
 
-		dispatcher.register(EventName.MODIFY_CARD) {
-			card = it.card!!
-			Result.success()
-		}
-
-		dispatcher.register(EventName.RENDER) {
-			render()
-		}
 	}
 
-	private fun render(): Result<Unit> {
+	fun setCard(card: Card): Result<Unit> {
+		this.card = card
+		return Result.success()
+	}
+
+	fun render(): Result<Unit> {
 		logger.info { "Render card" }
 
 		val paramText = Command.rendererParamFile?.toFile()?.readText()

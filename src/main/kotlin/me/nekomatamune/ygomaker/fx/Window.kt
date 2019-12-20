@@ -3,6 +3,7 @@ package me.nekomatamune.ygomaker.fx
 import javafx.fxml.FXML
 import me.nekomatamune.ygomaker.EventName
 import me.nekomatamune.ygomaker.dispatcher
+import me.nekomatamune.ygomaker.success
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
@@ -33,5 +34,19 @@ class Window {
 
 
 		dispatcher.register(EventName.NEW_CARD) { cardListController.newCard() }
+
+		dispatcher.register(EventName.SELECT_CARD) {
+			cardRendererController.setCard(it.card!!)
+			cardRendererController.render()
+		}
+
+		dispatcher.register(EventName.MODIFY_CARD) {
+			cardRendererController.setCard(it.card!!)
+			Result.success()
+		}
+
+		dispatcher.register(EventName.RENDER) {
+			cardRendererController.render()
+		}
 	}
 }
