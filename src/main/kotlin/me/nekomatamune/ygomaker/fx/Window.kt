@@ -34,5 +34,8 @@ class Window {
 		dispatcher.register(EventName.MODIFY_CARD_IMAGE) {
 			cardListController.onModifyCardImage(it.image)
 		}
+
+
+		dispatcher.register(EventName.NEW_CARD) { cardListController.newCard() }
 	}
 }

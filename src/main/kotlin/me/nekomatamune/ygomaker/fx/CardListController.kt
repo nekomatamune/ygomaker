@@ -51,7 +51,6 @@ class CardListController {
 		languageComboBox.items = observableList(Language.values().toList())
 		languageComboBox.selectionModel.selectFirst()
 
-		dispatcher.register(EventName.NEW_CARD) { newCard() }
 	}
 
 	private fun onModifyPackInfo() {
@@ -183,7 +182,7 @@ class CardListController {
 		}
 	}
 
-	private fun newCard(): Result<Unit> {
+	fun newCard(): Result<Unit> {
 		val newCard = Card()
 		pack = pack.copy(cards = pack.cards + newCard)
 
