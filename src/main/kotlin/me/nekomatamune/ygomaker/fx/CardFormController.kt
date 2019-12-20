@@ -12,8 +12,7 @@ import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 
-class CardForm {
-	private lateinit var packDir: Path
+class CardFormController {
 
 	@FXML lateinit var cardNameTextField: TextField
 	@FXML lateinit var cardTypeComboBox: ComboBox<CardType>
@@ -26,8 +25,11 @@ class CardForm {
 	@FXML lateinit var atkTextField: TextField
 	@FXML lateinit var defTextField: TextField
 	@FXML lateinit var codeTextField: TextField
+	@FXML lateinit var cardImageController: CardImageController
 
 	var onSelectCardInProgress: Boolean = false
+
+	private var card = Card()
 
 	@FXML
 	fun initialize() {
@@ -73,7 +75,34 @@ class CardForm {
 			it.addSimpleListener { onCardValueChange() }
 		}
 
-		dispatcher.register(EventName.SELECT_CARD) { onSelectCard(it) }
+		dispatcher.register(EventName.MODIFY_CARD_IMAGE) {
+			dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = card.copy(
+				image = it.image
+			)))
+		}
+	}
+
+	fun setCard(card: Card, packDir: Path): Result<Unit> {
+		this.card = card.copy()
+
+		onSelectCardInProgress = true
+
+		cardNameTextField.text = card.name
+		cardTypeComboBox.selectionModel.select(card.type)
+		attributeComboBox.selectionModel.select(card.monster?.attribute)
+		levelComboBox.selectionModel.select(card.monster?.level)
+		monsterTypeComboBox.selectionModel.select(card.monster?.type)
+		monsterAbilityComboBox.selectionModel.select(card.monster?.ability ?: "")
+		effectCheckBox.isSelected = card.monster?.effect ?: false
+		effectTextArea.text = card.effect
+		atkTextField.text = card.monster?.atk ?: ""
+		defTextField.text = card.monster?.def ?: ""
+		codeTextField.text = card.code
+
+		cardImageController.setImage(card.image ?: Image(), packDir)
+
+		onSelectCardInProgress = false
+		return Result.success()
 	}
 
 	private fun onCardValueChange() {
@@ -82,7 +111,7 @@ class CardForm {
 			return
 		}
 
-		val newCard = Card(
+		val updatedCard = this.card.copy(
 			name = cardNameTextField.text,
 			type = cardTypeComboBox.value,
 			code = codeTextField.text,
@@ -98,29 +127,6 @@ class CardForm {
 			)
 		)
 
-		dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = newCard))
-	}
-
-	private fun onSelectCard(event: Event): Result<Unit> {
-		onSelectCardInProgress = true
-
-		packDir = event.packDir!!
-
-		val card = event.card!!
-		cardNameTextField.text = card.name
-		cardTypeComboBox.selectionModel.select(card.type)
-		attributeComboBox.selectionModel.select(card.monster?.attribute)
-		levelComboBox.selectionModel.select(card.monster?.level)
-		monsterTypeComboBox.selectionModel.select(card.monster?.type)
-		monsterAbilityComboBox.selectionModel.select(card.monster?.ability ?: "")
-		effectCheckBox.isSelected = card.monster?.effect ?: false
-		effectTextArea.text = card.effect
-		atkTextField.text = card.monster?.atk ?: ""
-		defTextField.text = card.monster?.def ?: ""
-		codeTextField.text = card.code
-
-		onSelectCardInProgress = false
-
-		return Result.success()
+		dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = updatedCard))
 	}
 }

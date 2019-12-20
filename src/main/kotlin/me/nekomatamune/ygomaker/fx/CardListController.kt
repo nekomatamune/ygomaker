@@ -18,7 +18,7 @@ import java.nio.file.attribute.BasicFileAttributes
 
 private val logger = KotlinLogging.logger { }
 
-class CardList {
+class CardListController {
 
 	private var pack: Pack = Pack()
 	private lateinit var packDir: Path
@@ -51,12 +51,6 @@ class CardList {
 		languageComboBox.items = observableList(Language.values().toList())
 		languageComboBox.selectionModel.selectFirst()
 
-		dispatcher.register(EventName.LOAD_PACK) { loadPack(it) }
-		dispatcher.register(EventName.SAVE_PACK) { savePack() }
-		dispatcher.register(EventName.SAVE_PACK_AS) { saveAsPack(it) }
-		dispatcher.register(EventName.MODIFY_CARD) { onModifyCard(it) }
-		dispatcher.register(EventName.MODIFY_CARD_IMAGE) { onModifyCardImage(it) }
-		dispatcher.register(EventName.NEW_CARD) { newCard() }
 	}
 
 	private fun onModifyPackInfo() {
@@ -82,20 +76,21 @@ class CardList {
 		}
 	}
 
-	private fun onModifyCard(event: Event): Result<Unit> {
+	fun onModifyCard(card: Card?): Result<Unit> {
 		if (cardListView.selectionModel.selectedItem == null) {
 			return Result.success()
 		}
 
 		disableOnSelectCard = true
 
-		val mergedCard = event.card?.let {
+		val mergedCard = card?.let {
 			cardListView.selectionModel.selectedItem.copy(
 				name = it.name,
 				type = it.type,
 				monster = it.monster,
 				code = it.code,
-				effect = it.effect
+				effect = it.effect,
+				image = it.image
 			)
 		}
 
@@ -108,29 +103,7 @@ class CardList {
 		return Result.success()
 	}
 
-	private fun onModifyCardImage(event: Event): Result<Unit> {
-		if (cardListView.selectionModel.selectedItem == null) {
-			return Result.success()
-		}
-
-		disableOnSelectCard = true
-		val mergedCard = event.image!!.let {
-			cardListView.selectionModel.selectedItem.copy(
-				image = it
-			)
-		}
-
-		val cards = cardListView.items
-		val selectIdx = cardListView.selectionModel.selectedIndex
-		cards[selectIdx] = mergedCard
-		pack = pack.copy(cards = cards)
-
-		disableOnSelectCard = false
-		return Result.success()
-	}
-
-	private fun loadPack(event: Event): Result<Unit> {
-		val packDir = event.packDir!!
+	fun loadPack(packDir: Path): Result<Unit> {
 		logger.debug { "Loading pack from: $packDir" }
 
 		val cardFile = packDir.resolve("pack.json")
@@ -157,7 +130,7 @@ class CardList {
 		return Result.success()
 	}
 
-	private fun savePack(): Result<Unit> {
+	fun savePack(): Result<Unit> {
 		logger.info { "Saving pack into $packDir" }
 		val cardFile = packDir.resolve("pack.json")
 
@@ -170,9 +143,7 @@ class CardList {
 		return Result.success()
 	}
 
-	private fun saveAsPack(event: Event): Result<Unit> {
-		val newPackDir = event.packDir!!
-
+	fun saveAsPack(newPackDir: Path): Result<Unit> {
 		Files.walkFileTree(packDir, object : SimpleFileVisitor<Path>() {
 			override fun visitFile(
 				file: Path, attrs: BasicFileAttributes
@@ -187,11 +158,11 @@ class CardList {
 		this.packDir = newPackDir
 
 		return savePack().continueOnSuccess {
-			loadPack(event)
+			loadPack(packDir)
 		}
 	}
 
-	private fun newCard(): Result<Unit> {
+	fun newCard(): Result<Unit> {
 		val newCard = Card()
 		pack = pack.copy(cards = pack.cards + newCard)
 

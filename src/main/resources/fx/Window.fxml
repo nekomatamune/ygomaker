@@ -3,18 +3,19 @@
 <?import javafx.scene.layout.BorderPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            prefHeight="800" prefWidth="1000">
+            prefHeight="800" prefWidth="1000"
+            fx:controller="me.nekomatamune.ygomaker.fx.Window">
     <top>
         <fx:include source="MenuBar.fxml"/>
     </top>
     <left>
-        <fx:include source="CardList.fxml"/>
+        <fx:include fx:id="cardList" source="CardList.fxml"/>
     </left>
     <center>
-        <fx:include source="CardRenderer.fxml"/>
+        <fx:include fx:id="cardRenderer" source="CardRenderer.fxml"/>
     </center>
     <right>
-        <fx:include source="CardForm.fxml"/>
+        <fx:include fx:id="cardForm" source="CardForm.fxml"/>
     </right>
 
 </BorderPane>

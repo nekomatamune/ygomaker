@@ -21,11 +21,10 @@ import java.io.FileNotFoundException
 import java.nio.file.Path
 import kotlin.math.max
 import kotlin.math.roundToInt
-import me.nekomatamune.ygomaker.Image as CardImage
 
 private val logger = KotlinLogging.logger { }
 
-class CardImage {
+class CardImageController {
 
 	private lateinit var packDir: Path
 	private var mouseClickX: Int = 0
@@ -49,8 +48,22 @@ class CardImage {
 		imageView.setOnMouseDragged { onMouseDragged(it) }
 		imageView.setOnScroll { onMouseScrolled(it) }
 		imageView.setOnZoom { onZoom(it) }
+	}
 
-		dispatcher.register(EventName.SELECT_CARD) { onSelectCard(it) }
+	fun setImage(
+		image: me.nekomatamune.ygomaker.Image,
+		packDir: Path
+	): Result<Unit> {
+
+		logger.info { "setImage: $image" }
+
+		fileTextField.text = image.file
+		xSpinner.valueFactory.value = image.x
+		ySpinner.valueFactory.value = image.y
+		sizeSpinner.valueFactory.value = image.size
+
+		this.packDir = packDir!!.normalize().toAbsolutePath()
+		return loadImage()
 	}
 
 	private fun onSpinnerValueChange() {
@@ -91,19 +104,6 @@ class CardImage {
 			(sizeSpinner.value / event.zoomFactor).roundToInt()
 		updateViewPort()
 		dispatchModifyCardImageEvent()
-	}
-
-	private fun onSelectCard(event: Event): Result<Unit> {
-		logger.trace { "Handling SELECT_CARD event" }
-
-		(event.card?.image ?: CardImage()).let {
-			fileTextField.text = it.file
-			xSpinner.valueFactory.value = it.x
-			ySpinner.valueFactory.value = it.y
-			sizeSpinner.valueFactory.value = it.size
-		}
-		packDir = event.packDir!!.normalize().toAbsolutePath()
-		return loadImage()
 	}
 
 	private fun onClickImageFile() {

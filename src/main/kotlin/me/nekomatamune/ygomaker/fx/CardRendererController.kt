@@ -18,7 +18,7 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger { }
 private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
-class CardRenderer {
+class CardRendererController {
 
 	@FXML private lateinit var rootPane: BorderPane
 	@FXML private lateinit var infoText: Text
@@ -29,27 +29,15 @@ class CardRenderer {
 	fun initialize() {
 		logger.debug { "Initializing CardRenderer" }
 
-		dispatcher.register(EventName.SELECT_CARD) {
-			card = it.card!!
-			render()
-		}
 
-		dispatcher.register(EventName.MODIFY_CARD) {
-			card = it.card!!.copy(image = card.image)
-			render()
-		}
-
-		dispatcher.register(EventName.MODIFY_CARD_IMAGE) {
-			card = card.copy(image = it.image!!)
-			Result.success()
-		}
-
-		dispatcher.register(EventName.RENDER) {
-			render()
-		}
 	}
 
-	private fun render(): Result<Unit> {
+	fun setCard(card: Card): Result<Unit> {
+		this.card = card
+		return Result.success()
+	}
+
+	fun render(): Result<Unit> {
 		logger.info { "Render card" }
 
 		val paramText = Command.rendererParamFile?.toFile()?.readText()
