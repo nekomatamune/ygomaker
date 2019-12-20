@@ -9,7 +9,7 @@
         <fx:include source="MenuBar.fxml"/>
     </top>
     <left>
-        <fx:include source="CardList.fxml"/>
+        <fx:include fx:id="cardList" source="CardList.fxml"/>
     </left>
     <center>
         <fx:include source="CardRenderer.fxml"/>

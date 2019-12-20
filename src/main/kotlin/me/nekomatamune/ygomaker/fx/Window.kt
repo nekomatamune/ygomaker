@@ -8,6 +8,7 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger { }
 
 class Window {
+	@FXML lateinit var cardListController: CardListController
 	@FXML lateinit var cardFormController: CardFormController
 
 	@FXML
