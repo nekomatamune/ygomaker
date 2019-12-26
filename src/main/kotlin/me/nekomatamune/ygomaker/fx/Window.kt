@@ -12,17 +12,17 @@ import java.nio.file.Path
 private val logger = KotlinLogging.logger { }
 
 class Window {
+
+	private var packDir: Path = Command.dataDir.resolve(Command.packCode)
+
 	@FXML lateinit var menuBarController: MenuBar
 	@FXML lateinit var cardListController: CardListController
 	@FXML lateinit var cardRendererController: CardRendererController
 	@FXML lateinit var cardFormController: CardFormController
-	private lateinit var packDir: Path
 
 	@FXML
 	fun initialize() {
-		logger.info { "Init Window..." }
-
-		packDir = Command.dataDir.resolve(Command.packCode)
+		logger.info { "Initializing Window..." }
 
 		menuBarController.menuActionHandler = {
 			when (it) {
