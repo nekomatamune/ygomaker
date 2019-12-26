@@ -110,15 +110,12 @@ class CardListController {
 	fun getPack() = pack
 
 
-	fun newCard(): Result<Unit> {
+	fun newCard() {
 		val newCard = Card()
 		pack = pack.copy(cards = pack.cards + newCard)
 
 		cardListView.items.add(newCard)
 		cardListView.selectionModel.selectFirst()
-
-
-		return Result.success()
 	}
 }
 
