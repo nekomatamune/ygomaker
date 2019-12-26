@@ -8,7 +8,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
-import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -61,12 +60,7 @@ class Window {
 			initialDirectory = Command.dataDir.toFile()
 		}.showDialog(null).toPath()
 
-		val cardFile = packDir.resolve("pack.json")
-		if (!cardFile.toFile().isFile) {
-			throw FileNotFoundException(cardFile.toString())
-		}
-
-		val pack = json.parse(Pack.serializer(), cardFile.toFile().readText())
+		val pack = Pack.readFrom(packDir)
 		cardListController.setPack(pack)
 		this.packDir = packDir
 	}

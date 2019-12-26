@@ -2,6 +2,7 @@ package me.nekomatamune.ygomaker
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
+import java.io.FileNotFoundException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 
@@ -32,4 +33,12 @@ fun Pack.writeTo(packDir: Path) {
 	val packJson = json.stringify(Pack.serializer(), this)
 
 	cardFile.toFile().writeText(packJson)
+}
+
+fun Pack.Companion.readFrom(packDir: Path): Pack {
+	val cardFile = packDir.resolve("pack.json")
+	if (!cardFile.toFile().isFile) {
+		throw FileNotFoundException(cardFile.toString())
+	}
+	return json.parse(Pack.serializer(), cardFile.toFile().readText())
 }
