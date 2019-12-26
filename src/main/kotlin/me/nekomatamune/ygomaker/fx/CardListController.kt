@@ -12,9 +12,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
-import java.io.FileNotFoundException
-import java.nio.file.*
-import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 
@@ -35,9 +33,7 @@ class CardListController {
 
 	private var disableOnSelectCard = false
 	private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
-	private val backupper by lazy {
-		Backupper(Command.dataDir.resolve("bak"), 10)
-	}
+
 
 	@FXML
 	private fun initialize() {
@@ -119,37 +115,8 @@ class CardListController {
 		this.pack = pack
 	}
 
-	fun savePack(): Result<Unit> {
-		logger.info { "Saving pack into $packDir" }
-		val cardFile = packDir.resolve("pack.json")
+	fun getPack() = pack
 
-		backupper.backup(cardFile)
-
-		val packJson = json.stringify(Pack.serializer(), pack)
-
-		cardFile.toFile().writeText(packJson)
-
-		return Result.success()
-	}
-
-	fun saveAsPack(newPackDir: Path): Result<Unit> {
-		Files.walkFileTree(packDir, object : SimpleFileVisitor<Path>() {
-			override fun visitFile(
-				file: Path, attrs: BasicFileAttributes
-			): FileVisitResult {
-				Files.copy(file,
-					newPackDir.resolve(file.fileName),
-					StandardCopyOption.REPLACE_EXISTING
-				)
-				return FileVisitResult.CONTINUE
-			}
-		})
-		this.packDir = newPackDir
-
-		savePack()
-
-		return Result.success()
-	}
 
 	fun newCard(): Result<Unit> {
 		val newCard = Card()

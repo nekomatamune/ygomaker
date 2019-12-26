@@ -6,12 +6,14 @@ import javafx.scene.control.ButtonType
 import javafx.stage.DirectoryChooser
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
+import me.nekomatamune.ygomaker.Backupper
 import me.nekomatamune.ygomaker.Command
 import me.nekomatamune.ygomaker.Pack
+import me.nekomatamune.ygomaker.success
 import mu.KotlinLogging
 import java.io.FileNotFoundException
-import java.nio.file.Files
-import java.nio.file.Path
+import java.nio.file.*
+import java.nio.file.attribute.BasicFileAttributes
 
 private val logger = KotlinLogging.logger { }
 private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
@@ -21,6 +23,10 @@ class Window {
 	@FXML lateinit var cardListController: CardListController
 	@FXML lateinit var cardRendererController: CardRendererController
 	@FXML lateinit var cardFormController: CardFormController
+	private val backupper by lazy {
+		Backupper(Command.dataDir.resolve("bak"), 10)
+	}
+	private lateinit var packDir: Path
 
 	@FXML
 	fun initialize() {
@@ -51,7 +57,6 @@ class Window {
 	}
 
 	private fun loadPack(packDir: Path? = null) {
-
 		val packDir = packDir ?: DirectoryChooser().apply {
 			title = "Select a pack directory"
 			initialDirectory = Command.dataDir.toFile()
@@ -66,10 +71,19 @@ class Window {
 
 		val pack = json.parse(Pack.serializer(), cardFile.toFile().readText())
 		cardListController.setPack(pack)
+		this.packDir = packDir
 	}
 
 	private fun savePack() {
-		cardListController.savePack()
+		logger.info { "Saving pack into $packDir" }
+		val cardFile = packDir.resolve("pack.json")
+
+		backupper.backup(cardFile)
+
+		val packJson = json.stringify(Pack.serializer(),
+			cardListController.getPack())
+
+		cardFile.toFile().writeText(packJson)
 	}
 
 	private fun savePackAs() {
@@ -86,7 +100,22 @@ class Window {
 				contentText = "This will overwrite the existing pack ${newPackDir.fileName}. Proceed?"
 			}.showAndWait().filter(ButtonType.OK::equals).ifPresent {
 				logger.info { "Writing pack to ${newPackDir.fileName}" }
-				cardListController.saveAsPack(newPackDir)
+
+
+				Files.walkFileTree(packDir, object : SimpleFileVisitor<Path>() {
+					override fun visitFile(
+						file: Path, attrs: BasicFileAttributes
+					): FileVisitResult {
+						Files.copy(file,
+							newPackDir.resolve(file.fileName),
+							StandardCopyOption.REPLACE_EXISTING
+						)
+						return FileVisitResult.CONTINUE
+					}
+				})
+				this.packDir = newPackDir
+
+				savePack()
 			}
 		}
 	}
