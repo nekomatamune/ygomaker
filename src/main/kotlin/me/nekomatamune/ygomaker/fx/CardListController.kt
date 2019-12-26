@@ -7,7 +7,6 @@ import javafx.scene.control.ComboBox
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
 import javafx.scene.control.TextField
-import javafx.scene.text.Text
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
 
@@ -19,7 +18,6 @@ class CardListController {
 
 	private var pack: Pack = Pack()
 
-	@FXML private lateinit var packDirText: Text
 	@FXML private lateinit var packNameTextField: TextField
 	@FXML private lateinit var packCodeTextField: TextField
 	@FXML private lateinit var languageComboBox: ComboBox<Language>
@@ -97,7 +95,6 @@ class CardListController {
 	fun setPack(pack: Pack) {
 		logger.info { "Pack ${pack.name} (${pack.code})" }
 
-		packDirText.text = ""
 		packNameTextField.text = pack.name
 		packCodeTextField.text = pack.code
 		languageComboBox.selectionModel.select(pack.language)

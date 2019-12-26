@@ -6,13 +6,11 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="me.nekomatamune.ygomaker.fx.CardListController">
     <top>
         <VBox>
-            <Text fx:id="packDirText" text=""/>
             <TextField fx:id="packNameTextField" promptText="Pack Name"/>
             <HBox>
                 <TextField fx:id="packCodeTextField" promptText="Pack Code"/>
