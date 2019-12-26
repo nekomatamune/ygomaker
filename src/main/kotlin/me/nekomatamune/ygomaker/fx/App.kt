@@ -25,11 +25,6 @@ class App : Application() {
 			location = Resources.getResource("fx/Window.fxml")
 		}.load<BorderPane>()
 
-		dispatcher.dispatch(Event(
-			name = EventName.LOAD_PACK,
-			packDir = Command.dataDir.resolve(Command.packCode)
-		))
-
 		logger.info { "Showing stage" }
 		primaryStage.apply {
 			title = "YGOMaker"

@@ -6,11 +6,19 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.MenuItem
 import javafx.stage.DirectoryChooser
-import me.nekomatamune.ygomaker.*
+import me.nekomatamune.ygomaker.Command
+import me.nekomatamune.ygomaker.Event
+import me.nekomatamune.ygomaker.EventName
+import me.nekomatamune.ygomaker.dispatcher
 import mu.KotlinLogging
 import java.nio.file.Files
 
 private val logger = KotlinLogging.logger { }
+
+enum class MenuAction {
+	LOAD_PACK
+}
+typealias MenuActionHandler = (MenuAction) -> Unit
 
 class MenuBar {
 
@@ -21,11 +29,12 @@ class MenuBar {
 	@FXML private lateinit var renderMenuItem: MenuItem
 	@FXML private lateinit var exitMenuItem: MenuItem
 
+	lateinit var menuActionHandler: MenuActionHandler
+
 	@FXML
 	private fun initialize() {
 		logger.debug { "Initializing MenuBar" }
-		loadPackMenuItem.setOnAction { onLoadPackMenuItem() }
-		loadPackMenuItem.setOnAction { onLoadPackMenuItem() }
+		loadPackMenuItem.setOnAction { menuActionHandler(MenuAction.LOAD_PACK) }
 		savePackMenuItem.setOnAction { onSavePackMenuItem() }
 		savePackAsMenuItem.setOnAction { onSavePackAsMenuItem() }
 		newCardMenuItem.setOnAction {
@@ -35,17 +44,6 @@ class MenuBar {
 			dispatcher.dispatch(Event(EventName.RENDER))
 		}
 		exitMenuItem.setOnAction { onExitMenuItem() }
-	}
-
-	private fun onLoadPackMenuItem() {
-		logger.debug { "onLoadPackMenuItem()" }
-
-		val packDir = DirectoryChooser().apply {
-			title = "Select a pack directory"
-			initialDirectory = Command.dataDir.toFile()
-		}.showDialog(null).toPath()
-
-		dispatcher.dispatch(Event(EventName.LOAD_PACK, packDir = packDir))
 	}
 
 	private fun onSavePackMenuItem() {

@@ -1,6 +1,9 @@
 package me.nekomatamune.ygomaker.fx
 
 import javafx.fxml.FXML
+import javafx.stage.DirectoryChooser
+import me.nekomatamune.ygomaker.Command
+import me.nekomatamune.ygomaker.Event
 import me.nekomatamune.ygomaker.EventName
 import me.nekomatamune.ygomaker.dispatcher
 import mu.KotlinLogging
@@ -8,6 +11,7 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger { }
 
 class Window {
+	@FXML lateinit var menuBarController: MenuBar
 	@FXML lateinit var cardListController: CardListController
 	@FXML lateinit var cardRendererController: CardRendererController
 	@FXML lateinit var cardFormController: CardFormController
@@ -16,11 +20,15 @@ class Window {
 	fun initialize() {
 		logger.info { "Init Window..." }
 
+		menuBarController.menuActionHandler = {
+			when (it) {
+				MenuAction.LOAD_PACK -> loadPack()
+			}
+		}
+
+
 		dispatcher.register(EventName.SELECT_CARD) {
 			cardFormController.setCard(it.card!!, it.packDir!!)
-		}
-		dispatcher.register(EventName.LOAD_PACK) {
-			cardListController.loadPack(it.packDir!!)
 		}
 		dispatcher.register(EventName.SAVE_PACK) { cardListController.savePack() }
 		dispatcher.register(EventName.SAVE_PACK_AS) {
@@ -43,5 +51,16 @@ class Window {
 		dispatcher.register(EventName.RENDER) {
 			cardRendererController.render()
 		}
+
+		cardListController.loadPack(Command.dataDir.resolve(Command.packCode))
+	}
+
+	private fun loadPack() {
+		val packDir = DirectoryChooser().apply {
+			title = "Select a pack directory"
+			initialDirectory = Command.dataDir.toFile()
+		}.showDialog(null).toPath()
+
+		cardListController.loadPack(packDir)
 	}
 }
