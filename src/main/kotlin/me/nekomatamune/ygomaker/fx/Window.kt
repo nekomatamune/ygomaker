@@ -30,19 +30,18 @@ class Window {
 				MenuAction.SAVE_PACK -> cardListController.getPack().writeTo(packDir)
 				MenuAction.SAVE_PACK_AS -> savePackAs()
 				MenuAction.NEW_CARD -> cardListController.newCard()
-				MenuAction.RENDER_CARD -> cardRendererController.render()
+				MenuAction.RENDER_CARD -> cardRendererController.render(
+					cardFormController.getCard())
 			}
 		}
 
 		cardListController.cardSelectedHandler = {
 			cardFormController.setCard(it, packDir)
-			cardRendererController.setCard(it)
-			cardRendererController.render()
+			cardRendererController.render(it)
 		}
 
 		cardFormController.cardModifiedHandler = {
 			cardListController.onModifyCard(it)
-			cardRendererController.setCard(it)
 		}
 
 		loadPack(Command.dataDir.resolve(Command.packCode))

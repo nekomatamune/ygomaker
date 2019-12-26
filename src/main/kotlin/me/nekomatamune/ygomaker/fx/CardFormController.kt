@@ -108,6 +108,8 @@ class CardFormController {
 		return Result.success()
 	}
 
+	fun getCard() = this.card
+
 	private fun onCardValueChange() {
 		logger.trace { "onCardValueChange()" }
 		if (onSelectCardInProgress) {

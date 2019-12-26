@@ -23,21 +23,12 @@ class CardRendererController {
 	@FXML private lateinit var rootPane: BorderPane
 	@FXML private lateinit var infoText: Text
 
-	private lateinit var card: Card
-
 	@FXML
 	fun initialize() {
 		logger.debug { "Initializing CardRenderer" }
-
-
 	}
 
-	fun setCard(card: Card): Result<Unit> {
-		this.card = card
-		return Result.success()
-	}
-
-	fun render(): Result<Unit> {
+	fun render(card: Card): Result<Unit> {
 		logger.info { "Render card" }
 
 		val paramText = Command.rendererParamFile?.toFile()?.readText()
