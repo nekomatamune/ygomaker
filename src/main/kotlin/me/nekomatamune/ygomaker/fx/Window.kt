@@ -65,7 +65,7 @@ class Window {
 		}
 
 		val pack = json.parse(Pack.serializer(), cardFile.toFile().readText())
-		cardListController.loadPack(pack)
+		cardListController.setPack(pack)
 	}
 
 	private fun savePack() {

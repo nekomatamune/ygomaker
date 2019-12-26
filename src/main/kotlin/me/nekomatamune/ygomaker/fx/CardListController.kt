@@ -103,7 +103,7 @@ class CardListController {
 		return Result.success()
 	}
 
-	fun loadPack(pack: Pack) {
+	fun setPack(pack: Pack) {
 		logger.info { "Pack ${pack.name} (${pack.code})" }
 
 		packDirText.text = ""
@@ -115,6 +115,8 @@ class CardListController {
 			items = FXCollections.observableArrayList(pack.cards)
 			selectionModel.selectFirst()
 		}
+
+		this.pack = pack
 	}
 
 	fun savePack(): Result<Unit> {
