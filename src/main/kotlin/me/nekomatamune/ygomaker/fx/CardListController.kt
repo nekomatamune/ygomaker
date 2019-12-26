@@ -7,25 +7,17 @@ import javafx.scene.control.ComboBox
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
 import javafx.scene.control.TextField
-import javafx.scene.text.Text
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
-import java.io.FileNotFoundException
-import java.nio.file.*
-import java.nio.file.attribute.BasicFileAttributes
 
 private val logger = KotlinLogging.logger { }
 
-typealias CardSelectedHandler = (Card, Path) -> Unit
+typealias CardSelectedHandler = (Card) -> Unit
 
 class CardListController {
 
 	private var pack: Pack = Pack()
-	lateinit var packDir: Path
 
-	@FXML private lateinit var packDirText: Text
 	@FXML private lateinit var packNameTextField: TextField
 	@FXML private lateinit var packCodeTextField: TextField
 	@FXML private lateinit var languageComboBox: ComboBox<Language>
@@ -34,10 +26,7 @@ class CardListController {
 	lateinit var cardSelectedHandler: CardSelectedHandler
 
 	private var disableOnSelectCard = false
-	private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
-	private val backupper by lazy {
-		Backupper(Command.dataDir.resolve("bak"), 10)
-	}
+
 
 	@FXML
 	private fun initialize() {
@@ -72,7 +61,7 @@ class CardListController {
 		}
 
 		cardListView.selectionModel.selectedItem?.let {
-			cardSelectedHandler(it, packDir)
+			cardSelectedHandler(it)
 		}
 	}
 
@@ -103,10 +92,9 @@ class CardListController {
 		return Result.success()
 	}
 
-	fun loadPack(pack: Pack) {
+	fun setPack(pack: Pack) {
 		logger.info { "Pack ${pack.name} (${pack.code})" }
 
-		packDirText.text = ""
 		packNameTextField.text = pack.name
 		packCodeTextField.text = pack.code
 		languageComboBox.selectionModel.select(pack.language)
@@ -115,76 +103,19 @@ class CardListController {
 			items = FXCollections.observableArrayList(pack.cards)
 			selectionModel.selectFirst()
 		}
+
+		this.pack = pack
 	}
 
-//	fun loadPack(packDir: Path): Result<Unit> {
-//		logger.debug { "Loading pack from: $packDir" }
-//
-//		val cardFile = packDir.resolve("pack.json")
-//		if (!cardFile.toFile().isFile) {
-//			return Result.failure(FileNotFoundException(cardFile.toString()))
-//		}
-//
-//		pack = json.parse(Pack.serializer(), cardFile.toFile().readText())
-//
-//		logger.info { "Pack ${pack.name} (${pack.code})" }
-//
-//		packDirText.text = Paths.get(".").toAbsolutePath().relativize(
-//			cardFile.toAbsolutePath()).normalize().toString()
-//		packNameTextField.text = pack.name
-//		packCodeTextField.text = pack.code
-//		languageComboBox.selectionModel.select(pack.language)
-//		this.packDir = packDir
-//
-//		cardListView.apply {
-//			items = FXCollections.observableArrayList(pack.cards)
-//			selectionModel.selectFirst()
-//		}
-//
-//		return Result.success()
-//	}
+	fun getPack() = pack
 
-	fun savePack(): Result<Unit> {
-		logger.info { "Saving pack into $packDir" }
-		val cardFile = packDir.resolve("pack.json")
 
-		backupper.backup(cardFile)
-
-		val packJson = json.stringify(Pack.serializer(), pack)
-
-		cardFile.toFile().writeText(packJson)
-
-		return Result.success()
-	}
-
-	fun saveAsPack(newPackDir: Path): Result<Unit> {
-		Files.walkFileTree(packDir, object : SimpleFileVisitor<Path>() {
-			override fun visitFile(
-				file: Path, attrs: BasicFileAttributes
-			): FileVisitResult {
-				Files.copy(file,
-					newPackDir.resolve(file.fileName),
-					StandardCopyOption.REPLACE_EXISTING
-				)
-				return FileVisitResult.CONTINUE
-			}
-		})
-		this.packDir = newPackDir
-
-		savePack()
-
-		return Result.success()
-	}
-
-	fun newCard(): Result<Unit> {
+	fun newCard() {
 		val newCard = Card()
 		pack = pack.copy(cards = pack.cards + newCard)
 
 		cardListView.items.add(newCard)
 		cardListView.selectionModel.selectFirst()
-
-
-		return Result.success()
 	}
 }
 
