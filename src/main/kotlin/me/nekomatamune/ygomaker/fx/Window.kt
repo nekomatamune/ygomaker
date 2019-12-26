@@ -6,10 +6,7 @@ import javafx.scene.control.ButtonType
 import javafx.stage.DirectoryChooser
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
-import me.nekomatamune.ygomaker.Backupper
-import me.nekomatamune.ygomaker.Command
-import me.nekomatamune.ygomaker.Pack
-import me.nekomatamune.ygomaker.deepCopyTo
+import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
 import java.io.FileNotFoundException
 import java.nio.file.Files
@@ -37,7 +34,7 @@ class Window {
 		menuBarController.menuActionHandler = {
 			when (it) {
 				MenuAction.LOAD_PACK -> loadPack()
-				MenuAction.SAVE_PACK -> savePack()
+				MenuAction.SAVE_PACK -> cardListController.getPack().writeTo(packDir)
 				MenuAction.SAVE_PACK_AS -> savePackAs()
 				MenuAction.NEW_CARD -> cardListController.newCard()
 				MenuAction.RENDER_CARD -> cardRendererController.render()
@@ -74,18 +71,6 @@ class Window {
 		this.packDir = packDir
 	}
 
-	private fun savePack() {
-		logger.info { "Saving pack into $packDir" }
-		val cardFile = packDir.resolve("pack.json")
-
-		backupper.backup(cardFile)
-
-		val packJson = json.stringify(Pack.serializer(),
-			cardListController.getPack())
-
-		cardFile.toFile().writeText(packJson)
-	}
-
 	private fun savePackAs() {
 		logger.debug { "onSavePackAsMenuItem()" }
 
@@ -104,7 +89,7 @@ class Window {
 				packDir.deepCopyTo(newPackDir)
 				this.packDir = newPackDir
 
-				savePack()
+				cardListController.getPack().writeTo(packDir)
 			}
 		}
 	}

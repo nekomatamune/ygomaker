@@ -8,7 +8,7 @@
             "name": "青眼の白龍",
             "type": "NORMAL_SUMMON_MONSTER",
             "monster": {
-                "attribute": "LIGHT",
+                "attribute": "EARTH",
                 "level": 6,
                 "type": "ドラゴン族",
                 "ability": "",

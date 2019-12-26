@@ -1,7 +1,14 @@
 package me.nekomatamune.ygomaker
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
+
+private val backupper by lazy {
+	Backupper(Command.dataDir.resolve("bak"), 10)
+}
+private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
 fun Path.deepCopyTo(toPath: Path) {
 	Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
@@ -15,4 +22,14 @@ fun Path.deepCopyTo(toPath: Path) {
 			return FileVisitResult.CONTINUE
 		}
 	})
+}
+
+fun Pack.writeTo(packDir: Path) {
+	val cardFile = packDir.resolve("pack.json")
+
+	backupper.backup(cardFile)
+
+	val packJson = json.stringify(Pack.serializer(), this)
+
+	cardFile.toFile().writeText(packJson)
 }
