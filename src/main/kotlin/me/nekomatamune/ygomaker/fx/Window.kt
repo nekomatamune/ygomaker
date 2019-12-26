@@ -28,6 +28,7 @@ class Window {
 				MenuAction.SAVE_PACK -> savePack()
 				MenuAction.SAVE_PACK_AS -> savePackAs()
 				MenuAction.NEW_CARD -> cardListController.newCard()
+				MenuAction.RENDER_CARD -> cardRendererController.render()
 			}
 		}
 
@@ -40,10 +41,6 @@ class Window {
 		cardFormController.cardModifiedHandler = {
 			cardListController.onModifyCard(it)
 			cardRendererController.setCard(it)
-		}
-		
-		dispatcher.register(EventName.RENDER) {
-			cardRendererController.render()
 		}
 
 		cardListController.loadPack(Command.dataDir.resolve(Command.packCode))

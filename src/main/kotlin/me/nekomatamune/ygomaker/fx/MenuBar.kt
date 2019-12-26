@@ -5,18 +5,12 @@ import javafx.fxml.FXML
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.MenuItem
-import javafx.stage.DirectoryChooser
-import me.nekomatamune.ygomaker.Command
-import me.nekomatamune.ygomaker.Event
-import me.nekomatamune.ygomaker.EventName
-import me.nekomatamune.ygomaker.dispatcher
 import mu.KotlinLogging
-import java.nio.file.Files
 
 private val logger = KotlinLogging.logger { }
 
 enum class MenuAction {
-	LOAD_PACK, SAVE_PACK, SAVE_PACK_AS, NEW_CARD
+	LOAD_PACK, SAVE_PACK, SAVE_PACK_AS, NEW_CARD, RENDER_CARD
 }
 typealias MenuActionHandler = (MenuAction) -> Unit
 
@@ -36,11 +30,11 @@ class MenuBar {
 		logger.debug { "Initializing MenuBar" }
 		loadPackMenuItem.setOnAction { menuActionHandler(MenuAction.LOAD_PACK) }
 		savePackMenuItem.setOnAction { menuActionHandler(MenuAction.SAVE_PACK) }
-		savePackAsMenuItem.setOnAction { menuActionHandler(MenuAction.SAVE_PACK_AS) }
-		newCardMenuItem.setOnAction { menuActionHandler(MenuAction.NEW_CARD) }
-		renderMenuItem.setOnAction {
-			dispatcher.dispatch(Event(EventName.RENDER))
+		savePackAsMenuItem.setOnAction {
+			menuActionHandler(MenuAction.SAVE_PACK_AS)
 		}
+		newCardMenuItem.setOnAction { menuActionHandler(MenuAction.NEW_CARD) }
+		renderMenuItem.setOnAction { menuActionHandler(MenuAction.RENDER_CARD) }
 		exitMenuItem.setOnAction { onExitMenuItem() }
 	}
 

@@ -23,7 +23,5 @@ data class Event(
  */
 enum class EventName {
 	UNKNOWN,
-	/** Does not contain payload */
-	RENDER,
 }
 
