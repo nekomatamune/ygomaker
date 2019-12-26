@@ -48,6 +48,7 @@ class Window {
 			cardListController.onModifyCard(it)
 		}
 
+		logger.info { "Setup completed!" }
 		loadPack(packDir)
 	}
 
