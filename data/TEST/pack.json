@@ -10,7 +10,7 @@
             "monster": {
                 "attribute": "LIGHT",
                 "level": 6,
-                "type": "戦士族",
+                "type": "ドラゴン族",
                 "ability": "",
                 "effect": false,
                 "atk": "3000",

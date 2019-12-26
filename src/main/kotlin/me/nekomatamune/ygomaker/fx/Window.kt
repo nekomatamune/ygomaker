@@ -9,10 +9,11 @@ import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.Backupper
 import me.nekomatamune.ygomaker.Command
 import me.nekomatamune.ygomaker.Pack
+import me.nekomatamune.ygomaker.deepCopyTo
 import mu.KotlinLogging
 import java.io.FileNotFoundException
-import java.nio.file.*
-import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file.Files
+import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
@@ -100,18 +101,7 @@ class Window {
 			}.showAndWait().filter(ButtonType.OK::equals).ifPresent {
 				logger.info { "Writing pack to ${newPackDir.fileName}" }
 
-
-				Files.walkFileTree(packDir, object : SimpleFileVisitor<Path>() {
-					override fun visitFile(
-						file: Path, attrs: BasicFileAttributes
-					): FileVisitResult {
-						Files.copy(file,
-							newPackDir.resolve(file.fileName),
-							StandardCopyOption.REPLACE_EXISTING
-						)
-						return FileVisitResult.CONTINUE
-					}
-				})
+				packDir.deepCopyTo(newPackDir)
 				this.packDir = newPackDir
 
 				savePack()
