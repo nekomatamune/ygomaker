@@ -9,7 +9,6 @@ import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.Backupper
 import me.nekomatamune.ygomaker.Command
 import me.nekomatamune.ygomaker.Pack
-import me.nekomatamune.ygomaker.success
 import mu.KotlinLogging
 import java.io.FileNotFoundException
 import java.nio.file.*
@@ -32,6 +31,8 @@ class Window {
 	fun initialize() {
 		logger.info { "Init Window..." }
 
+		packDir = Command.dataDir.resolve(Command.packCode)
+
 		menuBarController.menuActionHandler = {
 			when (it) {
 				MenuAction.LOAD_PACK -> loadPack()
@@ -42,9 +43,9 @@ class Window {
 			}
 		}
 
-		cardListController.cardSelectedHandler = { card, packDir ->
-			cardFormController.setCard(card, packDir)
-			cardRendererController.setCard(card)
+		cardListController.cardSelectedHandler = {
+			cardFormController.setCard(it, packDir)
+			cardRendererController.setCard(it)
 			cardRendererController.render()
 		}
 
@@ -61,8 +62,6 @@ class Window {
 			title = "Select a pack directory"
 			initialDirectory = Command.dataDir.toFile()
 		}.showDialog(null).toPath()
-
-		cardListController.packDir = packDir
 
 		val cardFile = packDir.resolve("pack.json")
 		if (!cardFile.toFile().isFile) {

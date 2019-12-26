@@ -8,20 +8,16 @@ import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
 import javafx.scene.control.TextField
 import javafx.scene.text.Text
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
-import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 
-typealias CardSelectedHandler = (Card, Path) -> Unit
+typealias CardSelectedHandler = (Card) -> Unit
 
 class CardListController {
 
 	private var pack: Pack = Pack()
-	lateinit var packDir: Path
 
 	@FXML private lateinit var packDirText: Text
 	@FXML private lateinit var packNameTextField: TextField
@@ -32,7 +28,6 @@ class CardListController {
 	lateinit var cardSelectedHandler: CardSelectedHandler
 
 	private var disableOnSelectCard = false
-	private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
 
 	@FXML
@@ -68,7 +63,7 @@ class CardListController {
 		}
 
 		cardListView.selectionModel.selectedItem?.let {
-			cardSelectedHandler(it, packDir)
+			cardSelectedHandler(it)
 		}
 	}
 
