@@ -5,7 +5,6 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.stage.DirectoryChooser
 import me.nekomatamune.ygomaker.Command
-import me.nekomatamune.ygomaker.Event
 import me.nekomatamune.ygomaker.EventName
 import me.nekomatamune.ygomaker.dispatcher
 import mu.KotlinLogging
@@ -28,9 +27,9 @@ class Window {
 				MenuAction.LOAD_PACK -> loadPack()
 				MenuAction.SAVE_PACK -> savePack()
 				MenuAction.SAVE_PACK_AS -> savePackAs()
+				MenuAction.NEW_CARD -> cardListController.newCard()
 			}
 		}
-
 
 		dispatcher.register(EventName.SELECT_CARD) {
 			cardFormController.setCard(it.card!!, it.packDir!!)
@@ -42,8 +41,6 @@ class Window {
 			cardListController.onModifyCard(it)
 			cardRendererController.setCard(it)
 		}
-
-		dispatcher.register(EventName.NEW_CARD) { cardListController.newCard() }
 
 		dispatcher.register(EventName.SELECT_CARD) {
 			cardRendererController.setCard(it.card!!)

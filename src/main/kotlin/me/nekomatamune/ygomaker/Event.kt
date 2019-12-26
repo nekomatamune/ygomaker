@@ -27,7 +27,5 @@ enum class EventName {
 	SELECT_CARD,
 	/** Does not contain payload */
 	RENDER,
-	/** Does not contain payload */
-	NEW_CARD,
 }
 
