@@ -16,7 +16,7 @@ import java.nio.file.Files
 private val logger = KotlinLogging.logger { }
 
 enum class MenuAction {
-	LOAD_PACK, SAVE_PACK
+	LOAD_PACK, SAVE_PACK, SAVE_PACK_AS
 }
 typealias MenuActionHandler = (MenuAction) -> Unit
 
@@ -36,7 +36,7 @@ class MenuBar {
 		logger.debug { "Initializing MenuBar" }
 		loadPackMenuItem.setOnAction { menuActionHandler(MenuAction.LOAD_PACK) }
 		savePackMenuItem.setOnAction { menuActionHandler(MenuAction.SAVE_PACK) }
-		savePackAsMenuItem.setOnAction { onSavePackAsMenuItem() }
+		savePackAsMenuItem.setOnAction { menuActionHandler(MenuAction.SAVE_PACK_AS) }
 		newCardMenuItem.setOnAction {
 			dispatcher.dispatch(Event(EventName.NEW_CARD))
 		}
@@ -44,25 +44,6 @@ class MenuBar {
 			dispatcher.dispatch(Event(EventName.RENDER))
 		}
 		exitMenuItem.setOnAction { onExitMenuItem() }
-	}
-
-	private fun onSavePackAsMenuItem() {
-		logger.debug { "onSavePackAsMenuItem()" }
-
-		val newPackDir = DirectoryChooser().apply {
-			title = "Enter or select a new pack directory"
-			initialDirectory = Command.dataDir.toFile()
-		}.showDialog(null).toPath()
-
-		if (Files.exists(newPackDir)) {
-			Alert(Alert.AlertType.CONFIRMATION).apply {
-				headerText = "Overwriting existing pack..."
-				contentText = "This will overwrite the existing pack ${newPackDir.fileName}. Proceed?"
-			}.showAndWait().filter(ButtonType.OK::equals).ifPresent {
-				logger.info { "Writing pack to ${newPackDir.fileName}" }
-				dispatcher.dispatch(Event(EventName.SAVE_PACK_AS, packDir = newPackDir))
-			}
-		}
 	}
 
 	private fun onExitMenuItem() {

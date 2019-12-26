@@ -1,12 +1,15 @@
 package me.nekomatamune.ygomaker.fx
 
 import javafx.fxml.FXML
+import javafx.scene.control.Alert
+import javafx.scene.control.ButtonType
 import javafx.stage.DirectoryChooser
 import me.nekomatamune.ygomaker.Command
 import me.nekomatamune.ygomaker.Event
 import me.nekomatamune.ygomaker.EventName
 import me.nekomatamune.ygomaker.dispatcher
 import mu.KotlinLogging
+import java.nio.file.Files
 
 private val logger = KotlinLogging.logger { }
 
@@ -24,6 +27,7 @@ class Window {
 			when (it) {
 				MenuAction.LOAD_PACK -> loadPack()
 				MenuAction.SAVE_PACK -> savePack()
+				MenuAction.SAVE_PACK_AS -> savePackAs()
 			}
 		}
 
@@ -31,9 +35,7 @@ class Window {
 		dispatcher.register(EventName.SELECT_CARD) {
 			cardFormController.setCard(it.card!!, it.packDir!!)
 		}
-		dispatcher.register(EventName.SAVE_PACK_AS) {
-			cardListController.saveAsPack(it.packDir!!)
-		}
+
 
 
 		cardFormController.cardModifiedHandler = {
@@ -66,5 +68,24 @@ class Window {
 
 	private fun savePack() {
 		cardListController.savePack()
+	}
+
+	private fun savePackAs() {
+		logger.debug { "onSavePackAsMenuItem()" }
+
+		val newPackDir = DirectoryChooser().apply {
+			title = "Enter or select a new pack directory"
+			initialDirectory = Command.dataDir.toFile()
+		}.showDialog(null).toPath()
+
+		if (Files.exists(newPackDir)) {
+			Alert(Alert.AlertType.CONFIRMATION).apply {
+				headerText = "Overwriting existing pack..."
+				contentText = "This will overwrite the existing pack ${newPackDir.fileName}. Proceed?"
+			}.showAndWait().filter(ButtonType.OK::equals).ifPresent {
+				logger.info { "Writing pack to ${newPackDir.fileName}" }
+				cardListController.saveAsPack(newPackDir)
+			}
+		}
 	}
 }
