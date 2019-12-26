@@ -31,22 +31,17 @@ class Window {
 			}
 		}
 
-		dispatcher.register(EventName.SELECT_CARD) {
-			cardFormController.setCard(it.card!!, it.packDir!!)
+		cardListController.cardSelectedHandler = { card, packDir ->
+			cardFormController.setCard(card, packDir)
+			cardRendererController.setCard(card)
+			cardRendererController.render()
 		}
-
-
 
 		cardFormController.cardModifiedHandler = {
 			cardListController.onModifyCard(it)
 			cardRendererController.setCard(it)
 		}
-
-		dispatcher.register(EventName.SELECT_CARD) {
-			cardRendererController.setCard(it.card!!)
-			cardRendererController.render()
-		}
-
+		
 		dispatcher.register(EventName.RENDER) {
 			cardRendererController.render()
 		}

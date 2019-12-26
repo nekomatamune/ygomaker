@@ -23,8 +23,6 @@ data class Event(
  */
 enum class EventName {
 	UNKNOWN,
-	/** Should also set [Event.card] */
-	SELECT_CARD,
 	/** Does not contain payload */
 	RENDER,
 }

@@ -18,6 +18,8 @@ import java.nio.file.attribute.BasicFileAttributes
 
 private val logger = KotlinLogging.logger { }
 
+typealias CardSelectedHandler = (Card, Path) -> Unit
+
 class CardListController {
 
 	private var pack: Pack = Pack()
@@ -28,6 +30,8 @@ class CardListController {
 	@FXML private lateinit var packCodeTextField: TextField
 	@FXML private lateinit var languageComboBox: ComboBox<Language>
 	@FXML private lateinit var cardListView: ListView<Card>
+
+	lateinit var cardSelectedHandler: CardSelectedHandler
 
 	private var disableOnSelectCard = false
 	private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
@@ -68,11 +72,7 @@ class CardListController {
 		}
 
 		cardListView.selectionModel.selectedItem?.let {
-			dispatcher.dispatch(Event(
-				EventName.SELECT_CARD,
-				card = it,
-				packDir = packDir
-			))
+			cardSelectedHandler(it, packDir)
 		}
 	}
 
