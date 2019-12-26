@@ -92,7 +92,7 @@ class CardListController {
 		return Result.success()
 	}
 
-	fun setPack(pack: Pack) {
+	fun setPack(pack: Pack, selectLast: Boolean = false) {
 		logger.info { "Pack ${pack.name} (${pack.code})" }
 
 		packNameTextField.text = pack.name
@@ -101,22 +101,17 @@ class CardListController {
 
 		cardListView.apply {
 			items = FXCollections.observableArrayList(pack.cards)
-			selectionModel.selectFirst()
+
+			if (selectLast)
+				selectionModel.selectLast()
+			else
+				selectionModel.selectFirst()
 		}
 
 		this.pack = pack
 	}
 
 	fun getPack() = pack
-
-
-	fun newCard() {
-		val newCard = Card()
-		pack = pack.copy(cards = pack.cards + newCard)
-
-		cardListView.items.add(newCard)
-		cardListView.selectionModel.selectFirst()
-	}
 }
 
 /**

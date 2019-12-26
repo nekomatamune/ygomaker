@@ -33,7 +33,7 @@ class Window {
 				MenuAction.LOAD_PACK -> loadPack()
 				MenuAction.SAVE_PACK -> cardListController.getPack().writeTo(packDir)
 				MenuAction.SAVE_PACK_AS -> savePackAs()
-				MenuAction.NEW_CARD -> cardListController.newCard()
+				MenuAction.NEW_CARD -> newCard()
 				MenuAction.RENDER_CARD -> cardRendererController.render(
 					cardFormController.getCard())
 			}
@@ -85,4 +85,12 @@ class Window {
 			}
 		}
 	}
+
+	private fun newCard() {
+		cardListController.getPack().let {
+			val newPack = it.copy(cards = it.cards + Card())
+			cardListController.setPack(newPack, selectLast = true)
+		}
+	}
+
 }
