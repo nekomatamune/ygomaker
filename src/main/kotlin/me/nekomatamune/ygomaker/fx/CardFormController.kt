@@ -75,10 +75,9 @@ class CardFormController {
 			it.addSimpleListener { onCardValueChange() }
 		}
 
-		dispatcher.register(EventName.MODIFY_CARD_IMAGE) {
-			dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = card.copy(
-				image = it.image
-			)))
+		cardImageController.imageModifiedHandler = {
+			card = card.copy(image = it)
+			dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = card))
 		}
 	}
 

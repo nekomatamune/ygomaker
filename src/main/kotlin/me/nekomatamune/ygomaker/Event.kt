@@ -33,8 +33,6 @@ enum class EventName {
 	SELECT_CARD,
 	/** Should also set [Event.card] */
 	MODIFY_CARD,
-	/** Should also set [Event.image] */
-	MODIFY_CARD_IMAGE,
 	/** Does not contain payload */
 	RENDER,
 	/** Does not contain payload */
