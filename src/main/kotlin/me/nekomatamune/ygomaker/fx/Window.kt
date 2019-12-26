@@ -5,8 +5,6 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.stage.DirectoryChooser
 import me.nekomatamune.ygomaker.Command
-import me.nekomatamune.ygomaker.EventName
-import me.nekomatamune.ygomaker.dispatcher
 import mu.KotlinLogging
 import java.nio.file.Files
 
