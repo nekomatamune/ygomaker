@@ -9,7 +9,7 @@
             "type": "NORMAL_SUMMON_MONSTER",
             "monster": {
                 "attribute": "LIGHT",
-                "level": 2,
+                "level": 6,
                 "type": "ドラゴン族",
                 "ability": "",
                 "effect": false,

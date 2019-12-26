@@ -23,6 +23,7 @@ class Window {
 		menuBarController.menuActionHandler = {
 			when (it) {
 				MenuAction.LOAD_PACK -> loadPack()
+				MenuAction.SAVE_PACK -> savePack()
 			}
 		}
 
@@ -30,7 +31,6 @@ class Window {
 		dispatcher.register(EventName.SELECT_CARD) {
 			cardFormController.setCard(it.card!!, it.packDir!!)
 		}
-		dispatcher.register(EventName.SAVE_PACK) { cardListController.savePack() }
 		dispatcher.register(EventName.SAVE_PACK_AS) {
 			cardListController.saveAsPack(it.packDir!!)
 		}
@@ -62,5 +62,9 @@ class Window {
 		}.showDialog(null).toPath()
 
 		cardListController.loadPack(packDir)
+	}
+
+	private fun savePack() {
+		cardListController.savePack()
 	}
 }

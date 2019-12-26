@@ -24,8 +24,6 @@ data class Event(
 enum class EventName {
 	UNKNOWN,
 	/** Should also set [Event.packDir] */
-	SAVE_PACK,
-	/** Should also set [Event.packDir] */
 	SAVE_PACK_AS,
 	/** Should also set [Event.card] */
 	SELECT_CARD,

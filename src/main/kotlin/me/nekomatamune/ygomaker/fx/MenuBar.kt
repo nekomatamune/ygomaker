@@ -16,7 +16,7 @@ import java.nio.file.Files
 private val logger = KotlinLogging.logger { }
 
 enum class MenuAction {
-	LOAD_PACK
+	LOAD_PACK, SAVE_PACK
 }
 typealias MenuActionHandler = (MenuAction) -> Unit
 
@@ -35,7 +35,7 @@ class MenuBar {
 	private fun initialize() {
 		logger.debug { "Initializing MenuBar" }
 		loadPackMenuItem.setOnAction { menuActionHandler(MenuAction.LOAD_PACK) }
-		savePackMenuItem.setOnAction { onSavePackMenuItem() }
+		savePackMenuItem.setOnAction { menuActionHandler(MenuAction.SAVE_PACK) }
 		savePackAsMenuItem.setOnAction { onSavePackAsMenuItem() }
 		newCardMenuItem.setOnAction {
 			dispatcher.dispatch(Event(EventName.NEW_CARD))
@@ -44,11 +44,6 @@ class MenuBar {
 			dispatcher.dispatch(Event(EventName.RENDER))
 		}
 		exitMenuItem.setOnAction { onExitMenuItem() }
-	}
-
-	private fun onSavePackMenuItem() {
-		logger.debug { "onSavePackMenuItem()" }
-		dispatcher.dispatch(Event(EventName.SAVE_PACK))
 	}
 
 	private fun onSavePackAsMenuItem() {
