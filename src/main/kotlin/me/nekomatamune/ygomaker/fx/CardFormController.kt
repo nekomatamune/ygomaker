@@ -85,7 +85,7 @@ class CardFormController {
 		}
 	}
 
-	fun setCard(card: Card, packDir: Path): Result<Unit> {
+	fun setCard(card: Card, packDir: Path) {
 		this.card = card.copy()
 
 		onSelectCardInProgress = true
@@ -105,7 +105,6 @@ class CardFormController {
 		cardImageController.setImage(card.image ?: Image(), packDir)
 
 		onSelectCardInProgress = false
-		return Result.success()
 	}
 
 	fun getCard() = this.card

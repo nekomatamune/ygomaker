@@ -13,12 +13,16 @@ private val logger = KotlinLogging.logger { }
 
 class Window {
 
-	private var packDir: Path = Command.dataDir.resolve(Command.packCode)
+	// region states
+	private var packDir = Command.dataDir.resolve(Command.packCode)
+	// endregion
 
+	// region subview controllers
 	@FXML lateinit var menuBarController: MenuBar
 	@FXML lateinit var cardListController: CardListController
 	@FXML lateinit var cardRendererController: CardRendererController
 	@FXML lateinit var cardFormController: CardFormController
+	// endregion
 
 	@FXML
 	fun initialize() {
