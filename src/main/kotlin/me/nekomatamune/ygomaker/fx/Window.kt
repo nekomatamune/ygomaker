@@ -4,24 +4,18 @@ import javafx.fxml.FXML
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.stage.DirectoryChooser
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
 import java.nio.file.Files
 import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
-private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
 class Window {
 	@FXML lateinit var menuBarController: MenuBar
 	@FXML lateinit var cardListController: CardListController
 	@FXML lateinit var cardRendererController: CardRendererController
 	@FXML lateinit var cardFormController: CardFormController
-	private val backupper by lazy {
-		Backupper(Command.dataDir.resolve("bak"), 10)
-	}
 	private lateinit var packDir: Path
 
 	@FXML
