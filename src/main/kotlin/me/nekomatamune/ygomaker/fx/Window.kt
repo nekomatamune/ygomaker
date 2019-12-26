@@ -44,7 +44,7 @@ class Window {
 			cardListController.onModifyCard(it)
 		}
 
-		loadPack(Command.dataDir.resolve(Command.packCode))
+		loadPack(packDir)
 	}
 
 	private fun loadPack(packDir: Path? = null) {
