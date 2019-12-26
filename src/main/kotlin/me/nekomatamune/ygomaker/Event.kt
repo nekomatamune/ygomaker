@@ -31,8 +31,6 @@ enum class EventName {
 	SAVE_PACK_AS,
 	/** Should also set [Event.card] */
 	SELECT_CARD,
-	/** Should also set [Event.card] */
-	MODIFY_CARD,
 	/** Does not contain payload */
 	RENDER,
 	/** Does not contain payload */

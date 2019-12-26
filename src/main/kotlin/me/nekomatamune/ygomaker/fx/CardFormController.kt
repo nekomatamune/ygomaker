@@ -12,6 +12,8 @@ import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 
+typealias CardModifiedHandler = (Card) -> Unit
+
 class CardFormController {
 
 	@FXML lateinit var cardNameTextField: TextField
@@ -26,6 +28,8 @@ class CardFormController {
 	@FXML lateinit var defTextField: TextField
 	@FXML lateinit var codeTextField: TextField
 	@FXML lateinit var cardImageController: CardImageController
+
+	lateinit var cardModifiedHandler: CardModifiedHandler
 
 	var onSelectCardInProgress: Boolean = false
 
@@ -77,7 +81,7 @@ class CardFormController {
 
 		cardImageController.imageModifiedHandler = {
 			card = card.copy(image = it)
-			dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = card))
+			cardModifiedHandler(card)
 		}
 	}
 
@@ -110,7 +114,7 @@ class CardFormController {
 			return
 		}
 
-		val updatedCard = this.card.copy(
+		card = card.copy(
 			name = cardNameTextField.text,
 			type = cardTypeComboBox.value,
 			code = codeTextField.text,
@@ -126,6 +130,6 @@ class CardFormController {
 			)
 		)
 
-		dispatcher.dispatch(Event(EventName.MODIFY_CARD, card = updatedCard))
+		cardModifiedHandler(card)
 	}
 }
