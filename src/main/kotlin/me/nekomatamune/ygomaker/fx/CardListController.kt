@@ -23,7 +23,7 @@ typealias CardSelectedHandler = (Card, Path) -> Unit
 class CardListController {
 
 	private var pack: Pack = Pack()
-	private lateinit var packDir: Path
+	lateinit var packDir: Path
 
 	@FXML private lateinit var packDirText: Text
 	@FXML private lateinit var packNameTextField: TextField
@@ -103,32 +103,46 @@ class CardListController {
 		return Result.success()
 	}
 
-	fun loadPack(packDir: Path): Result<Unit> {
-		logger.debug { "Loading pack from: $packDir" }
-
-		val cardFile = packDir.resolve("pack.json")
-		if (!cardFile.toFile().isFile) {
-			return Result.failure(FileNotFoundException(cardFile.toString()))
-		}
-
-		pack = json.parse(Pack.serializer(), cardFile.toFile().readText())
-
+	fun loadPack(pack: Pack) {
 		logger.info { "Pack ${pack.name} (${pack.code})" }
 
-		packDirText.text = Paths.get(".").toAbsolutePath().relativize(
-			cardFile.toAbsolutePath()).normalize().toString()
+		packDirText.text = ""
 		packNameTextField.text = pack.name
 		packCodeTextField.text = pack.code
 		languageComboBox.selectionModel.select(pack.language)
-		this.packDir = packDir
 
 		cardListView.apply {
 			items = FXCollections.observableArrayList(pack.cards)
 			selectionModel.selectFirst()
 		}
-
-		return Result.success()
 	}
+
+//	fun loadPack(packDir: Path): Result<Unit> {
+//		logger.debug { "Loading pack from: $packDir" }
+//
+//		val cardFile = packDir.resolve("pack.json")
+//		if (!cardFile.toFile().isFile) {
+//			return Result.failure(FileNotFoundException(cardFile.toString()))
+//		}
+//
+//		pack = json.parse(Pack.serializer(), cardFile.toFile().readText())
+//
+//		logger.info { "Pack ${pack.name} (${pack.code})" }
+//
+//		packDirText.text = Paths.get(".").toAbsolutePath().relativize(
+//			cardFile.toAbsolutePath()).normalize().toString()
+//		packNameTextField.text = pack.name
+//		packCodeTextField.text = pack.code
+//		languageComboBox.selectionModel.select(pack.language)
+//		this.packDir = packDir
+//
+//		cardListView.apply {
+//			items = FXCollections.observableArrayList(pack.cards)
+//			selectionModel.selectFirst()
+//		}
+//
+//		return Result.success()
+//	}
 
 	fun savePack(): Result<Unit> {
 		logger.info { "Saving pack into $packDir" }
@@ -157,9 +171,9 @@ class CardListController {
 		})
 		this.packDir = newPackDir
 
-		return savePack().continueOnSuccess {
-			loadPack(packDir)
-		}
+		savePack()
+
+		return Result.success()
 	}
 
 	fun newCard(): Result<Unit> {

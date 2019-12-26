@@ -4,11 +4,17 @@ import javafx.fxml.FXML
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.stage.DirectoryChooser
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.Command
+import me.nekomatamune.ygomaker.Pack
 import mu.KotlinLogging
+import java.io.FileNotFoundException
 import java.nio.file.Files
+import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
+private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
 class Window {
 	@FXML lateinit var menuBarController: MenuBar
@@ -41,16 +47,25 @@ class Window {
 			cardRendererController.setCard(it)
 		}
 
-		cardListController.loadPack(Command.dataDir.resolve(Command.packCode))
+		loadPack(Command.dataDir.resolve(Command.packCode))
 	}
 
-	private fun loadPack() {
-		val packDir = DirectoryChooser().apply {
+	private fun loadPack(packDir: Path? = null) {
+
+		val packDir = packDir ?: DirectoryChooser().apply {
 			title = "Select a pack directory"
 			initialDirectory = Command.dataDir.toFile()
 		}.showDialog(null).toPath()
 
-		cardListController.loadPack(packDir)
+		cardListController.packDir = packDir
+
+		val cardFile = packDir.resolve("pack.json")
+		if (!cardFile.toFile().isFile) {
+			throw FileNotFoundException(cardFile.toString())
+		}
+
+		val pack = json.parse(Pack.serializer(), cardFile.toFile().readText())
+		cardListController.loadPack(pack)
 	}
 
 	private fun savePack() {
