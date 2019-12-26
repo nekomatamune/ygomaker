@@ -6,7 +6,7 @@
             prefHeight="800" prefWidth="1000"
             fx:controller="me.nekomatamune.ygomaker.fx.Window">
     <top>
-        <fx:include source="MenuBar.fxml"/>
+        <fx:include fx:id="menuBar" source="MenuBar.fxml"/>
     </top>
     <left>
         <fx:include fx:id="cardList" source="CardList.fxml"/>

@@ -1,14 +1,23 @@
 package me.nekomatamune.ygomaker.fx
 
 import javafx.fxml.FXML
-import me.nekomatamune.ygomaker.EventName
-import me.nekomatamune.ygomaker.dispatcher
-import me.nekomatamune.ygomaker.success
+import javafx.scene.control.Alert
+import javafx.scene.control.ButtonType
+import javafx.stage.DirectoryChooser
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
+import me.nekomatamune.ygomaker.Command
+import me.nekomatamune.ygomaker.Pack
 import mu.KotlinLogging
+import java.io.FileNotFoundException
+import java.nio.file.Files
+import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
+private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
 class Window {
+	@FXML lateinit var menuBarController: MenuBar
 	@FXML lateinit var cardListController: CardListController
 	@FXML lateinit var cardRendererController: CardRendererController
 	@FXML lateinit var cardFormController: CardFormController
@@ -17,36 +26,68 @@ class Window {
 	fun initialize() {
 		logger.info { "Init Window..." }
 
-		dispatcher.register(EventName.SELECT_CARD) {
-			cardFormController.setCard(it.card!!, it.packDir!!)
+		menuBarController.menuActionHandler = {
+			when (it) {
+				MenuAction.LOAD_PACK -> loadPack()
+				MenuAction.SAVE_PACK -> savePack()
+				MenuAction.SAVE_PACK_AS -> savePackAs()
+				MenuAction.NEW_CARD -> cardListController.newCard()
+				MenuAction.RENDER_CARD -> cardRendererController.render()
+			}
 		}
-		dispatcher.register(EventName.LOAD_PACK) {
-			cardListController.loadPack(it.packDir!!)
-		}
-		dispatcher.register(EventName.SAVE_PACK) { cardListController.savePack() }
-		dispatcher.register(EventName.SAVE_PACK_AS) {
-			cardListController.saveAsPack(it.packDir!!)
-		}
 
-
-		dispatcher.register(
-			EventName.MODIFY_CARD) { cardListController.onModifyCard(it.card) }
-
-
-		dispatcher.register(EventName.NEW_CARD) { cardListController.newCard() }
-
-		dispatcher.register(EventName.SELECT_CARD) {
-			cardRendererController.setCard(it.card!!)
+		cardListController.cardSelectedHandler = { card, packDir ->
+			cardFormController.setCard(card, packDir)
+			cardRendererController.setCard(card)
 			cardRendererController.render()
 		}
 
-		dispatcher.register(EventName.MODIFY_CARD) {
-			cardRendererController.setCard(it.card!!)
-			Result.success()
+		cardFormController.cardModifiedHandler = {
+			cardListController.onModifyCard(it)
+			cardRendererController.setCard(it)
 		}
 
-		dispatcher.register(EventName.RENDER) {
-			cardRendererController.render()
+		loadPack(Command.dataDir.resolve(Command.packCode))
+	}
+
+	private fun loadPack(packDir: Path? = null) {
+
+		val packDir = packDir ?: DirectoryChooser().apply {
+			title = "Select a pack directory"
+			initialDirectory = Command.dataDir.toFile()
+		}.showDialog(null).toPath()
+
+		cardListController.packDir = packDir
+
+		val cardFile = packDir.resolve("pack.json")
+		if (!cardFile.toFile().isFile) {
+			throw FileNotFoundException(cardFile.toString())
+		}
+
+		val pack = json.parse(Pack.serializer(), cardFile.toFile().readText())
+		cardListController.loadPack(pack)
+	}
+
+	private fun savePack() {
+		cardListController.savePack()
+	}
+
+	private fun savePackAs() {
+		logger.debug { "onSavePackAsMenuItem()" }
+
+		val newPackDir = DirectoryChooser().apply {
+			title = "Enter or select a new pack directory"
+			initialDirectory = Command.dataDir.toFile()
+		}.showDialog(null).toPath()
+
+		if (Files.exists(newPackDir)) {
+			Alert(Alert.AlertType.CONFIRMATION).apply {
+				headerText = "Overwriting existing pack..."
+				contentText = "This will overwrite the existing pack ${newPackDir.fileName}. Proceed?"
+			}.showAndWait().filter(ButtonType.OK::equals).ifPresent {
+				logger.info { "Writing pack to ${newPackDir.fileName}" }
+				cardListController.saveAsPack(newPackDir)
+			}
 		}
 	}
 }

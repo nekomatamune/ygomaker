@@ -12,17 +12,17 @@ import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.HBox
 import javafx.stage.FileChooser
-import me.nekomatamune.ygomaker.Event
-import me.nekomatamune.ygomaker.EventName
-import me.nekomatamune.ygomaker.dispatcher
 import me.nekomatamune.ygomaker.success
 import mu.KotlinLogging
 import java.io.FileNotFoundException
 import java.nio.file.Path
 import kotlin.math.max
 import kotlin.math.roundToInt
+import kotlin.properties.ObservableProperty
 
 private val logger = KotlinLogging.logger { }
+
+typealias ImageModifiedHandler = (me.nekomatamune.ygomaker.Image) -> Unit
 
 class CardImageController {
 
@@ -35,6 +35,8 @@ class CardImageController {
 	@FXML private lateinit var sizeSpinner: Spinner<Int>
 	@FXML private lateinit var imageView: ImageView
 	@FXML private lateinit var imageHBox: HBox
+
+	lateinit var imageModifiedHandler: ImageModifiedHandler
 
 	@FXML
 	private fun initialize() {
@@ -126,14 +128,11 @@ class CardImageController {
 	}
 
 	private fun dispatchModifyCardImageEvent() {
-		dispatcher.dispatch(Event(
-			EventName.MODIFY_CARD_IMAGE,
-			image = me.nekomatamune.ygomaker.Image(
-				file = fileTextField.text,
-				x = xSpinner.value,
-				y = ySpinner.value,
-				size = sizeSpinner.value
-			)
+		imageModifiedHandler(me.nekomatamune.ygomaker.Image(
+			file = fileTextField.text,
+			x = xSpinner.value,
+			y = ySpinner.value,
+			size = sizeSpinner.value
 		))
 	}
 
