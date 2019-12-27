@@ -12,40 +12,44 @@ import java.nio.file.Path
 private val logger = KotlinLogging.logger { }
 
 class Window {
+
+	// region states
+	private var packDir = Command.dataDir.resolve(Command.packCode)
+	// endregion
+
+	// region subview controllers
 	@FXML lateinit var menuBarController: MenuBar
 	@FXML lateinit var cardListController: CardListController
 	@FXML lateinit var cardRendererController: CardRendererController
 	@FXML lateinit var cardFormController: CardFormController
-	private lateinit var packDir: Path
+	// endregion
 
 	@FXML
 	fun initialize() {
-		logger.info { "Init Window..." }
-
-		packDir = Command.dataDir.resolve(Command.packCode)
+		logger.info { "Initializing Window..." }
 
 		menuBarController.menuActionHandler = {
 			when (it) {
 				MenuAction.LOAD_PACK -> loadPack()
 				MenuAction.SAVE_PACK -> cardListController.getPack().writeTo(packDir)
 				MenuAction.SAVE_PACK_AS -> savePackAs()
-				MenuAction.NEW_CARD -> cardListController.newCard()
-				MenuAction.RENDER_CARD -> cardRendererController.render()
+				MenuAction.NEW_CARD -> newCard()
+				MenuAction.RENDER_CARD -> cardRendererController.render(
+					cardFormController.getCard())
 			}
 		}
 
 		cardListController.cardSelectedHandler = {
 			cardFormController.setCard(it, packDir)
-			cardRendererController.setCard(it)
-			cardRendererController.render()
+			cardRendererController.render(it)
 		}
 
 		cardFormController.cardModifiedHandler = {
 			cardListController.onModifyCard(it)
-			cardRendererController.setCard(it)
 		}
 
-		loadPack(Command.dataDir.resolve(Command.packCode))
+		logger.info { "Setup completed!" }
+		loadPack(packDir)
 	}
 
 	private fun loadPack(packDir: Path? = null) {
@@ -81,4 +85,12 @@ class Window {
 			}
 		}
 	}
+
+	private fun newCard() {
+		cardListController.getPack().let {
+			val newPack = it.copy(cards = it.cards + Card())
+			cardListController.setPack(newPack, selectLast = true)
+		}
+	}
+
 }
