@@ -134,7 +134,7 @@ val MONSTER_TYPE_PRESETS = listOf(
  * Predefined value for [Monster.ability]
  */
 val MONSTER_ABILITY_PRESETS = listOf(
-	"", "リーバス", "トゥーン ", "スピリット", "ユニオン", "デュアル", "チューナー")
+	"", "リーバス", "トゥーン", "スピリット", "ユニオン", "デュアル", "チューナー")
 
 /**
  * [CardType] that are monsters. A [Card] with the following value should have
