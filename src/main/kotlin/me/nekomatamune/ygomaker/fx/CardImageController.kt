@@ -36,8 +36,8 @@ class CardImageController {
 	private var mouseClickX: Int = 0
 	private var mouseClickY: Int = 0
 
-
-	lateinit var imageModifiedHandler: ImageModifiedHandler
+	var imageModifiedHandler: ImageModifiedHandler = {}
+		get() { throw UnsupportedOperationException() }
 
 	@FXML
 	private fun initialize() {
