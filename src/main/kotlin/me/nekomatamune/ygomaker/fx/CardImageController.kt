@@ -18,7 +18,6 @@ import java.io.FileNotFoundException
 import java.nio.file.Path
 import kotlin.math.max
 import kotlin.math.roundToInt
-import kotlin.properties.ObservableProperty
 
 private val logger = KotlinLogging.logger { }
 

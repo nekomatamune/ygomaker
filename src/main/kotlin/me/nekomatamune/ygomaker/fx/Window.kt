@@ -35,13 +35,13 @@ class Window {
 				MenuAction.SAVE_PACK_AS -> savePackAs()
 				MenuAction.NEW_CARD -> newCard()
 				MenuAction.RENDER_CARD -> cardRendererController.render(
-					cardFormController.getCard())
+					cardFormController.card, packDir)
 			}
 		}
 
 		cardListController.cardSelectedHandler = {
-			cardFormController.setCard(it, packDir)
-			cardRendererController.render(it)
+			cardFormController.setState(it, packDir)
+			cardRendererController.render(it, packDir)
 		}
 
 		cardFormController.cardModifiedHandler = {

@@ -14,6 +14,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
+import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
@@ -28,7 +29,7 @@ class CardRendererController {
 		logger.debug { "Initializing CardRenderer" }
 	}
 
-	fun render(card: Card): Result<Unit> {
+	fun render(card: Card, packDir: Path): Result<Unit> {
 		logger.info { "Render card" }
 
 		val paramText = Command.rendererParamFile?.toFile()?.readText()
@@ -107,7 +108,7 @@ class CardRendererController {
 		}
 
 		card.image?.let {
-			val imagePath = Command.dataDir.resolve(Command.packCode).resolve(it.file)
+			val imagePath = packDir.resolve(it.file)
 			val image = Image(imagePath.toUri().toString())
 
 

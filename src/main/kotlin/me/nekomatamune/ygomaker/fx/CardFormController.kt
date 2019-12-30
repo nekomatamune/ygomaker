@@ -33,7 +33,8 @@ class CardFormController {
 
 	var onSelectCardInProgress: Boolean = false
 
-	private var card = Card()
+	var card = Card()
+		private set
 
 	@FXML
 	fun initialize() {
@@ -85,7 +86,11 @@ class CardFormController {
 		}
 	}
 
-	fun setCard(card: Card, packDir: Path) {
+	fun setState(card: Card, packDir: Path) {
+		logger.info {
+			"setState(card=$card, packDir=$packDir)"
+		}
+
 		this.card = card.copy()
 
 		onSelectCardInProgress = true
@@ -106,8 +111,6 @@ class CardFormController {
 
 		onSelectCardInProgress = false
 	}
-
-	fun getCard() = this.card
 
 	private fun onCardValueChange() {
 		logger.trace { "onCardValueChange()" }
