@@ -16,6 +16,7 @@ import me.nekomatamune.ygomaker.success
 import mu.KotlinLogging
 import java.io.FileNotFoundException
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -25,15 +26,16 @@ typealias ImageModifiedHandler = (me.nekomatamune.ygomaker.Image) -> Unit
 
 class CardImageController {
 
-	private lateinit var packDir: Path
-	private var mouseClickX: Int = 0
-	private var mouseClickY: Int = 0
 	@FXML private lateinit var fileTextField: TextField
 	@FXML private lateinit var xSpinner: Spinner<Int>
 	@FXML private lateinit var ySpinner: Spinner<Int>
 	@FXML private lateinit var sizeSpinner: Spinner<Int>
 	@FXML private lateinit var imageView: ImageView
 	@FXML private lateinit var imageHBox: HBox
+	private var packDir: Path = Paths.get("")
+	private var mouseClickX: Int = 0
+	private var mouseClickY: Int = 0
+
 
 	lateinit var imageModifiedHandler: ImageModifiedHandler
 
