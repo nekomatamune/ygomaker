@@ -37,6 +37,10 @@ dependencies {
 	testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVer")
 	testImplementation("io.strikt:strikt-core:0.21.1")
 	testImplementation("io.mockk:mockk:1.9")
+	val testfxVer = "4.0.16-alpha"
+	testImplementation("org.testfx:testfx-core:$testfxVer")
+	testImplementation("org.testfx:testfx-junit5:$testfxVer")
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.1")
 }
 
 tasks.clean {

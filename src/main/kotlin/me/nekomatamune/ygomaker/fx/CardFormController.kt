@@ -29,7 +29,7 @@ class CardFormController {
 	@FXML lateinit var codeTextField: TextField
 	@FXML lateinit var cardImageController: CardImageController
 
-	lateinit var cardModifiedHandler: CardModifiedHandler
+	var cardModifiedHandler: CardModifiedHandler = {}
 
 	var onSelectCardInProgress: Boolean = false
 
