@@ -21,10 +21,10 @@ import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
 
 
-object CardFormControllerSpec : Spek({
+object CardFormSpec : Spek({
 	val robot = FxRobot()
 	lateinit var app: Application
-	lateinit var ctrl: CardFormCtrl
+	lateinit var ctrl: CardForm
 	lateinit var pane: GridPane
 
 	lateinit var card: Card
@@ -101,9 +101,16 @@ object CardFormControllerSpec : Spek({
 		expectThat(card.monster?.type).isEqualTo(MONSTER_TYPE_PRESETS[10])
 	}
 
-	test("Should modify monster effect") {
+	test("Should modify monster effect checker") {
 		robot.clickOn("#effectCheckBox")
 		expectThat(card.monster?.effect).isTrue()
+	}
+
+	test("Should modify effect") {
+		robot.clickOn("#effectTextArea")
+		robot.write("First line.\n")
+		robot.write("Second line.")
+		expectThat(card.effect).isEqualTo("First line.\nSecond line.")
 	}
 
 })

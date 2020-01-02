@@ -14,7 +14,7 @@ private val logger = KotlinLogging.logger { }
 
 typealias CardModifiedHandler = (Card) -> Unit
 
-class CardFormCtrl {
+class CardForm {
 
 	@FXML lateinit var cardNameTextField: TextField
 	@FXML lateinit var cardTypeComboBox: ComboBox<CardType>
