@@ -7,9 +7,12 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.scene.layout.GridPane
 import javafx.stage.Stage
+import me.nekomatamune.ygomaker.Card
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
 import org.testfx.api.FxToolkit
+import strikt.api.expectThat
+import strikt.assertions.isEqualTo
 
 
 object CardFormControllerSpec : Spek({
@@ -53,17 +56,22 @@ object CardFormControllerSpec : Spek({
 
 
 	test("Should do a test") {
+		var card = Card()
+		ctrl.cardModifiedHandler = {
+			card = it.copy()
+		}
 
 
 		val robot = FxRobot()
 		robot.rightClickOn("#cardNameTextField")
 		robot.write("Hello World!")
 
+		expectThat(card.name).isEqualTo("Hello World!")
 	}
 
 	test("Should do another test") {
 
-
+		expectThat(ctrl.card.name).isEqualTo("")
 	}
 
 })
