@@ -18,6 +18,7 @@ import org.testfx.api.FxRobot
 import org.testfx.api.FxToolkit
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isTrue
 
 
 object CardFormControllerSpec : Spek({
@@ -67,37 +68,42 @@ object CardFormControllerSpec : Spek({
 	}
 
 	test("Should modify card name") {
-		robot.rightClickOn("#cardNameTextField")
+		robot.clickOn("#cardNameTextField")
 		robot.write("Hello World!")
 		expectThat(card.name).isEqualTo("Hello World!")
 	}
 
 	test("Should modify card type") {
-		robot.rightClickOn("#cardTypeComboBox")
+		robot.clickOn("#cardTypeComboBox")
 		robot.type(DOWN, CardType.SPECIAL_SUMMON_MONSTER.ordinal)
 		robot.type(ENTER)
 		expectThat(card.type).isEqualTo(CardType.SPECIAL_SUMMON_MONSTER)
 	}
 
 	test("Should modify attribute") {
-		robot.rightClickOn("#attributeComboBox")
+		robot.clickOn("#attributeComboBox")
 		robot.type(DOWN, Attribute.WATER.ordinal)
 		robot.type(ENTER)
 		expectThat(card.monster?.attribute).isEqualTo(Attribute.WATER)
 	}
 
 	test("Should modify level") {
-		robot.rightClickOn("#levelComboBox")
+		robot.clickOn("#levelComboBox")
 		robot.type(DOWN, 3)
 		robot.type(ENTER)
 		expectThat(card.monster?.level).isEqualTo(4)
 	}
 
 	test("Should modify monster type") {
-		robot.rightClickOn("#monsterTypeComboBox")
+		robot.clickOn("#monsterTypeComboBox")
 		robot.type(DOWN, 10)
 		robot.type(ENTER)
 		expectThat(card.monster?.type).isEqualTo(MONSTER_TYPE_PRESETS[10])
+	}
+
+	test("Should modify monster effect") {
+		robot.clickOn("#effectCheckBox")
+		expectThat(card.monster?.effect).isTrue()
 	}
 
 })
