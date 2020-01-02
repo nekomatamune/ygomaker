@@ -113,4 +113,15 @@ object CardFormSpec : Spek({
 		expectThat(card.effect).isEqualTo("First line.\nSecond line.")
 	}
 
+	test("Should modify atk/def") {
+		robot.clickOn("#atkTextField")
+		robot.write("3000")
+		robot.clickOn("#defTextField")
+		robot.write("2500")
+		expectThat(card).get {
+			expectThat(monster?.atk).isEqualTo("3000")
+			expectThat(monster?.def).isEqualTo("2500")
+		}
+	}
+
 })
