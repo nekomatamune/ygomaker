@@ -17,7 +17,7 @@ import strikt.assertions.isEqualTo
 
 object CardFormControllerSpec : Spek({
 	lateinit var app: Application
-	lateinit var ctrl: CardFormController
+	lateinit var ctrl: CardFormCtrl
 	lateinit var pane: GridPane
 
 	beforeGroup {
