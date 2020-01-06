@@ -9,25 +9,61 @@ import javafx.scene.Scene
 import javafx.scene.input.KeyCode.DOWN
 import javafx.scene.input.KeyCode.ENTER
 import javafx.scene.layout.GridPane
+import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import javafx.util.Callback
 import me.nekomatamune.ygomaker.*
 import org.spekframework.spek2.Spek
+import org.spekframework.spek2.dsl.Root
 import org.testfx.api.FxRobot
 import org.testfx.api.FxToolkit
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
+import java.net.URL
 import java.nio.file.Paths
 import java.util.concurrent.Semaphore
 
+fun <C, P> Root.setup(fxmlLocation: URL, ctrlFactory: ((Class<*>) -> Any)) where
+	P : Pane {
+
+	val robot by memoized {
+		FxRobot()
+	}
+
+	val loader by memoized {
+		FXMLLoader().apply {
+			location = fxmlLocation
+			controllerFactory = Callback<Class<*>, Any>(ctrlFactory)
+		}
+	}
+
+	val app by memoized(
+		factory = {
+			FxToolkit.registerPrimaryStage()
+			FxToolkit.setupApplication {
+				object : Application() {
+					override fun start(primaryStage: Stage) {
+						primaryStage.scene = Scene(loader.load<P>())
+						primaryStage.show()
+					}
+				}
+			}
+		},
+		destructor = {
+			FxToolkit.cleanupApplication(it)
+			FxToolkit.cleanupStages()
+
+		}
+	)
+
+	val ctrl by memoized<C> {
+		val a = app
+		loader.getController()
+	}
+}
+
 object CardFormSpec : Spek({
-	val robot = FxRobot()
-	lateinit var app: Application
-	lateinit var ctrl: CardForm
-
-	lateinit var card: Card
-
 	val capturedImageModifiedHandler = slot<ImageModifiedHandler>()
 	val mockCardImage = mockk<CardImage>(relaxed = true) {
 		every {
@@ -36,47 +72,27 @@ object CardFormSpec : Spek({
 		}.just(Runs)
 	}
 
-
-
-	beforeGroup {
-		FxToolkit.registerPrimaryStage()
+	setup<CardForm, GridPane>(Resources.getResource("fx/CardForm.fxml")) {
+		when (it) {
+			CardImage::class.java -> mockCardImage
+			CardForm::class.java -> CardForm()
+			else -> throw UnsupportedOperationException(it.toString())
+		}
 	}
 
+	val ctrl by memoized<CardForm>()
+	val robot by memoized<FxRobot>()
+
+	lateinit var card: Card
+
 	afterGroup {
-		FxToolkit.cleanupStages()
 		if (FxToolkit.isFXApplicationThreadRunning()) {
 			Platform.exit()
 		}
 	}
 
 	beforeEachTest {
-		lateinit var loader: FXMLLoader
-
-		app = FxToolkit.setupApplication {
-			object : Application() {
-				override fun start(primaryStage: Stage) {
-					loader = FXMLLoader().apply {
-						location = Resources.getResource("fx/CardForm.fxml")
-						controllerFactory = Callback<Class<*>, Any> {
-							when (it) {
-								CardImage::class.java -> mockCardImage
-								CardForm::class.java -> CardForm()
-								else -> throw UnsupportedOperationException(it.toString())
-							}
-						}
-					}
-					primaryStage.scene = Scene(loader.load<GridPane>())
-					primaryStage.show()
-				}
-			}
-		}
-
-		ctrl = loader.getController()
 		ctrl.cardModifiedHandler = { card = it.copy() }
-	}
-
-	afterEachTest {
-		FxToolkit.cleanupApplication(app)
 	}
 
 	group("Basic") {
