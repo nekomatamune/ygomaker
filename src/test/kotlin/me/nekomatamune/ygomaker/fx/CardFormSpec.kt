@@ -13,15 +13,13 @@ import strikt.assertions.isTrue
 import java.nio.file.Paths
 
 object CardFormSpec : Spek({
-
 	val mockCardImage = mockk<CardImage>(relaxed = true)
-	setupTextFx<CardForm>(Resources.getResource("fx/CardForm.fxml")) {
-		when (it) {
-			CardImage::class.java -> mockCardImage
-			CardForm::class.java -> CardForm()
-			else -> throw UnsupportedOperationException(it.toString())
-		}
-	}
+	setupTextFx<CardForm>(Resources.getResource("fx/CardForm.fxml"),
+		mapOf(
+			CardImage::class to { mockCardImage },
+			CardForm::class to { CardForm() }
+		)
+	)
 
 	val ctrl by memoized<CardForm>()
 	val robot by memoized<FxRobot>()

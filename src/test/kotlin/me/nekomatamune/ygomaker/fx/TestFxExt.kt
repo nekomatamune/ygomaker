@@ -2,6 +2,7 @@ package me.nekomatamune.ygomaker.fx
 
 import javafx.application.Application
 import javafx.application.Platform
+import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.stage.Stage
 import javafx.util.Callback
@@ -10,10 +11,11 @@ import org.testfx.api.FxRobot
 import org.testfx.api.FxToolkit
 import java.net.URL
 import java.util.concurrent.Semaphore
+import kotlin.reflect.KClass
 
 fun <C> Root.setupTextFx(
 	fxmlLocation: URL,
-	ctrlFactory: ((Class<*>) -> Any)
+	controllers: Map<KClass<*>, () -> Any>
 ) {
 
 	val robot by memoized {
@@ -21,10 +23,18 @@ fun <C> Root.setupTextFx(
 	}
 
 	val loader by memoized {
-		javafx.fxml.FXMLLoader().apply {
+		FXMLLoader().apply {
 			location = fxmlLocation
-			controllerFactory = Callback<Class<*>, Any>(ctrlFactory)
+			controllerFactory = Callback<Class<*>, Any> {
+				when (it.kotlin) {
+					in controllers -> (controllers[it.kotlin] ?: error("")).invoke()
+					else -> throw UnsupportedOperationException(
+						"Missing factory for controller $it")
+				}
+			}
 		}
+
+
 	}
 
 	val app by memoized(
