@@ -28,7 +28,7 @@ object CardFormSpec : Spek({
 	lateinit var card: Card
 
 	var imageModifiedHandler = slot<ImageModifiedHandler>()
-	val mockCardImage = mockk<CardImageController>(relaxed = true)
+	val mockCardImage = mockk<CardImage>(relaxed = true)
 
 	beforeGroup {
 		FxToolkit.registerPrimaryStage()
@@ -54,7 +54,7 @@ object CardFormSpec : Spek({
 
 						controllerFactory = Callback<Class<*>, Any> {
 							when (it) {
-								CardImageController::class.java -> mockCardImage
+								CardImage::class.java -> mockCardImage
 								CardForm::class.java -> CardForm()
 								else -> throw UnsupportedOperationException(it.toString())
 							}

@@ -24,7 +24,7 @@ private val logger = KotlinLogging.logger { }
 
 typealias ImageModifiedHandler = (me.nekomatamune.ygomaker.Image) -> Unit
 
-open class CardImageController {
+open class CardImage {
 
 	@FXML private lateinit var fileTextField: TextField
 	@FXML private lateinit var xSpinner: Spinner<Int>
