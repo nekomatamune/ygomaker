@@ -10,7 +10,6 @@ import javafx.util.Callback
 import org.spekframework.spek2.dsl.Root
 import org.testfx.api.FxRobot
 import org.testfx.api.FxToolkit
-import java.net.URL
 import java.util.concurrent.Semaphore
 import kotlin.reflect.KClass
 
@@ -34,8 +33,6 @@ fun <C> Root.setupTextFx(
 				}
 			}
 		}
-
-
 	}
 
 	val app by memoized(
@@ -57,7 +54,7 @@ fun <C> Root.setupTextFx(
 	)
 
 	val ctrl by memoized<C> {
-		val a = app
+		app
 		loader.getController()
 	}
 }
