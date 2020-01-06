@@ -1,6 +1,7 @@
 package me.nekomatamune.ygomaker.fx
 
 import com.google.common.io.Resources
+import io.mockk.*
 import javafx.application.Application
 import javafx.application.Platform
 import javafx.fxml.FXMLLoader
@@ -9,17 +10,14 @@ import javafx.scene.input.KeyCode.DOWN
 import javafx.scene.input.KeyCode.ENTER
 import javafx.scene.layout.GridPane
 import javafx.stage.Stage
-import me.nekomatamune.ygomaker.Attribute
-import me.nekomatamune.ygomaker.Card
-import me.nekomatamune.ygomaker.CardType
-import me.nekomatamune.ygomaker.MONSTER_TYPE_PRESETS
+import javafx.util.Callback
+import me.nekomatamune.ygomaker.*
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
 import org.testfx.api.FxToolkit
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
-
 
 object CardFormSpec : Spek({
 	val robot = FxRobot()
@@ -28,6 +26,9 @@ object CardFormSpec : Spek({
 	lateinit var pane: GridPane
 
 	lateinit var card: Card
+
+	var imageModifiedHandler = slot<ImageModifiedHandler>()
+	val mockCardImage = mockk<CardImageController>(relaxed = true)
 
 	beforeGroup {
 		FxToolkit.registerPrimaryStage()
@@ -41,11 +42,23 @@ object CardFormSpec : Spek({
 	}
 
 	beforeEachTest {
+		every {
+			mockCardImage.imageModifiedHandler = capture(imageModifiedHandler)
+		}.just(Runs)
+
 		app = FxToolkit.setupApplication {
 			object : Application() {
 				override fun start(primaryStage: Stage) {
 					FXMLLoader().apply {
 						location = Resources.getResource("fx/CardForm.fxml")
+
+						controllerFactory = Callback<Class<*>, Any> {
+							when (it) {
+								CardImageController::class.java -> mockCardImage
+								CardForm::class.java -> CardForm()
+								else -> throw UnsupportedOperationException(it.toString())
+							}
+						}
 					}.let {
 						pane = it.load()
 						ctrl = it.getController()
@@ -56,6 +69,9 @@ object CardFormSpec : Spek({
 				}
 			}
 		}
+
+
+
 
 		card = ctrl.card
 		ctrl.cardModifiedHandler = {
@@ -122,6 +138,12 @@ object CardFormSpec : Spek({
 			expectThat(monster?.atk).isEqualTo("3000")
 			expectThat(monster?.def).isEqualTo("2500")
 		}
+	}
+
+	test("Should update image when modified") {
+		val image = Image(file = "my_file", x = 123, y = 456, size = 789)
+		imageModifiedHandler.invoke(image)
+		expectThat(card.image).isEqualTo(image)
 	}
 
 })
