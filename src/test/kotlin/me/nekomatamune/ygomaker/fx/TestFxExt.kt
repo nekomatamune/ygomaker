@@ -13,7 +13,7 @@ import org.testfx.api.FxToolkit
 import java.util.concurrent.Semaphore
 import kotlin.reflect.KClass
 
-fun <C> Root.setupTextFx(
+fun <C> Root.setupTestFx(
 	fxmlLocation: String,
 	controllers: Map<KClass<*>, () -> Any>
 ) {
