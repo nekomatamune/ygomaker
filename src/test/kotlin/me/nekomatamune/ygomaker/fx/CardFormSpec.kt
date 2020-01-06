@@ -19,6 +19,7 @@ import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
 import java.nio.file.Paths
+import java.util.concurrent.Semaphore
 
 object CardFormSpec : Spek({
 	val robot = FxRobot()
@@ -27,12 +28,15 @@ object CardFormSpec : Spek({
 
 	lateinit var card: Card
 
-	val mockCardImage = mockk<CardImage>(relaxed = true)
 	val capturedImageModifiedHandler = slot<ImageModifiedHandler>()
-	every {
-		mockCardImage.imageModifiedHandler = capture(
-			capturedImageModifiedHandler)
-	}.just(Runs)
+	val mockCardImage = mockk<CardImage>(relaxed = true) {
+		every {
+			this@mockk.imageModifiedHandler = capture(
+				capturedImageModifiedHandler)
+		}.just(Runs)
+	}
+
+
 
 	beforeGroup {
 		FxToolkit.registerPrimaryStage()
@@ -150,8 +154,16 @@ object CardFormSpec : Spek({
 
 			Platform.runLater {
 				ctrl.setState(card = card, packDir = packDir)
-				verify { mockCardImage.setImage(card.image!!, packDir) }
 			}
+
+
+			val semaphore = Semaphore(0)
+			Platform.runLater {
+				semaphore.release()
+			}
+			semaphore.acquire()
+
+			verify { mockCardImage.setImage(card.image!!, packDir) }
 
 
 		}
