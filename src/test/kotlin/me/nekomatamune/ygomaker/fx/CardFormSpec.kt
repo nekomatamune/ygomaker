@@ -12,7 +12,7 @@ import strikt.assertions.isTrue
 import java.nio.file.Paths
 
 object CardFormSpec : Spek({
-	val mockCardImage = mockk<CardImage>(relaxed = true)
+	val mockCardImage by memoized { mockk<CardImage>(relaxed = true) }
 	setupTextFx<CardForm>("fx/CardForm.fxml", mapOf(
 		CardImage::class to { mockCardImage },
 		CardForm::class to { CardForm() }
