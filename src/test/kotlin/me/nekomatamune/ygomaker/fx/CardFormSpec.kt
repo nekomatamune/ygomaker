@@ -97,23 +97,21 @@ object CardFormSpec : Spek({
 
 	group("Interaction with CardImage") {
 		test("Should update image when modified") {
-
-
 			val image = Image(file = "my_file", x = 123, y = 456, size = 789)
 			capturedImageModifiedHandler.captured(image)
 			expectThat(card.image).isEqualTo(image)
 		}
 
 		test("Should set image") {
-			val card = Card(
+			val myCard = Card(
 				image = Image(file = "my_file", x = 123, y = 456, size = 777))
-			val packDir = Paths.get("my_path")
+			val myPackDir = Paths.get("my_path")
 
 			runFx {
-				ctrl.setState(card = card, packDir = packDir)
+				ctrl.setState(card = myCard, packDir = myPackDir)
 			}
 
-			verify { mockCardImage.setImage(card.image!!, packDir) }
+			verify { mockCardImage.setImage(myCard.image!!, myPackDir) }
 		}
 	}
 })
