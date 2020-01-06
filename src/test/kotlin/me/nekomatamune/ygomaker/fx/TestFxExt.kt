@@ -1,5 +1,6 @@
 package me.nekomatamune.ygomaker.fx
 
+import com.google.common.io.Resources
 import javafx.application.Application
 import javafx.application.Platform
 import javafx.fxml.FXMLLoader
@@ -14,7 +15,7 @@ import java.util.concurrent.Semaphore
 import kotlin.reflect.KClass
 
 fun <C> Root.setupTextFx(
-	fxmlLocation: URL,
+	fxmlLocation: String,
 	controllers: Map<KClass<*>, () -> Any>
 ) {
 
@@ -24,7 +25,7 @@ fun <C> Root.setupTextFx(
 
 	val loader by memoized {
 		FXMLLoader().apply {
-			location = fxmlLocation
+			location = Resources.getResource(fxmlLocation)
 			controllerFactory = Callback<Class<*>, Any> {
 				when (it.kotlin) {
 					in controllers -> (controllers[it.kotlin] ?: error("")).invoke()

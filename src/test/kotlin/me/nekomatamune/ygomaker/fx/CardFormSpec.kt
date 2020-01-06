@@ -1,6 +1,5 @@
 package me.nekomatamune.ygomaker.fx
 
-import com.google.common.io.Resources
 import io.mockk.*
 import javafx.scene.input.KeyCode.DOWN
 import javafx.scene.input.KeyCode.ENTER
@@ -14,12 +13,10 @@ import java.nio.file.Paths
 
 object CardFormSpec : Spek({
 	val mockCardImage = mockk<CardImage>(relaxed = true)
-	setupTextFx<CardForm>(Resources.getResource("fx/CardForm.fxml"),
-		mapOf(
-			CardImage::class to { mockCardImage },
-			CardForm::class to { CardForm() }
-		)
-	)
+	setupTextFx<CardForm>("fx/CardForm.fxml", mapOf(
+		CardImage::class to { mockCardImage },
+		CardForm::class to { CardForm() }
+	))
 
 	val ctrl by memoized<CardForm>()
 	val robot by memoized<FxRobot>()
