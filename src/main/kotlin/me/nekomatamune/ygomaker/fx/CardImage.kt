@@ -24,7 +24,7 @@ private val logger = KotlinLogging.logger { }
 
 typealias ImageModifiedHandler = (me.nekomatamune.ygomaker.Image) -> Unit
 
-class CardImageController {
+open class CardImage {
 
 	@FXML private lateinit var fileTextField: TextField
 	@FXML private lateinit var xSpinner: Spinner<Int>
@@ -40,7 +40,7 @@ class CardImageController {
 		get() { throw UnsupportedOperationException() }
 
 	@FXML
-	private fun initialize() {
+	fun initialize() {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {

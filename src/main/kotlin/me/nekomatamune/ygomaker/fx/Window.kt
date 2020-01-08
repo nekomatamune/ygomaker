@@ -21,7 +21,7 @@ class Window {
 	@FXML lateinit var menuBarController: MenuBar
 	@FXML lateinit var cardListController: CardListController
 	@FXML lateinit var cardRendererController: CardRendererController
-	@FXML lateinit var cardFormController: CardFormController
+	@FXML lateinit var cardFormController: CardForm
 	// endregion
 
 	@FXML
