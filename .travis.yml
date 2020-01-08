@@ -1,5 +1,6 @@
 before_install:
   - sudo apt-get install -y openjfx
+  - export DISPLAY=:99.0
 langauge: java
 jdk: openjdk8
 script:
