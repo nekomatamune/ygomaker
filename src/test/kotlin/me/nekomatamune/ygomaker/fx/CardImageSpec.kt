@@ -11,6 +11,7 @@ import org.testfx.api.FxRobot
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import java.nio.file.Paths
+import javafx.scene.image.Image as FxImage
 
 
 object CardImageSpec : Spek({
@@ -53,14 +54,10 @@ object CardImageSpec : Spek({
 		val imageView = robot.lookup("#imageView").queryAs(ImageView::class.java)
 		expectThat(imageView.fitWidth.toInt()).isEqualTo(expectedImageSize)
 
-		val actualImage = robot.capture(
-			robot.lookup("#imageView").queryAs(ImageView::class.java)).image
-		val expectedImage = javafx.scene.image.Image(
-			expectImageFile.toUri().toString())
-
+		val actualImage = imageView.image
+		val expectedImage = FxImage(expectImageFile.toUri().toString())
 		val actualPixels = actualImage.pixelReader
 		val expectedPixels = expectedImage.pixelReader
-
 		(0 until actualImage.width.toInt()).forEach { i ->
 			(0 until actualImage.height.toInt()).forEach { j ->
 				expectThat(actualPixels.getArgb(i, j))
