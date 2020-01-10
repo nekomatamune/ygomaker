@@ -38,28 +38,51 @@ object CardImageSpec : Spek({
 
 	afterGroup { tearDownFx() }
 
-	test("Should populate fields when set with image.") {
-		val expectedImage = Image(
-				x = 12, y = 34, size = 250, file = "250x250.jpg"
-		)
 
-		runFx {
-			ctrl.setState(expectedImage, testPackDir)
+	group("Setting initial state") {
+		test("Should populate UI fields") {
+			val expectedImage = Image(
+					x = 12, y = 34, size = 56, file = "original.jpg"
+			)
+
+			runFx {
+				ctrl.setState(expectedImage, testPackDir)
+			}
+
+			expectThat(
+					robot.lookupAs("#fileTextField", TextField::class).text
+			).isEqualTo(expectedImage.file)
+			expectThat(
+					robot.lookupAs("#xSpinner", Spinner::class).value
+			).isEqualTo(expectedImage.x)
+			expectThat(
+					robot.lookupAs("#ySpinner", Spinner::class).value
+			).isEqualTo(expectedImage.y)
+			expectThat(
+					robot.lookupAs("#sizeSpinner", Spinner::class).value
+			).isEqualTo(expectedImage.size)
+
+			val viewPort = robot.lookupAs("#imageView", ImageView::class).viewport
+			expectThat(viewPort.minX.toInt()).isEqualTo(expectedImage.x)
+			expectThat(viewPort.minY.toInt()).isEqualTo(expectedImage.y)
+			expectThat(viewPort.width.toInt()).isEqualTo(expectedImage.size)
+			expectThat(viewPort.height.toInt()).isEqualTo(expectedImage.size)
 		}
 
-		expectThat(
-				robot.lookupAs("#fileTextField", TextField::class).text
-		).isEqualTo(expectedImage.file)
-		expectThat(
-				robot.lookupAs("#xSpinner", Spinner::class).value
-		).isEqualTo(expectedImage.x)
-		expectThat(
-				robot.lookupAs("#ySpinner", Spinner::class).value
-		).isEqualTo(expectedImage.y)
-		expectThat(
-				robot.lookupAs("#sizeSpinner", Spinner::class).value
-		).isEqualTo(expectedImage.size)
+		test("Should set image.") {
+			val imageData = Image(file = "original.jpg")
+
+			runFx {
+				ctrl.setState(imageData, testPackDir)
+			}
+
+			compareImagesByPixel(
+					robot.lookupAs("#imageView", ImageView::class).image,
+					FxImage(testPackDir.resolve(imageData.file).toUri().toString())
+			)
+		}
 	}
+
 
 	test("Should draw image in view port when new image is selected.") {
 		val expectedImageSize = 250
@@ -85,17 +108,7 @@ object CardImageSpec : Spek({
 				robot.lookupAs("#fileTextField", TextField::class).text
 		).isEqualTo(expectedImageFileBasename)
 
-		val actualImage = imageView.image
-		val expectedImage = FxImage(expectedImageFile.toUri().toString())
-		val actualPixels = actualImage.pixelReader
-		val expectedPixels = expectedImage.pixelReader
-		(0 until actualImage.width.toInt()).forEach { i ->
-			(0 until actualImage.height.toInt()).forEach { j ->
-				expectThat(actualPixels.getArgb(i, j))
-						.describedAs("Pixel at ($i,$j)")
-						.isEqualTo(expectedPixels.getArgb(i, j))
-			}
-		}
-
+		compareImagesByPixel(imageView.image,
+				FxImage(expectedImageFile.toUri().toString()))
 	}
 })

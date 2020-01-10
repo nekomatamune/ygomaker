@@ -6,11 +6,14 @@ import javafx.application.Platform
 import javafx.fxml.FXMLLoader
 import javafx.scene.Node
 import javafx.scene.Parent
+import javafx.scene.image.Image
 import javafx.stage.Stage
 import javafx.util.Callback
 import org.spekframework.spek2.dsl.Root
 import org.testfx.api.FxRobot
 import org.testfx.api.FxToolkit
+import strikt.api.expectThat
+import strikt.assertions.isEqualTo
 import java.util.concurrent.Semaphore
 import kotlin.reflect.KClass
 
@@ -83,3 +86,17 @@ fun <T> FxRobot.lookupAs(id: String, clazz: KClass<T>): T where T : Node {
 	return this.lookup(id).queryAs(clazz.java)
 }
 
+fun compareImagesByPixel(actual: Image, expected: Image,
+		x: Int = 0, y: Int = 0,
+		w: Int = actual.width.toInt(), h: Int = actual.height.toInt()) {
+
+	val actualPixels = actual.pixelReader
+	val expectedPixels = expected.pixelReader
+	(0 until w).forEach { i ->
+		(0 until h).forEach { j ->
+			expectThat(actualPixels.getArgb(i, j))
+					.describedAs("Pixel at ($i,$j)")
+					.isEqualTo(expectedPixels.getArgb(x + i, y + j))
+		}
+	}
+}
