@@ -83,6 +83,9 @@ object CardImageSpec : Spek({
 		}
 	}
 
+	test("Should invoke image handler") {
+		// TODO
+	}
 
 	test("Should draw image in view port when new image is selected.") {
 		val expectedImageSize = 250
