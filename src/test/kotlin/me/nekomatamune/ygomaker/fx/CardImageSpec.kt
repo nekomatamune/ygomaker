@@ -2,6 +2,7 @@ package me.nekomatamune.ygomaker.fx
 
 import io.mockk.every
 import io.mockk.mockk
+import javafx.scene.control.TextField
 import javafx.scene.image.ImageView
 import javafx.stage.FileChooser
 import me.nekomatamune.ygomaker.Image
@@ -37,11 +38,12 @@ object CardImageSpec : Spek({
 
 	test("Should draw image in view port when new image is selected.") {
 		val expectedImageSize = 250
-		val expectImageFile = myPackDir.resolve("250x250.jpg")
-
+		val expectedImageFileBasename = "250x250.jpg"
+		val expectedImageFile = myPackDir.resolve(expectedImageFileBasename)
+		
 		every {
 			mockFileChooser.showOpenDialog(any())
-		} returns (expectImageFile.toFile())
+		} returns (expectedImageFile.toFile())
 
 		//region action
 		runFx {
@@ -54,8 +56,12 @@ object CardImageSpec : Spek({
 		val imageView = robot.lookup("#imageView").queryAs(ImageView::class.java)
 		expectThat(imageView.fitWidth.toInt()).isEqualTo(expectedImageSize)
 
+		expectThat(
+			robot.lookup("#fileTextField").queryAs(TextField::class.java).text
+		).isEqualTo(expectedImageFileBasename)
+
 		val actualImage = imageView.image
-		val expectedImage = FxImage(expectImageFile.toUri().toString())
+		val expectedImage = FxImage(expectedImageFile.toUri().toString())
 		val actualPixels = actualImage.pixelReader
 		val expectedPixels = expectedImage.pixelReader
 		(0 until actualImage.width.toInt()).forEach { i ->
