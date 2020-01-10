@@ -17,8 +17,8 @@ import javafx.scene.image.Image as FxImage
 
 object CardImageSpec : Spek({
 	setupTestFx<CardImage>(
-		fxmlLocation = "fx/CardImage.fxml",
-		controllers = mapOf(CardImage::class to { CardImage() })
+			fxmlLocation = "fx/CardImage.fxml",
+			controllers = mapOf(CardImage::class to { CardImage() })
 	)
 
 	val ctrl by memoized<CardImage>()
@@ -26,7 +26,7 @@ object CardImageSpec : Spek({
 	val mockFileChooser by memoized { mockk<FileChooser>(relaxed = true) }
 
 	val myPackDir = Paths.get("src", "test", "resources", "fx",
-		"TEST").toAbsNormPath()
+			"TEST").toAbsNormPath()
 
 	lateinit var selectedImage: Image
 	beforeEachTest {
@@ -40,7 +40,7 @@ object CardImageSpec : Spek({
 		val expectedImageSize = 250
 		val expectedImageFileBasename = "250x250.jpg"
 		val expectedImageFile = myPackDir.resolve(expectedImageFileBasename)
-		
+
 		every {
 			mockFileChooser.showOpenDialog(any())
 		} returns (expectedImageFile.toFile())
@@ -57,7 +57,7 @@ object CardImageSpec : Spek({
 		expectThat(imageView.fitWidth.toInt()).isEqualTo(expectedImageSize)
 
 		expectThat(
-			robot.lookup("#fileTextField").queryAs(TextField::class.java).text
+				robot.lookup("#fileTextField").queryAs(TextField::class.java).text
 		).isEqualTo(expectedImageFileBasename)
 
 		val actualImage = imageView.image
@@ -67,8 +67,8 @@ object CardImageSpec : Spek({
 		(0 until actualImage.width.toInt()).forEach { i ->
 			(0 until actualImage.height.toInt()).forEach { j ->
 				expectThat(actualPixels.getArgb(i, j))
-					.describedAs("Pixel at ($i,$j)")
-					.isEqualTo(expectedPixels.getArgb(i, j))
+						.describedAs("Pixel at ($i,$j)")
+						.isEqualTo(expectedPixels.getArgb(i, j))
 			}
 		}
 
