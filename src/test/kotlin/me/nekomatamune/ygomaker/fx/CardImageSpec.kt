@@ -2,6 +2,7 @@ package me.nekomatamune.ygomaker.fx
 
 import io.mockk.every
 import io.mockk.mockk
+import javafx.scene.control.Spinner
 import javafx.scene.control.TextField
 import javafx.scene.image.ImageView
 import javafx.stage.FileChooser
@@ -25,7 +26,7 @@ object CardImageSpec : Spek({
 	val robot by memoized<FxRobot>()
 	val mockFileChooser by memoized { mockk<FileChooser>(relaxed = true) }
 
-	val myPackDir = Paths.get(
+	val testPackDir = Paths.get(
 			"src", "test", "resources", "fx", "TEST"
 	).toAbsNormPath()
 
@@ -37,10 +38,33 @@ object CardImageSpec : Spek({
 
 	afterGroup { tearDownFx() }
 
+	test("Should populate fields when set with image.") {
+		val expectedImage = Image(
+				x = 12, y = 34, size = 250, file = "250x250.jpg"
+		)
+
+		runFx {
+			ctrl.setState(expectedImage, testPackDir)
+		}
+
+		expectThat(
+				robot.lookup("#fileTextField").queryAs(TextField::class.java).text
+		).isEqualTo(expectedImage.file)
+		expectThat(
+				robot.lookup("#xSpinner").queryAs(Spinner::class.java).value
+		).isEqualTo(expectedImage.x)
+		expectThat(
+				robot.lookup("#ySpinner").queryAs(Spinner::class.java).value
+		).isEqualTo(expectedImage.y)
+		expectThat(
+				robot.lookup("#sizeSpinner").queryAs(Spinner::class.java).value
+		).isEqualTo(expectedImage.size)
+	}
+
 	test("Should draw image in view port when new image is selected.") {
 		val expectedImageSize = 250
 		val expectedImageFileBasename = "250x250.jpg"
-		val expectedImageFile = myPackDir.resolve(expectedImageFileBasename)
+		val expectedImageFile = testPackDir.resolve(expectedImageFileBasename)
 
 		every {
 			mockFileChooser.showOpenDialog(any())
@@ -48,7 +72,7 @@ object CardImageSpec : Spek({
 
 		//region action
 		runFx {
-			ctrl.setState(Image(), myPackDir)
+			ctrl.setState(Image(), testPackDir)
 		}
 
 		robot.rightClickOn("#fileTextField")
