@@ -48,16 +48,16 @@ object CardImageSpec : Spek({
 		}
 
 		expectThat(
-				robot.lookup("#fileTextField").queryAs(TextField::class.java).text
+				robot.lookupAs("#fileTextField", TextField::class).text
 		).isEqualTo(expectedImage.file)
 		expectThat(
-				robot.lookup("#xSpinner").queryAs(Spinner::class.java).value
+				robot.lookupAs("#xSpinner", Spinner::class).value
 		).isEqualTo(expectedImage.x)
 		expectThat(
-				robot.lookup("#ySpinner").queryAs(Spinner::class.java).value
+				robot.lookupAs("#ySpinner", Spinner::class).value
 		).isEqualTo(expectedImage.y)
 		expectThat(
-				robot.lookup("#sizeSpinner").queryAs(Spinner::class.java).value
+				robot.lookupAs("#sizeSpinner", Spinner::class).value
 		).isEqualTo(expectedImage.size)
 	}
 
@@ -78,11 +78,11 @@ object CardImageSpec : Spek({
 		robot.rightClickOn("#fileTextField")
 		//endregion
 
-		val imageView = robot.lookup("#imageView").queryAs(ImageView::class.java)
+		val imageView = robot.lookupAs("#imageView", ImageView::class)
 		expectThat(imageView.fitWidth.toInt()).isEqualTo(expectedImageSize)
 
 		expectThat(
-				robot.lookup("#fileTextField").queryAs(TextField::class.java).text
+				robot.lookupAs("#fileTextField", TextField::class).text
 		).isEqualTo(expectedImageFileBasename)
 
 		val actualImage = imageView.image
