@@ -25,8 +25,9 @@ object CardImageSpec : Spek({
 	val robot by memoized<FxRobot>()
 	val mockFileChooser by memoized { mockk<FileChooser>(relaxed = true) }
 
-	val myPackDir = Paths.get("src", "test", "resources", "fx",
-			"TEST").toAbsNormPath()
+	val myPackDir = Paths.get(
+			"src", "test", "resources", "fx", "TEST"
+	).toAbsNormPath()
 
 	lateinit var selectedImage: Image
 	beforeEachTest {
