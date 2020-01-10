@@ -107,7 +107,7 @@ open class CardForm {
 		defTextField.text = card.monster?.def ?: ""
 		codeTextField.text = card.code
 
-		cardImageController.setImage(card.image ?: Image(), packDir)
+		cardImageController.setState(card.image ?: Image(), packDir)
 
 		onSelectCardInProgress = false
 	}

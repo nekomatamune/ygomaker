@@ -18,10 +18,6 @@ fun <C> Root.setupTestFx(
 	controllers: Map<KClass<*>, () -> Any>
 ) {
 
-	val robot by memoized {
-		FxRobot()
-	}
-
 	val loader by memoized {
 		FXMLLoader().apply {
 			location = Resources.getResource(fxmlLocation)
@@ -56,6 +52,11 @@ fun <C> Root.setupTestFx(
 	val ctrl by memoized<C> {
 		app
 		loader.getController()
+	}
+
+	val robot by memoized {
+		ctrl
+		FxRobot()
 	}
 }
 

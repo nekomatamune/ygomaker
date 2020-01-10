@@ -111,7 +111,7 @@ object CardFormSpec : Spek({
 				ctrl.setState(card = myCard, packDir = myPackDir)
 			}
 
-			verify { mockCardImage.setImage(myCard.image!!, myPackDir) }
+			verify { mockCardImage.setState(myCard.image!!, myPackDir) }
 		}
 	}
 })

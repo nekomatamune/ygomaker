@@ -19,3 +19,19 @@ fun Control.addSimpleListener(listener: () -> Unit) {
 		else -> error("Unexpected control class ${this.javaClass}")
 	}.addListener { _, _, _ -> listener() }
 }
+
+class SoftLock {
+	private var locked = false
+
+	fun runIfNotLocked(block: () -> Unit) {
+		if (!locked) {
+			block()
+		}
+	}
+
+	fun lockAndRun(block: () -> Unit) {
+		locked = true
+		block()
+		locked = false
+	}
+}

@@ -40,7 +40,7 @@ data class Image(
 	val file: String = "",
 	val x: Int = 0,
 	val y: Int = 0,
-	val size: Int = 300
+	val size: Int = 250
 )
 
 /**
