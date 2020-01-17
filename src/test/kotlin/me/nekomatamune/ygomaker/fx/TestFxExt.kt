@@ -105,4 +105,4 @@ fun compareImagesByPixel(actual: Image, expected: Image,
 }
 
 private fun isRunByIntellij() =
-		System.getenv("XPC_SERVICE_NAME").contains("intellij")
+		System.getenv("XPC_SERVICE_NAME")?.contains("intellij") ?: false
