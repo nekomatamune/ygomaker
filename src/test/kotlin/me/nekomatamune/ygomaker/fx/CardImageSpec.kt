@@ -36,9 +36,6 @@ object CardImageSpec : Spek({
 		ctrl.imageModifiedHandler = { selectedImage = it.copy() }
 	}
 
-	afterGroup { tearDownFx() }
-
-
 	group("Setting initial state") {
 		test("Should populate UI fields") {
 			val expectedImage = Image(

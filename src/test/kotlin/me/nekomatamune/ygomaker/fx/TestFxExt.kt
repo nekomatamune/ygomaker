@@ -34,10 +34,8 @@ fun <C> Root.setupTestFx(
 			}
 		}
 	}
-
 	val app by memoized(
 			factory = {
-				FxToolkit.registerPrimaryStage()
 				FxToolkit.setupApplication {
 					object : Application() {
 						override fun start(primaryStage: Stage) {
@@ -49,7 +47,7 @@ fun <C> Root.setupTestFx(
 			},
 			destructor = {
 				FxToolkit.cleanupApplication(it)
-				FxToolkit.cleanupStages()
+
 			}
 	)
 
@@ -62,11 +60,16 @@ fun <C> Root.setupTestFx(
 		ctrl
 		FxRobot()
 	}
-}
 
-fun tearDownFx() {
-	if (FxToolkit.isFXApplicationThreadRunning()) {
-		Platform.exit()
+	beforeGroup {
+		FxToolkit.registerPrimaryStage()
+	}
+
+	afterGroup {
+		FxToolkit.cleanupStages()
+		if (FxToolkit.isFXApplicationThreadRunning() && isRunByIntellij()) {
+			Platform.exit()
+		}
 	}
 }
 
@@ -100,3 +103,6 @@ fun compareImagesByPixel(actual: Image, expected: Image,
 		}
 	}
 }
+
+private fun isRunByIntellij() =
+		System.getenv("XPC_SERVICE_NAME").contains("intellij")
