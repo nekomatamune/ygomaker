@@ -17,6 +17,7 @@ import strikt.assertions.isEqualTo
 import java.util.concurrent.Semaphore
 import kotlin.reflect.KClass
 
+@Suppress("UNUSED_VARIABLE", "UNUSED_EXPRESSION")
 fun <C> Root.setupTestFx(
 		fxmlLocation: String,
 		controllers: Map<KClass<*>, () -> Any>
@@ -50,6 +51,7 @@ fun <C> Root.setupTestFx(
 
 			}
 	)
+
 
 	val ctrl by memoized<C> {
 		app
