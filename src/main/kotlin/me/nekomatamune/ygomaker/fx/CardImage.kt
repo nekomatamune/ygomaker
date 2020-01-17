@@ -73,7 +73,6 @@ open class CardImage {
 			xSpinner.valueFactory.value = image.x
 			ySpinner.valueFactory.value = image.y
 			sizeSpinner.valueFactory.value = image.size
-
 		}
 
 		this.packDir = packDir

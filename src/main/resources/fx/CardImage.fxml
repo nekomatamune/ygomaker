@@ -15,13 +15,21 @@
     <!-- TODO: dynamically modify max value -->
     <HBox spacing="10">
         <Label text="x:"/>
-        <Spinner fx:id="xSpinner"
-                 min="0" max="1000" amountToStepBy="1"
-                 prefWidth="70"/>
+        <Spinner fx:id="xSpinner" prefWidth="70">
+            <valueFactory>
+                <SpinnerValueFactory.IntegerSpinnerValueFactory min="0"
+                                                                max="1000"
+                                                                amountToStepBy="1"/>
+            </valueFactory>
+        </Spinner>
         <Label text="y:"/>
-        <Spinner fx:id="ySpinner"
-                 min="0" max="1000" amountToStepBy="1"
-                 prefWidth="70"/>
+        <Spinner fx:id="ySpinner" prefWidth="70">
+            <valueFactory>
+                <SpinnerValueFactory.IntegerSpinnerValueFactory min="0"
+                                                                max="1000"
+                                                                amountToStepBy="1"/>
+            </valueFactory>
+        </Spinner>
         <Label text="size:"/>
         <Spinner fx:id="sizeSpinner"
                  min="1" initialValue="250" max="1000" amountToStepBy="1"
