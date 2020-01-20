@@ -36,36 +36,52 @@ open class CardImage {
 	private var mouseClickX: Int = 0
 	private var mouseClickY: Int = 0
 
-	var imageModifiedHandler: ImageModifiedHandler = {}
-		get() { throw UnsupportedOperationException() }
+	var imageModifiedHandler: ImageModifiedHandler = {
+		logger.warn { "No ImageModifiedHandler set" }
+	}
+
+	var fileChooserFactory = { FileChooser() }
+	private val listenerLock = SoftLock()
 
 	@FXML
 	fun initialize() {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
-			it.addSimpleListener { onSpinnerValueChange() }
+			it.addSimpleListener {
+				listenerLock.runIfNotLocked {
+					onSpinnerValueChange()
+				}
+			}
 		}
-		fileTextField.setOnMouseClicked { onClickImageFile() }
+		fileTextField.setOnMouseClicked { onClickFileText() }
 		imageView.setOnMousePressed { onMousePressed(it) }
 		imageView.setOnMouseDragged { onMouseDragged(it) }
 		imageView.setOnScroll { onMouseScrolled(it) }
 		imageView.setOnZoom { onZoom(it) }
 	}
 
-	fun setImage(
+	fun setState(
 		image: me.nekomatamune.ygomaker.Image,
 		packDir: Path
 	): Result<Unit> {
 
-		logger.info { "setImage: $image" }
+		logger.info { "setState(image=$image, packDir=$packDir" }
 
 		fileTextField.text = image.file
-		xSpinner.valueFactory.value = image.x
-		ySpinner.valueFactory.value = image.y
-		sizeSpinner.valueFactory.value = image.size
+		listenerLock.lockAndRun {
+			xSpinner.valueFactory.value = image.x
+			ySpinner.valueFactory.value = image.y
+			sizeSpinner.valueFactory.value = image.size
+		}
 
-		this.packDir = packDir!!.normalize().toAbsolutePath()
+		this.packDir = packDir
+
+		if (image.file.isEmpty()) {
+			logger.warn { "No image is given." }
+			return Result.success()
+		}
+
 		return loadImage()
 	}
 
@@ -109,8 +125,10 @@ open class CardImage {
 		dispatchModifyCardImageEvent()
 	}
 
-	private fun onClickImageFile() {
-		FileChooser().apply {
+	private fun onClickFileText() {
+		logger.debug { "onClickFileText()" }
+
+		fileChooserFactory().apply {
 			title = "Select an Image File"
 			initialDirectory = packDir.toFile()
 			extensionFilters.add(
@@ -120,11 +138,14 @@ open class CardImage {
 			logger.debug { "Selected image file: $selectedFile" }
 			val imageFile = packDir.relativize(selectedFile.toPath())
 
-			fileTextField.text = imageFile.toString()
+			logger.debug { "Relativized image file: $imageFile" }
+
+			setState(me.nekomatamune.ygomaker.Image(
+				file = imageFile.toString()
+			), packDir)
+
 			dispatchModifyCardImageEvent()
-			loadImage().onFailure {
-				logger.error(it.cause) { it.message }
-			}
+
 		}
 	}
 

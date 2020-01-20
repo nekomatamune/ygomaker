@@ -14,8 +14,8 @@ import java.nio.file.Paths
 object CardFormSpec : Spek({
 	val mockCardImage by memoized { mockk<CardImage>(relaxed = true) }
 	setupTestFx<CardForm>("fx/CardForm.fxml", mapOf(
-		CardImage::class to { mockCardImage },
-		CardForm::class to { CardForm() }
+			CardImage::class to { mockCardImage },
+			CardForm::class to { CardForm() }
 	))
 
 	val ctrl by memoized<CardForm>()
@@ -26,14 +26,10 @@ object CardFormSpec : Spek({
 	beforeEachTest {
 		every {
 			mockCardImage.imageModifiedHandler = capture(
-				capturedImageModifiedHandler)
+					capturedImageModifiedHandler)
 		}.just(Runs)
 
 		ctrl.cardModifiedHandler = { card = it.copy() }
-	}
-
-	afterGroup {
-		tearDownFx()
 	}
 
 	group("Basic") {
@@ -104,14 +100,14 @@ object CardFormSpec : Spek({
 
 		test("Should set image") {
 			val myCard = Card(
-				image = Image(file = "my_file", x = 123, y = 456, size = 777))
+					image = Image(file = "my_file", x = 123, y = 456, size = 777))
 			val myPackDir = Paths.get("my_path")
 
 			runFx {
 				ctrl.setState(card = myCard, packDir = myPackDir)
 			}
 
-			verify { mockCardImage.setImage(myCard.image!!, myPackDir) }
+			verify { mockCardImage.setState(myCard.image!!, myPackDir) }
 		}
 	}
 })

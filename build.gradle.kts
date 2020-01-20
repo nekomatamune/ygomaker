@@ -1,6 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	val kotlinVer = "1.3.50"
@@ -52,8 +51,8 @@ tasks.compileKotlin {
 	kotlinOptions {
 		jvmTarget = "1.8"
 		freeCompilerArgs = listOf(
-			"-XXLanguage:+InlineClasses",
-			"-Xallow-result-return-type"
+				"-XXLanguage:+InlineClasses",
+				"-Xallow-result-return-type"
 		)
 	}
 }
@@ -64,7 +63,6 @@ tasks.test {
 		events(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
 		exceptionFormat = TestExceptionFormat.FULL
 	}
-
 }
 
 tasks.register<Jar>("pack") {
