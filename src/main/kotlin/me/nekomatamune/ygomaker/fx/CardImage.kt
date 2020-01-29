@@ -13,6 +13,7 @@ import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.HBox
 import javafx.stage.FileChooser
 import me.nekomatamune.ygomaker.success
+import me.nekomatamune.ygomaker.toAbsNormPath
 import mu.KotlinLogging
 import java.io.FileNotFoundException
 import java.nio.file.Path
@@ -76,6 +77,7 @@ open class CardImage {
 		}
 
 		this.packDir = packDir
+		logger.info { "new packDir: ${this.packDir}" }
 
 		if (image.file.isEmpty()) {
 			logger.warn { "No image is given." }
@@ -136,7 +138,8 @@ open class CardImage {
 
 		}.showOpenDialog(null).let { selectedFile ->
 			logger.debug { "Selected image file: $selectedFile" }
-			val imageFile = packDir.relativize(selectedFile.toPath())
+			logger.debug { "packDir: $packDir" }
+			val imageFile = packDir.toAbsNormPath().relativize(selectedFile.toPath())
 
 			logger.debug { "Relativized image file: $imageFile" }
 
