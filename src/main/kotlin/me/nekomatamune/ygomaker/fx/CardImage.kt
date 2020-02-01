@@ -12,6 +12,7 @@ import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.HBox
 import javafx.stage.FileChooser
 import me.nekomatamune.ygomaker.Image
+import me.nekomatamune.ygomaker.logIfError
 import me.nekomatamune.ygomaker.success
 import me.nekomatamune.ygomaker.toAbsNormPath
 import mu.KotlinLogging
@@ -42,12 +43,11 @@ open class CardImage {
 	private var packDir: Path = Paths.get("")
 	private var mouseClickX: Int = 0
 	private var mouseClickY: Int = 0
-	// endregion
 
-	// region Other properties
 	private var imageModifiedHandler: (Image) -> Unit = {
 		logger.warn { "Handler not set!" }
 	}
+
 	private var fileChooserFactory = { FileChooser() }
 	private val spinnerListenerLock = SoftLock()
 	// endregion
@@ -62,7 +62,7 @@ open class CardImage {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
-			it.addSimpleListener { onSpinnerValueChanged() }
+			it.addSimpleListener { onSpinnerValueChanged().logIfError() }
 		}
 		fileTextField.setOnMouseClicked { onClickFileText() }
 		imageView.apply {
@@ -113,12 +113,18 @@ open class CardImage {
 		fileChooserFactory = factory
 	}
 
-	private fun onSpinnerValueChanged() {
+	//region Internal listeners
+
+	/**
+	 * Invoked when the value of [xSpinner], [ySpinner], or [sizeSpinner] changes.
+	 */
+	private fun onSpinnerValueChanged(): Result<Unit> {
 		logger.trace { "onSpinnerValueChanged" }
 		spinnerListenerLock.runIfNotLocked {
 			updateViewPort()
 			dispatchModifyCardImageEvent()
 		}
+		return Result.success()
 	}
 
 	private fun onMousePressed(event: MouseEvent) {
@@ -181,13 +187,15 @@ open class CardImage {
 		}
 	}
 
-	private fun dispatchModifyCardImageEvent() {
+	private fun dispatchModifyCardImageEvent(): Result<Unit> {
 		imageModifiedHandler(Image(
 				file = fileTextField.text,
 				x = xSpinner.value,
 				y = ySpinner.value,
 				size = sizeSpinner.value
 		))
+
+		return Result.success()
 	}
 
 	private fun loadImage(): Result<Unit> {
@@ -218,6 +226,7 @@ open class CardImage {
 
 		return updateViewPort()
 	}
+	//endregion
 
 	private fun updateViewPort(): Result<Unit> {
 		imageView.viewport = Rectangle2D(
@@ -228,4 +237,6 @@ open class CardImage {
 
 		return Result.success()
 	}
+
+
 }
