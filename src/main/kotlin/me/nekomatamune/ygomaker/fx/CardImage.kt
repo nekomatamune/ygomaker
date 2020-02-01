@@ -12,8 +12,8 @@ import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.HBox
 import javafx.stage.FileChooser
 import me.nekomatamune.ygomaker.Image
-import me.nekomatamune.ygomaker.logIfError
-import me.nekomatamune.ygomaker.success
+import me.nekomatamune.ygomaker.logFailure
+import me.nekomatamune.ygomaker.ok
 import me.nekomatamune.ygomaker.toAbsNormPath
 import mu.KotlinLogging
 import org.jetbrains.annotations.TestOnly
@@ -44,8 +44,8 @@ open class CardImage {
 	private var mouseClickX: Int = 0
 	private var mouseClickY: Int = 0
 
-	private var imageModifiedHandler: (Image) -> Unit = {
-		logger.warn { "Handler not set!" }
+	private var imageModifiedHandler: (Image) -> Result<Unit> = {
+		Result.failure(IllegalStateException("Handler not set!"))
 	}
 
 	private var fileChooserFactory = { FileChooser() }
@@ -62,7 +62,7 @@ open class CardImage {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
-			it.addSimpleListener { onSpinnerValueChanged().logIfError() }
+			it.addSimpleListener { onSpinnerValueChanged().logFailure() }
 		}
 		fileTextField.setOnMouseClicked { onClickFileText() }
 		imageView.apply {
@@ -77,7 +77,7 @@ open class CardImage {
 	 * Sets the [handler] to be invoked when a new image is selected by this
 	 * component.
 	 */
-	fun setImageModifiedHandler(handler: (Image) -> Unit) {
+	fun setImageModifiedHandler(handler: (Image) -> Result<Unit>) {
 		imageModifiedHandler = handler
 	}
 
@@ -99,7 +99,7 @@ open class CardImage {
 
 		newImage.file.ifEmpty {
 			logger.warn { "No new image is set." }
-			return Result.success()
+			return Result.ok()
 		}
 
 		return loadImage()
@@ -124,7 +124,7 @@ open class CardImage {
 			updateViewPort()
 			dispatchModifyCardImageEvent()
 		}
-		return Result.success()
+		return Result.ok()
 	}
 
 	private fun onMousePressed(event: MouseEvent) {
@@ -195,13 +195,13 @@ open class CardImage {
 				size = sizeSpinner.value
 		))
 
-		return Result.success()
+		return Result.ok()
 	}
 
 	private fun loadImage(): Result<Unit> {
 		if (fileTextField.text.isBlank()) {
 			imageView.image = null
-			return Result.success()
+			return Result.ok()
 		}
 
 		val imagePath = packDir.resolve(fileTextField.text)
@@ -235,7 +235,7 @@ open class CardImage {
 				sizeSpinner.value.toDouble(),
 				sizeSpinner.value.toDouble())
 
-		return Result.success()
+		return Result.ok()
 	}
 
 

@@ -7,6 +7,7 @@ import javafx.scene.control.TextField
 import javafx.scene.image.ImageView
 import javafx.stage.FileChooser
 import me.nekomatamune.ygomaker.Image
+import me.nekomatamune.ygomaker.ok
 import me.nekomatamune.ygomaker.toAbsNormPath
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
@@ -33,7 +34,10 @@ object CardImageSpec : Spek({
 	lateinit var selectedImage: Image
 	beforeEachTest {
 		ctrl.injectFileChooserFactoryForTesting { mockFileChooser }
-		ctrl.setImageModifiedHandler { selectedImage = it.copy() }
+		ctrl.setImageModifiedHandler {
+			selectedImage = it.copy()
+			Result.ok()
+		}
 	}
 
 	group("Setting initial state") {

@@ -176,7 +176,7 @@ class CardRendererController {
 
 		canvas.setOnMouseMoved { infoText.text = "(${it.x}, ${it.y})" }
 
-		return Result.success()
+		return Result.ok()
 	}
 
 }

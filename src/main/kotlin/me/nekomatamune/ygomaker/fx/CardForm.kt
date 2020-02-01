@@ -83,6 +83,8 @@ open class CardForm {
 		cardImageController.setImageModifiedHandler {
 			card = card.copy(image = it)
 			cardModifiedHandler(card)
+			//TODO: return the correct result
+			Result.ok()
 		}
 	}
 
