@@ -81,14 +81,6 @@ open class CardImage {
 		imageModifiedHandler = handler
 	}
 
-	/**
-	 * Injects a fake factory for [FileChooser] for testing purpose.
-	 */
-	@TestOnly
-	fun injectFileChooserFactoryForTesting(factory: () -> FileChooser) {
-		fileChooserFactory = factory
-	}
-
 	fun setState(image: Image, packDir: Path): Result<Unit> {
 		logger.info { "image=$image, packDir=$packDir" }
 
@@ -108,6 +100,14 @@ open class CardImage {
 		}
 
 		return loadImage()
+	}
+
+	/**
+	 * Injects a fake factory for [FileChooser] for testing purpose.
+	 */
+	@TestOnly
+	fun injectFileChooserFactoryForTesting(factory: () -> FileChooser) {
+		fileChooserFactory = factory
 	}
 
 	private fun onSpinnerValueChanged() {
