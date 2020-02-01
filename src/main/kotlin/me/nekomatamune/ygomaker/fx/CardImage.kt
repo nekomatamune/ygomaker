@@ -48,7 +48,7 @@ open class CardImage {
 		logger.warn { "Handler not set!" }
 	}
 	private var fileChooserFactory = { FileChooser() }
-	private val listenerLock = SoftLock()
+	private val spinnerListenerLock = SoftLock()
 	// endregion
 
 
@@ -57,17 +57,15 @@ open class CardImage {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
-			it.addSimpleListener {
-				listenerLock.runIfNotLocked {
-					onSpinnerValueChange()
-				}
-			}
+			it.addSimpleListener { onSpinnerValueChanged() }
 		}
 		fileTextField.setOnMouseClicked { onClickFileText() }
-		imageView.setOnMousePressed { onMousePressed(it) }
-		imageView.setOnMouseDragged { onMouseDragged(it) }
-		imageView.setOnScroll { onMouseScrolled(it) }
-		imageView.setOnZoom { onZoom(it) }
+		imageView.apply {
+			setOnMousePressed { onMousePressed(it) }
+			setOnMouseDragged { onMouseDragged(it) }
+			setOnScroll { onMouseScrolled(it) }
+			setOnZoom { onZoom(it) }
+		}
 	}
 
 	fun setImageModifiedHandler(handler: (Image) -> Unit) {
@@ -83,7 +81,7 @@ open class CardImage {
 		logger.info { "setState(image=$image, packDir=$packDir" }
 
 		fileTextField.text = image.file
-		listenerLock.lockAndRun {
+		spinnerListenerLock.lockAndRun {
 			xSpinner.valueFactory.value = image.x
 			ySpinner.valueFactory.value = image.y
 			sizeSpinner.valueFactory.value = image.size
@@ -100,9 +98,12 @@ open class CardImage {
 		return loadImage()
 	}
 
-	private fun onSpinnerValueChange() {
-		updateViewPort()
-		dispatchModifyCardImageEvent()
+	private fun onSpinnerValueChanged() {
+		logger.trace { "onSpinnerValueChanged" }
+		spinnerListenerLock.runIfNotLocked {
+			updateViewPort()
+			dispatchModifyCardImageEvent()
+		}
 	}
 
 	private fun onMousePressed(event: MouseEvent) {
