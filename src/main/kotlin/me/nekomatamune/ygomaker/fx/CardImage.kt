@@ -52,8 +52,13 @@ open class CardImage {
 	private val spinnerListenerLock = SoftLock()
 	// endregion
 
+	/**
+	 * Called by the javafx framework when this component is first loaded.
+	 *
+	 * Sets up listeners for own FXML components.
+	 */
 	@FXML
-	fun initialize() {
+	private fun initialize() {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
@@ -68,6 +73,10 @@ open class CardImage {
 		}
 	}
 
+	/**
+	 * Sets the [handler] to be invoked when a new image is selected by this
+	 * component.
+	 */
 	fun setImageModifiedHandler(handler: (Image) -> Unit) {
 		imageModifiedHandler = handler
 	}
