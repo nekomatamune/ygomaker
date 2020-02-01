@@ -78,10 +78,7 @@ open class CardImage {
 		fileChooserFactory = factory
 	}
 
-	fun setState(
-			image: Image,
-			packDir: Path
-	): Result<Unit> {
+	fun setState(image: Image, packDir: Path): Result<Unit> {
 
 		logger.info { "setState(image=$image, packDir=$packDir" }
 
