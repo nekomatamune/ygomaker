@@ -32,7 +32,7 @@ object CardImageSpec : Spek({
 
 	lateinit var selectedImage: Image
 	beforeEachTest {
-		ctrl.setFileChooserFactoryForTesting { mockFileChooser }
+		ctrl.injectFileChooserFactoryForTesting { mockFileChooser }
 		ctrl.setImageModifiedHandler { selectedImage = it.copy() }
 	}
 

@@ -81,8 +81,11 @@ open class CardImage {
 		imageModifiedHandler = handler
 	}
 
+	/**
+	 * Injects a fake factory for [FileChooser] for testing purpose.
+	 */
 	@TestOnly
-	fun setFileChooserFactoryForTesting(factory: () -> FileChooser) {
+	fun injectFileChooserFactoryForTesting(factory: () -> FileChooser) {
 		fileChooserFactory = factory
 	}
 
