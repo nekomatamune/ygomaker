@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-	val kotlinVer = "1.3.50"
+	val kotlinVer = "1.3.60"
 	id("org.jetbrains.kotlin.jvm").version(kotlinVer)
 	id("org.jetbrains.kotlin.plugin.serialization").version(kotlinVer)
 }

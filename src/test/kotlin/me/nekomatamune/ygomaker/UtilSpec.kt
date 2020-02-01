@@ -2,7 +2,6 @@ package me.nekomatamune.ygomaker
 
 import org.spekframework.spek2.Spek
 import strikt.api.expectThat
-import strikt.assertions.containsExactly
 import strikt.assertions.isEqualTo
 
 object UtilSpec : Spek({
@@ -24,3 +23,5 @@ object UtilSpec : Spek({
 	}
 
 })
+
+

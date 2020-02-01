@@ -13,9 +13,9 @@ fun CardType.isMonster() = (this in MONSTER_CARD_TYPES)
 
 fun Result.Companion.ok() = success(Unit)
 
-fun Result<Unit>.logFailure() = this.onFailure { logger.error(it) {} }
+fun <T> Result<T>.logFailure() = this.onFailure { logger.error(it) {} }
 
-fun Result<Unit>.then(action: () -> Result<Unit>): Result<Unit> {
+fun <T> Result<T>.then(action: () -> Result<T>): Result<T> {
 	return if (this.isFailure) this else action()
 }
 

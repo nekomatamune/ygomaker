@@ -17,7 +17,7 @@ import org.jetbrains.annotations.TestOnly
 import java.io.FileNotFoundException
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 private val logger = KotlinLogging.logger { }
@@ -63,10 +63,10 @@ open class CardImage {
 		}
 		fileTextField.setOnMouseClicked { onClickFileText() }
 		imageView.apply {
-			setOnMousePressed { onMousePressed(it) }
-			setOnMouseDragged { onMouseDragged(it) }
-			setOnScroll { onMouseScrolled(it) }
-			setOnZoom { onZoom(it) }
+			setOnMousePressed { onMousePressed(it).logFailure() }
+			setOnMouseDragged { onMouseDragged(it).logFailure() }
+			setOnScroll { onMouseScrolled(it).logFailure() }
+			setOnZoom { onZoom(it).logFailure() }
 		}
 	}
 
@@ -81,10 +81,12 @@ open class CardImage {
 	/**
 	 * Sets the state, which will trigger changes on the own components.
 	 */
-	fun setState(newImage: Image, newPackDir: Path): Result<Unit> {
+	fun setState(newImage: Image, newPackDir: Path = packDir): Result<Unit> {
 		logger.info { "image=$newImage, packDir=$newPackDir" }
 
-		packDir = newPackDir
+		packDir = newPackDir.toAbsNormPath()
+		logger.info { "Normalized packDir: $packDir" }
+
 		fileTextField.text = newImage.file
 
 		// Lock to avoid triggering handlers that cyclically call this method.
@@ -92,11 +94,6 @@ open class CardImage {
 			xSpinner.valueFactory.value = newImage.x
 			ySpinner.valueFactory.value = newImage.y
 			sizeSpinner.valueFactory.value = newImage.size
-		}
-
-		newImage.file.ifEmpty {
-			logger.warn { "No new image is set." }
-			return Result.ok()
 		}
 
 		return loadImage()
@@ -116,109 +113,123 @@ open class CardImage {
 	 * Invoked when the value of [xSpinner], [ySpinner], or [sizeSpinner] changes.
 	 */
 	private fun onSpinnerValueChanged(): Result<Unit> {
-		logger.trace { "onSpinnerValueChanged" }
-		return spinnerListenerLock.runIfNotLocked {
-			refreshViewPort().then {
-				invokeImageModifiedHandler()
-			}
+		logger.trace { "onSpinnerValueChanged()" }
+
+		var res = Result.ok()
+		spinnerListenerLock.runIfNotLocked {
+			res = refreshViewPort()
+					.then { invokeImageModifiedHandler() }
 		}
+
+		return res
 	}
 
-	private fun onMousePressed(event: MouseEvent) {
-		logger.trace { "Handling MouseEvent: $event" }
+	private fun onMousePressed(event: MouseEvent): Result<Unit> {
+		logger.debug { "onMousePressed(): $event" }
 		mouseClickX = event.screenX.roundToInt()
 		mouseClickY = event.screenY.roundToInt()
+		return Result.ok()
 	}
 
-	private fun onMouseDragged(event: MouseEvent) {
-		logger.trace { "Handling MouseEvent: $event" }
+	private fun onMouseDragged(event: MouseEvent): Result<Unit> {
+		logger.trace { "onMouseDragged(): $event" }
 
 		val scale = sizeSpinner.value / imageHBox.prefHeight
-
 		xSpinner.valueFactory.value =
 				(xSpinner.value + (mouseClickX - event.screenX) * scale).roundToInt()
 		ySpinner.valueFactory.value =
 				(ySpinner.value + (mouseClickY - event.screenY) * scale).roundToInt()
-		onMousePressed(event)
-		invokeImageModifiedHandler()
+
+		return onMousePressed(event)
+				.then { invokeImageModifiedHandler() }
 	}
 
-	private fun onMouseScrolled(event: ScrollEvent) {
-		logger.trace { "Handling ScrollEvent: $event" }
+	private fun onMouseScrolled(event: ScrollEvent): Result<Unit> {
+		logger.trace { "onMouseScrolled(): $event" }
 		sizeSpinner.valueFactory.value =
 				(sizeSpinner.value * (1 + (event.deltaY * 0.001))).roundToInt()
-		refreshViewPort()
-		invokeImageModifiedHandler()
+
+		return refreshViewPort()
+				.then { invokeImageModifiedHandler() }
 	}
 
-	private fun onZoom(event: ZoomEvent) {
-		logger.trace { "Handling ZoomEvent: $event" }
+	private fun onZoom(event: ZoomEvent): Result<Unit> {
+		logger.trace { "onZoom(): $event" }
 		sizeSpinner.valueFactory.value =
 				(sizeSpinner.value / event.zoomFactor).roundToInt()
-		refreshViewPort()
-		invokeImageModifiedHandler()
+
+		return refreshViewPort()
+				.then { invokeImageModifiedHandler() }
 	}
 
-	private fun onClickFileText() {
+	/**
+	 * Opens a [FileChooser] dialog for user to select an image file.
+	 *
+	 * Populates FX components accordingly and invokes [imageModifiedHandler].
+	 */
+	private fun onClickFileText(): Result<Unit> {
 		logger.debug { "onClickFileText()" }
 
-		fileChooserFactory().apply {
+		val chooser = fileChooserFactory().apply {
 			title = "Select an Image File"
 			initialDirectory = packDir.toFile()
 			extensionFilters.add(
-					FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg"))
-
-		}.showOpenDialog(null).let { selectedFile ->
-			logger.debug { "Selected image file: $selectedFile" }
-			logger.debug { "packDir: $packDir" }
-			val imageFile = packDir.toAbsNormPath().relativize(selectedFile.toPath())
-
-			logger.debug { "Relativized image file: $imageFile" }
-
-			setState(Image(
-					file = imageFile.toString()
-			), packDir)
-
-			invokeImageModifiedHandler()
-
+					FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg")
+			)
 		}
+
+		val selectedFile = chooser.showOpenDialog(null)
+		logger.debug { "Selected image file: $selectedFile" }
+
+		val imageFile = packDir
+				.relativize(selectedFile.toPath())
+		logger.debug { "Relativized image file: $imageFile" }
+
+		return setState(Image(file = imageFile.toString()))
+				.then { invokeImageModifiedHandler() }
 	}
+	//endregion
 
-
+	/**
+	 * Loads image.
+	 */
 	private fun loadImage(): Result<Unit> {
 		if (fileTextField.text.isBlank()) {
+			logger.warn { "No image file is specified. Unload existing image." }
 			imageView.image = null
 			return Result.ok()
 		}
 
-		val imagePath = packDir.resolve(fileTextField.text)
-		logger.debug { "Loading image from ${imagePath.toUri()}" }
+		val imageFile = packDir.resolve(fileTextField.text).normalize().toFile()
+		logger.info { "Loading image from $imageFile" }
 
-		imagePath.toFile().let {
-			if (!it.exists()) {
-				return Result.failure(FileNotFoundException(imagePath.toString()))
-			}
-			if (!it.isFile) {
-				return Result.failure(
-						IllegalArgumentException("Not a file: $it"))
-			}
+		if (!imageFile.exists()) {
+			return Result.failure(FileNotFoundException(imageFile.toString()))
+		}
+		if (!imageFile.isFile) {
+			return Result.failure(
+					IllegalArgumentException("Not a file: $imageFile"))
+		}
 
-			val image = javafx.scene.image.Image(it.toURI().toString())
-			imageView.image = image
+		val image = javafx.scene.image.Image(imageFile.toURI().toString())
+		logger.info { "Image loaded." }
+
+		imageView.image = image
+		spinnerListenerLock.lockAndRun {
 			(sizeSpinner.valueFactory as IntegerSpinnerValueFactory).max =
-					max(image.height, image.width).toInt()
+					min(image.height, image.width).toInt()
 			(xSpinner.valueFactory as IntegerSpinnerValueFactory).max = image.width.toInt()
 			(ySpinner.valueFactory as IntegerSpinnerValueFactory).max = image.height.toInt()
 		}
 
 		return refreshViewPort()
 	}
-	//endregion
 
 	/**
 	 * Invokes [imageModifiedHandler] with contents from the FX components.
 	 */
 	private fun invokeImageModifiedHandler(): Result<Unit> {
+		logger.info { "invoke" }
 		return imageModifiedHandler(Image(
 				file = fileTextField.text,
 				x = xSpinner.value,
@@ -231,6 +242,7 @@ open class CardImage {
 	 * Updates [imageView]'s viewport according to the FX components.
 	 */
 	private fun refreshViewPort(): Result<Unit> {
+		logger.info { "refreshViewPOrt" }
 		imageView.viewport = Rectangle2D(
 				xSpinner.value.toDouble(),
 				ySpinner.value.toDouble(),
