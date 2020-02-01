@@ -15,6 +15,7 @@ import me.nekomatamune.ygomaker.Image
 import me.nekomatamune.ygomaker.success
 import me.nekomatamune.ygomaker.toAbsNormPath
 import mu.KotlinLogging
+import org.jetbrains.annotations.TestOnly
 import java.io.FileNotFoundException
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -51,7 +52,6 @@ open class CardImage {
 	private val spinnerListenerLock = SoftLock()
 	// endregion
 
-
 	@FXML
 	fun initialize() {
 		logger.debug { "Initializing CardImage" }
@@ -72,13 +72,13 @@ open class CardImage {
 		imageModifiedHandler = handler
 	}
 
+	@TestOnly
 	fun setFileChooserFactoryForTesting(factory: () -> FileChooser) {
 		fileChooserFactory = factory
 	}
 
 	fun setState(image: Image, packDir: Path): Result<Unit> {
-
-		logger.info { "setState(image=$image, packDir=$packDir" }
+		logger.info { "image=$image, packDir=$packDir" }
 
 		fileTextField.text = image.file
 		spinnerListenerLock.lockAndRun {

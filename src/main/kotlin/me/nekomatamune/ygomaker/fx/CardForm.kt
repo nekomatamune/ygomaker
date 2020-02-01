@@ -48,11 +48,11 @@ open class CardForm {
 
 		// Group fields together for ease of reference later
 		val monsterComboBoxes = sequenceOf(
-			attributeComboBox, levelComboBox,
-			monsterTypeComboBox, monsterAbilityComboBox
+				attributeComboBox, levelComboBox,
+				monsterTypeComboBox, monsterAbilityComboBox
 		)
 		val monsterFields = monsterComboBoxes.plus(
-			sequenceOf(effectCheckBox, atkTextField, defTextField)
+				sequenceOf(effectCheckBox, atkTextField, defTextField)
 		)
 
 		// Set the first value to be the default
@@ -74,13 +74,13 @@ open class CardForm {
 		}
 
 		monsterFields.plus(
-			sequenceOf(cardNameTextField, cardTypeComboBox, effectTextArea,
-				codeTextField)
+				sequenceOf(cardNameTextField, cardTypeComboBox, effectTextArea,
+						codeTextField)
 		).forEach {
 			it.addSimpleListener { onCardValueChange() }
 		}
 
-		cardImageController.imageModifiedHandler = {
+		cardImageController.setImageModifiedHandler {
 			card = card.copy(image = it)
 			cardModifiedHandler(card)
 		}
@@ -119,19 +119,19 @@ open class CardForm {
 		}
 
 		card = card.copy(
-			name = cardNameTextField.text,
-			type = cardTypeComboBox.value,
-			code = codeTextField.text,
-			effect = effectTextArea.text,
-			monster = if (!cardTypeComboBox.value.isMonster()) null else Monster(
-				attribute = attributeComboBox.value,
-				level = levelComboBox.value,
-				type = monsterTypeComboBox.value,
-				ability = monsterAbilityComboBox.value,
-				effect = effectCheckBox.isSelected,
-				atk = atkTextField.text,
-				def = defTextField.text
-			)
+				name = cardNameTextField.text,
+				type = cardTypeComboBox.value,
+				code = codeTextField.text,
+				effect = effectTextArea.text,
+				monster = if (!cardTypeComboBox.value.isMonster()) null else Monster(
+						attribute = attributeComboBox.value,
+						level = levelComboBox.value,
+						type = monsterTypeComboBox.value,
+						ability = monsterAbilityComboBox.value,
+						effect = effectCheckBox.isSelected,
+						atk = atkTextField.text,
+						def = defTextField.text
+				)
 		)
 
 		cardModifiedHandler(card)
