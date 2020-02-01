@@ -1,6 +1,7 @@
 package me.nekomatamune.ygomaker.fx
 
 import javafx.scene.control.*
+import me.nekomatamune.ygomaker.ok
 
 /**
  * Wraps [listener] into a [javafx.beans.value.ChangeListener] to listens to
@@ -23,10 +24,8 @@ fun Control.addSimpleListener(listener: () -> Unit) {
 class SoftLock {
 	private var locked = false
 
-	fun runIfNotLocked(block: () -> Unit) {
-		if (!locked) {
-			block()
-		}
+	fun runIfNotLocked(block: () -> Result<Unit>): Result<Unit> {
+		return if (!locked) block() else Result.ok()
 	}
 
 	fun lockAndRun(block: () -> Unit) {

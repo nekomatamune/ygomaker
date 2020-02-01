@@ -11,10 +11,7 @@ import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.HBox
 import javafx.stage.FileChooser
-import me.nekomatamune.ygomaker.Image
-import me.nekomatamune.ygomaker.logFailure
-import me.nekomatamune.ygomaker.ok
-import me.nekomatamune.ygomaker.toAbsNormPath
+import me.nekomatamune.ygomaker.*
 import mu.KotlinLogging
 import org.jetbrains.annotations.TestOnly
 import java.io.FileNotFoundException
@@ -120,11 +117,11 @@ open class CardImage {
 	 */
 	private fun onSpinnerValueChanged(): Result<Unit> {
 		logger.trace { "onSpinnerValueChanged" }
-		spinnerListenerLock.runIfNotLocked {
-			updateViewPort()
-			dispatchModifyCardImageEvent()
+		return spinnerListenerLock.runIfNotLocked {
+			refreshViewPort().then {
+				invokeImageModifiedHandler()
+			}
 		}
-		return Result.ok()
 	}
 
 	private fun onMousePressed(event: MouseEvent) {
@@ -143,23 +140,23 @@ open class CardImage {
 		ySpinner.valueFactory.value =
 				(ySpinner.value + (mouseClickY - event.screenY) * scale).roundToInt()
 		onMousePressed(event)
-		dispatchModifyCardImageEvent()
+		invokeImageModifiedHandler()
 	}
 
 	private fun onMouseScrolled(event: ScrollEvent) {
 		logger.trace { "Handling ScrollEvent: $event" }
 		sizeSpinner.valueFactory.value =
 				(sizeSpinner.value * (1 + (event.deltaY * 0.001))).roundToInt()
-		updateViewPort()
-		dispatchModifyCardImageEvent()
+		refreshViewPort()
+		invokeImageModifiedHandler()
 	}
 
 	private fun onZoom(event: ZoomEvent) {
 		logger.trace { "Handling ZoomEvent: $event" }
 		sizeSpinner.valueFactory.value =
 				(sizeSpinner.value / event.zoomFactor).roundToInt()
-		updateViewPort()
-		dispatchModifyCardImageEvent()
+		refreshViewPort()
+		invokeImageModifiedHandler()
 	}
 
 	private fun onClickFileText() {
@@ -182,21 +179,11 @@ open class CardImage {
 					file = imageFile.toString()
 			), packDir)
 
-			dispatchModifyCardImageEvent()
+			invokeImageModifiedHandler()
 
 		}
 	}
 
-	private fun dispatchModifyCardImageEvent(): Result<Unit> {
-		imageModifiedHandler(Image(
-				file = fileTextField.text,
-				x = xSpinner.value,
-				y = ySpinner.value,
-				size = sizeSpinner.value
-		))
-
-		return Result.ok()
-	}
 
 	private fun loadImage(): Result<Unit> {
 		if (fileTextField.text.isBlank()) {
@@ -224,11 +211,26 @@ open class CardImage {
 			(ySpinner.valueFactory as IntegerSpinnerValueFactory).max = image.height.toInt()
 		}
 
-		return updateViewPort()
+		return refreshViewPort()
 	}
 	//endregion
 
-	private fun updateViewPort(): Result<Unit> {
+	/**
+	 * Invokes [imageModifiedHandler] with contents from the FX components.
+	 */
+	private fun invokeImageModifiedHandler(): Result<Unit> {
+		return imageModifiedHandler(Image(
+				file = fileTextField.text,
+				x = xSpinner.value,
+				y = ySpinner.value,
+				size = sizeSpinner.value
+		))
+	}
+
+	/**
+	 * Updates [imageView]'s viewport according to the FX components.
+	 */
+	private fun refreshViewPort(): Result<Unit> {
 		imageView.viewport = Rectangle2D(
 				xSpinner.value.toDouble(),
 				ySpinner.value.toDouble(),
