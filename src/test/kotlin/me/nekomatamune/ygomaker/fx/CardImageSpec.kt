@@ -32,8 +32,8 @@ object CardImageSpec : Spek({
 
 	lateinit var selectedImage: Image
 	beforeEachTest {
-		ctrl.fileChooserFactory = { mockFileChooser }
-		ctrl.imageModifiedHandler = { selectedImage = it.copy() }
+		ctrl.setFileChooserFactoryForTesting { mockFileChooser }
+		ctrl.setImageModifiedHandler { selectedImage = it.copy() }
 	}
 
 	group("Setting initial state") {

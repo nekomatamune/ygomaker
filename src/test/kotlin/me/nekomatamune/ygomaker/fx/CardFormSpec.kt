@@ -25,8 +25,9 @@ object CardFormSpec : Spek({
 	val capturedImageModifiedHandler = slot<(Image) -> Unit>()
 	beforeEachTest {
 		every {
-			mockCardImage.imageModifiedHandler = capture(
-					capturedImageModifiedHandler)
+			mockCardImage.setImageModifiedHandler(
+					capture(capturedImageModifiedHandler)
+			)
 		}.just(Runs)
 
 		ctrl.cardModifiedHandler = { card = it.copy() }

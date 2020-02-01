@@ -5,13 +5,13 @@ import javafx.geometry.Rectangle2D
 import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory
 import javafx.scene.control.TextField
-import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseEvent
 import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.HBox
 import javafx.stage.FileChooser
+import me.nekomatamune.ygomaker.Image
 import me.nekomatamune.ygomaker.success
 import me.nekomatamune.ygomaker.toAbsNormPath
 import mu.KotlinLogging
@@ -23,24 +23,34 @@ import kotlin.math.roundToInt
 
 private val logger = KotlinLogging.logger { }
 
+/**
+ * Controller for fx/CardImage.fxml.
+ */
 open class CardImage {
 
+	// region FXML components
 	@FXML private lateinit var fileTextField: TextField
 	@FXML private lateinit var xSpinner: Spinner<Int>
 	@FXML private lateinit var ySpinner: Spinner<Int>
 	@FXML private lateinit var sizeSpinner: Spinner<Int>
 	@FXML private lateinit var imageView: ImageView
 	@FXML private lateinit var imageHBox: HBox
+	// endregion
+
+	// region Controller states
 	private var packDir: Path = Paths.get("")
 	private var mouseClickX: Int = 0
 	private var mouseClickY: Int = 0
+	// endregion
 
-	var imageModifiedHandler: (me.nekomatamune.ygomaker.Image) -> Unit = {
-		logger.warn { "No ImageModifiedHandler set" }
+	// region Other properties
+	private var imageModifiedHandler: (Image) -> Unit = {
+		logger.warn { "Handler not set!" }
 	}
-
-	var fileChooserFactory = { FileChooser() }
+	private var fileChooserFactory = { FileChooser() }
 	private val listenerLock = SoftLock()
+	// endregion
+
 
 	@FXML
 	fun initialize() {
@@ -60,9 +70,17 @@ open class CardImage {
 		imageView.setOnZoom { onZoom(it) }
 	}
 
+	fun setImageModifiedHandler(handler: (Image) -> Unit) {
+		imageModifiedHandler = handler
+	}
+
+	fun setFileChooserFactoryForTesting(factory: () -> FileChooser) {
+		fileChooserFactory = factory
+	}
+
 	fun setState(
-		image: me.nekomatamune.ygomaker.Image,
-		packDir: Path
+			image: Image,
+			packDir: Path
 	): Result<Unit> {
 
 		logger.info { "setState(image=$image, packDir=$packDir" }
@@ -102,9 +120,9 @@ open class CardImage {
 		val scale = sizeSpinner.value / imageHBox.prefHeight
 
 		xSpinner.valueFactory.value =
-			(xSpinner.value + (mouseClickX - event.screenX) * scale).roundToInt()
+				(xSpinner.value + (mouseClickX - event.screenX) * scale).roundToInt()
 		ySpinner.valueFactory.value =
-			(ySpinner.value + (mouseClickY - event.screenY) * scale).roundToInt()
+				(ySpinner.value + (mouseClickY - event.screenY) * scale).roundToInt()
 		onMousePressed(event)
 		dispatchModifyCardImageEvent()
 	}
@@ -112,7 +130,7 @@ open class CardImage {
 	private fun onMouseScrolled(event: ScrollEvent) {
 		logger.trace { "Handling ScrollEvent: $event" }
 		sizeSpinner.valueFactory.value =
-			(sizeSpinner.value * (1 + (event.deltaY * 0.001))).roundToInt()
+				(sizeSpinner.value * (1 + (event.deltaY * 0.001))).roundToInt()
 		updateViewPort()
 		dispatchModifyCardImageEvent()
 	}
@@ -120,7 +138,7 @@ open class CardImage {
 	private fun onZoom(event: ZoomEvent) {
 		logger.trace { "Handling ZoomEvent: $event" }
 		sizeSpinner.valueFactory.value =
-			(sizeSpinner.value / event.zoomFactor).roundToInt()
+				(sizeSpinner.value / event.zoomFactor).roundToInt()
 		updateViewPort()
 		dispatchModifyCardImageEvent()
 	}
@@ -132,7 +150,7 @@ open class CardImage {
 			title = "Select an Image File"
 			initialDirectory = packDir.toFile()
 			extensionFilters.add(
-				FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg"))
+					FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg"))
 
 		}.showOpenDialog(null).let { selectedFile ->
 			logger.debug { "Selected image file: $selectedFile" }
@@ -141,8 +159,8 @@ open class CardImage {
 
 			logger.debug { "Relativized image file: $imageFile" }
 
-			setState(me.nekomatamune.ygomaker.Image(
-				file = imageFile.toString()
+			setState(Image(
+					file = imageFile.toString()
 			), packDir)
 
 			dispatchModifyCardImageEvent()
@@ -151,11 +169,11 @@ open class CardImage {
 	}
 
 	private fun dispatchModifyCardImageEvent() {
-		imageModifiedHandler(me.nekomatamune.ygomaker.Image(
-			file = fileTextField.text,
-			x = xSpinner.value,
-			y = ySpinner.value,
-			size = sizeSpinner.value
+		imageModifiedHandler(Image(
+				file = fileTextField.text,
+				x = xSpinner.value,
+				y = ySpinner.value,
+				size = sizeSpinner.value
 		))
 	}
 
@@ -174,13 +192,13 @@ open class CardImage {
 			}
 			if (!it.isFile) {
 				return Result.failure(
-					IllegalArgumentException("Not a file: $it"))
+						IllegalArgumentException("Not a file: $it"))
 			}
 
-			val image = Image(it.toURI().toString())
+			val image = javafx.scene.image.Image(it.toURI().toString())
 			imageView.image = image
 			(sizeSpinner.valueFactory as IntegerSpinnerValueFactory).max =
-				max(image.height, image.width).toInt()
+					max(image.height, image.width).toInt()
 			(xSpinner.valueFactory as IntegerSpinnerValueFactory).max = image.width.toInt()
 			(ySpinner.valueFactory as IntegerSpinnerValueFactory).max = image.height.toInt()
 		}
@@ -190,10 +208,10 @@ open class CardImage {
 
 	private fun updateViewPort(): Result<Unit> {
 		imageView.viewport = Rectangle2D(
-			xSpinner.value.toDouble(),
-			ySpinner.value.toDouble(),
-			sizeSpinner.value.toDouble(),
-			sizeSpinner.value.toDouble())
+				xSpinner.value.toDouble(),
+				ySpinner.value.toDouble(),
+				sizeSpinner.value.toDouble(),
+				sizeSpinner.value.toDouble())
 
 		return Result.success()
 	}
