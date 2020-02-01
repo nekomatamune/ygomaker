@@ -23,8 +23,6 @@ import kotlin.math.roundToInt
 
 private val logger = KotlinLogging.logger { }
 
-typealias ImageModifiedHandler = (me.nekomatamune.ygomaker.Image) -> Unit
-
 open class CardImage {
 
 	@FXML private lateinit var fileTextField: TextField
@@ -37,7 +35,7 @@ open class CardImage {
 	private var mouseClickX: Int = 0
 	private var mouseClickY: Int = 0
 
-	var imageModifiedHandler: ImageModifiedHandler = {
+	var imageModifiedHandler: (me.nekomatamune.ygomaker.Image) -> Unit = {
 		logger.warn { "No ImageModifiedHandler set" }
 	}
 

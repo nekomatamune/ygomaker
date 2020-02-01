@@ -22,7 +22,7 @@ object CardFormSpec : Spek({
 	val robot by memoized<FxRobot>()
 
 	lateinit var card: Card
-	val capturedImageModifiedHandler = slot<ImageModifiedHandler>()
+	val capturedImageModifiedHandler = slot<(Image) -> Unit>()
 	beforeEachTest {
 		every {
 			mockCardImage.imageModifiedHandler = capture(
