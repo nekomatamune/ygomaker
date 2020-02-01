@@ -81,21 +81,24 @@ open class CardImage {
 		imageModifiedHandler = handler
 	}
 
-	fun setState(image: Image, packDir: Path): Result<Unit> {
-		logger.info { "image=$image, packDir=$packDir" }
+	/**
+	 * Sets the state, which will trigger changes on the own components.
+	 */
+	fun setState(newImage: Image, newPackDir: Path): Result<Unit> {
+		logger.info { "image=$newImage, packDir=$newPackDir" }
 
-		fileTextField.text = image.file
+		packDir = newPackDir
+		fileTextField.text = newImage.file
+
+		// Lock to avoid triggering handlers that cyclically call this method.
 		spinnerListenerLock.lockAndRun {
-			xSpinner.valueFactory.value = image.x
-			ySpinner.valueFactory.value = image.y
-			sizeSpinner.valueFactory.value = image.size
+			xSpinner.valueFactory.value = newImage.x
+			ySpinner.valueFactory.value = newImage.y
+			sizeSpinner.valueFactory.value = newImage.size
 		}
 
-		this.packDir = packDir
-		logger.info { "new packDir: ${this.packDir}" }
-
-		if (image.file.isEmpty()) {
-			logger.warn { "No image is given." }
+		newImage.file.ifEmpty {
+			logger.warn { "No new image is set." }
 			return Result.success()
 		}
 
