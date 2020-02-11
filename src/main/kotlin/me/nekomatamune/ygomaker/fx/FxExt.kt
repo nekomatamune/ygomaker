@@ -26,10 +26,10 @@ fun Control.addSimpleListener(listener: () -> Unit) {
 class SoftLock {
 	private var locked = false
 
-	fun runIfNotLocked(block: () -> Unit) {
-		if (!locked) {
-			block()
-		}
+	fun locked() = locked
+
+	inline fun runIfNotLocked(block: () -> Unit) {
+		if (!locked()) block()
 	}
 
 	fun lockAndRun(block: () -> Unit) {

@@ -67,7 +67,7 @@ class CardListController {
 
 	fun onModifyCard(card: Card?): Result<Unit> {
 		if (cardListView.selectionModel.selectedItem == null) {
-			return Result.ok()
+			return success()
 		}
 
 		disableOnSelectCard = true
@@ -89,7 +89,7 @@ class CardListController {
 		pack = pack.copy(cards = cards)
 
 		disableOnSelectCard = false
-		return Result.ok()
+		return success()
 	}
 
 	fun setPack(pack: Pack, selectLast: Boolean = false) {

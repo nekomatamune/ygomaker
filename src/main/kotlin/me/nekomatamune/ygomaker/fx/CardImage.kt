@@ -42,7 +42,7 @@ open class CardImage {
 	private var mouseClickY: Int = 0
 
 	private var imageModifiedHandler: (Image) -> Result<Unit> = {
-		Result.failure(IllegalStateException("Handler not set!"))
+		failure(IllegalStateException("Handler not set!"))
 	}
 
 	private var fileChooserFactory = { FileChooser() }
@@ -59,14 +59,14 @@ open class CardImage {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
-			it.addSimpleListener { onSpinnerValueChanged().logFailure() }
+			it.addSimpleListener { onSpinnerValueChanged().logFailure(logger::error) }
 		}
 		fileTextField.setOnMouseClicked { onClickFileText() }
 		imageView.apply {
-			setOnMousePressed { onMousePressed(it).logFailure() }
-			setOnMouseDragged { onMouseDragged(it).logFailure() }
-			setOnScroll { onMouseScrolled(it).logFailure() }
-			setOnZoom { onZoom(it).logFailure() }
+			setOnMousePressed { onMousePressed(it).logFailure(logger::error) }
+			setOnMouseDragged { onMouseDragged(it).logFailure(logger::error) }
+			setOnScroll { onMouseScrolled(it).logFailure(logger::error) }
+			setOnZoom { onZoom(it).logFailure(logger::error) }
 		}
 	}
 
@@ -115,20 +115,19 @@ open class CardImage {
 	private fun onSpinnerValueChanged(): Result<Unit> {
 		logger.trace { "onSpinnerValueChanged()" }
 
-		var res = Result.ok()
 		spinnerListenerLock.runIfNotLocked {
-			res = refreshViewPort()
-					.then { invokeImageModifiedHandler() }
+			refreshViewPort().onFailure { return it }
+			invokeImageModifiedHandler().onFailure { return it }
 		}
 
-		return res
+		return success()
 	}
 
 	private fun onMousePressed(event: MouseEvent): Result<Unit> {
 		logger.debug { "onMousePressed(): $event" }
 		mouseClickX = event.screenX.roundToInt()
 		mouseClickY = event.screenY.roundToInt()
-		return Result.ok()
+		return success()
 	}
 
 	private fun onMouseDragged(event: MouseEvent): Result<Unit> {
@@ -140,8 +139,8 @@ open class CardImage {
 		ySpinner.valueFactory.value =
 				(ySpinner.value + (mouseClickY - event.screenY) * scale).roundToInt()
 
-		return onMousePressed(event)
-				.then { invokeImageModifiedHandler() }
+		onMousePressed(event).onFailure { return it }
+		return invokeImageModifiedHandler()
 	}
 
 	private fun onMouseScrolled(event: ScrollEvent): Result<Unit> {
@@ -149,8 +148,8 @@ open class CardImage {
 		sizeSpinner.valueFactory.value =
 				(sizeSpinner.value * (1 + (event.deltaY * 0.001))).roundToInt()
 
-		return refreshViewPort()
-				.then { invokeImageModifiedHandler() }
+		refreshViewPort().onFailure { return it }
+		return invokeImageModifiedHandler()
 	}
 
 	private fun onZoom(event: ZoomEvent): Result<Unit> {
@@ -158,8 +157,8 @@ open class CardImage {
 		sizeSpinner.valueFactory.value =
 				(sizeSpinner.value / event.zoomFactor).roundToInt()
 
-		return refreshViewPort()
-				.then { invokeImageModifiedHandler() }
+		refreshViewPort().onFailure { return it }
+		return invokeImageModifiedHandler()
 	}
 
 	/**
@@ -185,8 +184,10 @@ open class CardImage {
 				.relativize(selectedFile.toPath())
 		logger.debug { "Relativized image file: $imageFile" }
 
-		return setState(Image(file = imageFile.toString()))
-				.then { invokeImageModifiedHandler() }
+		setState(Image(file = imageFile.toString())).onFailure {
+			return it
+		}
+		return invokeImageModifiedHandler()
 	}
 	//endregion
 
@@ -197,18 +198,17 @@ open class CardImage {
 		if (fileTextField.text.isBlank()) {
 			logger.warn { "No image file is specified. Unload existing image." }
 			imageView.image = null
-			return Result.ok()
+			return success()
 		}
 
 		val imageFile = packDir.resolve(fileTextField.text).normalize().toFile()
 		logger.info { "Loading image from $imageFile" }
 
 		if (!imageFile.exists()) {
-			return Result.failure(FileNotFoundException(imageFile.toString()))
+			return failure(FileNotFoundException(imageFile.toString()))
 		}
 		if (!imageFile.isFile) {
-			return Result.failure(
-					IllegalArgumentException("Not a file: $imageFile"))
+			return failure(IllegalArgumentException("Not a file: $imageFile"))
 		}
 
 		val image = javafx.scene.image.Image(imageFile.toURI().toString())
@@ -249,7 +249,7 @@ open class CardImage {
 				sizeSpinner.value.toDouble(),
 				sizeSpinner.value.toDouble())
 
-		return Result.ok()
+		return success()
 	}
 
 

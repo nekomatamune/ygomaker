@@ -51,8 +51,7 @@ tasks.compileKotlin {
 	kotlinOptions {
 		jvmTarget = "1.8"
 		freeCompilerArgs = listOf(
-				"-XXLanguage:+InlineClasses",
-				"-Xallow-result-return-type"
+				"-XXLanguage:+InlineClasses"
 		)
 	}
 }

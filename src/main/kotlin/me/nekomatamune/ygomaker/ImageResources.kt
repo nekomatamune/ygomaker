@@ -17,18 +17,19 @@ fun getCardFrame(card: Card): Result<Image> {
 		CardType.XYZ_MONSTER -> "xyz"
 		in SPELL_CARD_TYPES -> "spell"
 		in TRAP_CARD_TYPES -> "trap"
-		else -> return Result.failure(
-			IllegalArgumentException("MonsterType ${card.type} is not supported yet.")
+		else -> return failure(
+				IllegalArgumentException(
+						"MonsterType ${card.type} is not supported yet.")
 		)
 	}
 
 	try {
 		Resources.getResource("img/frame.${frameTag}.png").openStream().use {
 			val frameImage = Image(it)
-			return Result.success(frameImage)
+			return success(frameImage)
 		}
 	} catch (e: Exception) {
-		return Result.failure(e)
+		return failure(e)
 	}
 }
 
@@ -59,10 +60,10 @@ fun getAttribute(card: Card): Result<Image> {
 	try {
 		Resources.getResource("img/attribute.${tag}.png").openStream().use {
 			val attributeImage = Image(it)
-			return Result.success(attributeImage)
+			return success(attributeImage)
 		}
 	} catch (e: Exception) {
-		return Result.failure(e)
+		return failure(e)
 	}
 }
 
@@ -77,16 +78,16 @@ fun getSymbol(card: Card): Result<Image?> {
 		CardType.RITUAL_SPELL -> "ritual"
 		CardType.XYZ_MONSTER -> "rank"
 		in MONSTER_CARD_TYPES -> "level"
-		else -> return Result.success(null)
+		else -> return success(null)
 	}
 
 	try {
 		Resources.getResource("img/symbol.${tag}.png").openStream().use {
 			val symbolImage = Image(it)
-			return Result.success(symbolImage)
+			return success(symbolImage)
 		}
 	} catch (e: Exception) {
-		return Result.failure(e)
+		return failure(e)
 	}
 }
 
@@ -113,13 +114,13 @@ private fun getMonsterCardTypeText(card: Card): String {
 
 fun getMonsterTypeText(card: Card): String {
 	return sequenceOf(
-		card.monster!!.type,
-		card.monster.ability,
-		getMonsterCardTypeText(card),
-		if (card.monster.effect) "効果" else ""
+			card.monster!!.type,
+			card.monster.ability,
+			getMonsterCardTypeText(card),
+			if (card.monster.effect) "効果" else ""
 	).filter {
 		it.isNotEmpty()
 	}.joinToString(
-		"／", "【", "】")
+			"／", "【", "】")
 }
 

@@ -87,7 +87,7 @@ open class CardForm {
 			logger.info { "after cardModifiedHandler" }
 
 			//TODO: return the correct result
-			Result.ok()
+			success()
 		}
 	}
 
