@@ -23,6 +23,7 @@ fun Control.addSimpleListener(listener: () -> Unit) {
 	}.addListener { _, _, _ -> listener() }
 }
 
+// TODO: move to its own file
 class SoftLock {
 	private var locked = false
 
