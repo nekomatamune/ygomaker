@@ -16,6 +16,7 @@ typealias CardModifiedHandler = (Card) -> Unit
 
 open class CardFormCtrl {
 
+	// region FXML components
 	@FXML lateinit var cardNameTextField: TextField
 	@FXML lateinit var cardTypeComboBox: ComboBox<CardType>
 	@FXML lateinit var attributeComboBox: ComboBox<Attribute>
@@ -28,6 +29,7 @@ open class CardFormCtrl {
 	@FXML lateinit var defTextField: TextField
 	@FXML lateinit var codeTextField: TextField
 	@FXML lateinit var cardImageController: CardImageCtrl
+	// endregion
 
 	var cardModifiedHandler: CardModifiedHandler = {}
 
