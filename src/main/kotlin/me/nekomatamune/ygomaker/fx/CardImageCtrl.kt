@@ -25,7 +25,7 @@ private val logger = KotlinLogging.logger { }
 /**
  * Controller for fx/CardImage.fxml.
  */
-open class CardImage {
+open class CardImageCtrl {
 
 	// region FXML components
 	@FXML private lateinit var fileTextField: TextField

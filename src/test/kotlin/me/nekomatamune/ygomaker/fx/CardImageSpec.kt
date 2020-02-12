@@ -18,12 +18,12 @@ import javafx.scene.image.Image as FxImage
 
 
 object CardImageSpec : Spek({
-	setupTestFx<CardImage>(
+	setupTestFx<CardImageCtrl>(
 			fxmlLocation = "fx/CardImage.fxml",
-			controllers = mapOf(CardImage::class to { CardImage() })
+			controllers = mapOf(CardImageCtrl::class to { CardImageCtrl() })
 	)
 
-	val ctrl by memoized<CardImage>()
+	val ctrl by memoized<CardImageCtrl>()
 	val robot by memoized<FxRobot>()
 	val mockFileChooser by memoized { mockk<FileChooser>(relaxed = true) }
 

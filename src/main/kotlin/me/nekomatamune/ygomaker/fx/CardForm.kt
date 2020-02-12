@@ -27,7 +27,7 @@ open class CardForm {
 	@FXML lateinit var atkTextField: TextField
 	@FXML lateinit var defTextField: TextField
 	@FXML lateinit var codeTextField: TextField
-	@FXML lateinit var cardImageController: CardImage
+	@FXML lateinit var cardImageController: CardImageCtrl
 
 	var cardModifiedHandler: CardModifiedHandler = {}
 
