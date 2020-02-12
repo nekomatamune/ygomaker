@@ -13,12 +13,12 @@ import java.nio.file.Paths
 
 object CardFormSpec : Spek({
 	val mockCardImage by memoized { mockk<CardImageCtrl>(relaxed = true) }
-	setupTestFx<CardForm>("fx/CardForm.fxml", mapOf(
+	setupTestFx<CardFormCtrl>("fx/CardForm.fxml", mapOf(
 			CardImageCtrl::class to { mockCardImage },
-			CardForm::class to { CardForm() }
+			CardFormCtrl::class to { CardFormCtrl() }
 	))
 
-	val ctrl by memoized<CardForm>()
+	val ctrl by memoized<CardFormCtrl>()
 	val robot by memoized<FxRobot>()
 
 	lateinit var card: Card
