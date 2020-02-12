@@ -1,5 +1,7 @@
 package me.nekomatamune.ygomaker
 
+import mu.KotlinLogging
+
 fun success(): Result<Unit> = success(Unit)
 fun <T> success(value: T?): Result<T> = Result(value, null)
 fun failure(error: Exception): Result<Nothing> = Result(null, error)
@@ -10,6 +12,7 @@ class Result<out T> internal constructor(
 ) {
 
 	fun value() = value!!
+	fun error() = error!!
 	fun isSuccess() = (error == null)
 	fun isFailure() = !isSuccess()
 
@@ -21,12 +24,4 @@ class Result<out T> internal constructor(
 		@Suppress("UNCHECKED_CAST")
 		return if (isFailure()) ret(this as Result<Nothing>) else value()
 	}
-
-	fun logFailure(log: (str: String) -> Unit): Result<T> {
-		if (isFailure()) {
-			log(this.toString())
-		}
-		return this
-	}
-
 }

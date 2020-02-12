@@ -67,7 +67,7 @@ fun getAttribute(card: Card): Result<Image> {
 	}
 }
 
-fun getSymbol(card: Card): Result<Image?> {
+fun getSymbol(card: Card): Result<Image> {
 	val tag = when (card.type) {
 		CardType.CONTINUOUS_TRAP -> "continuous"
 		CardType.COUNTER_TRAP -> "counter"
@@ -78,7 +78,8 @@ fun getSymbol(card: Card): Result<Image?> {
 		CardType.RITUAL_SPELL -> "ritual"
 		CardType.XYZ_MONSTER -> "rank"
 		in MONSTER_CARD_TYPES -> "level"
-		else -> return success(null)
+		else -> return failure(
+				IllegalArgumentException("Card type not yet supported: ${card.type}"))
 	}
 
 	try {

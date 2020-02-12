@@ -1,6 +1,7 @@
 package me.nekomatamune.ygomaker.fx
 
 import javafx.scene.control.*
+import me.nekomatamune.ygomaker.Result
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
@@ -37,5 +38,12 @@ class SoftLock {
 		locked = true
 		block()
 		locked = false
+	}
+}
+
+fun <T> Result<T>.alertFailure() {
+	if (this.isFailure()) {
+		logger.error(this.error()) { "Got Exception:" }
+		Alert(Alert.AlertType.ERROR, "${this.error()}", ButtonType.OK).showAndWait()
 	}
 }

@@ -59,14 +59,14 @@ open class CardImage {
 		logger.debug { "Initializing CardImage" }
 
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
-			it.addSimpleListener { onSpinnerValueChanged().logFailure(logger::error) }
+			it.addSimpleListener { onSpinnerValueChanged().alertFailure() }
 		}
 		fileTextField.setOnMouseClicked { onClickFileText() }
 		imageView.apply {
-			setOnMousePressed { onMousePressed(it).logFailure(logger::error) }
-			setOnMouseDragged { onMouseDragged(it).logFailure(logger::error) }
-			setOnScroll { onMouseScrolled(it).logFailure(logger::error) }
-			setOnZoom { onZoom(it).logFailure(logger::error) }
+			setOnMousePressed { onMousePressed(it).alertFailure() }
+			setOnMouseDragged { onMouseDragged(it).alertFailure() }
+			setOnScroll { onMouseScrolled(it).alertFailure() }
+			setOnZoom { onZoom(it).alertFailure() }
 		}
 	}
 
