@@ -14,7 +14,7 @@ private val logger = KotlinLogging.logger { }
 
 typealias CardModifiedHandler = (Card) -> Unit
 
-open class CardForm {
+open class CardFormCtrl {
 
 	@FXML lateinit var cardNameTextField: TextField
 	@FXML lateinit var cardTypeComboBox: ComboBox<CardType>
@@ -27,7 +27,7 @@ open class CardForm {
 	@FXML lateinit var atkTextField: TextField
 	@FXML lateinit var defTextField: TextField
 	@FXML lateinit var codeTextField: TextField
-	@FXML lateinit var cardImageController: CardImage
+	@FXML lateinit var cardImageController: CardImageCtrl
 
 	var cardModifiedHandler: CardModifiedHandler = {}
 
@@ -48,11 +48,11 @@ open class CardForm {
 
 		// Group fields together for ease of reference later
 		val monsterComboBoxes = sequenceOf(
-			attributeComboBox, levelComboBox,
-			monsterTypeComboBox, monsterAbilityComboBox
+				attributeComboBox, levelComboBox,
+				monsterTypeComboBox, monsterAbilityComboBox
 		)
 		val monsterFields = monsterComboBoxes.plus(
-			sequenceOf(effectCheckBox, atkTextField, defTextField)
+				sequenceOf(effectCheckBox, atkTextField, defTextField)
 		)
 
 		// Set the first value to be the default
@@ -74,15 +74,20 @@ open class CardForm {
 		}
 
 		monsterFields.plus(
-			sequenceOf(cardNameTextField, cardTypeComboBox, effectTextArea,
-				codeTextField)
+				sequenceOf(cardNameTextField, cardTypeComboBox, effectTextArea,
+						codeTextField)
 		).forEach {
 			it.addSimpleListener { onCardValueChange() }
 		}
 
-		cardImageController.imageModifiedHandler = {
+		cardImageController.setImageModifiedHandler {
 			card = card.copy(image = it)
 			cardModifiedHandler(card)
+
+			logger.info { "after cardModifiedHandler" }
+
+			//TODO: return the correct result
+			success()
 		}
 	}
 
@@ -119,19 +124,19 @@ open class CardForm {
 		}
 
 		card = card.copy(
-			name = cardNameTextField.text,
-			type = cardTypeComboBox.value,
-			code = codeTextField.text,
-			effect = effectTextArea.text,
-			monster = if (!cardTypeComboBox.value.isMonster()) null else Monster(
-				attribute = attributeComboBox.value,
-				level = levelComboBox.value,
-				type = monsterTypeComboBox.value,
-				ability = monsterAbilityComboBox.value,
-				effect = effectCheckBox.isSelected,
-				atk = atkTextField.text,
-				def = defTextField.text
-			)
+				name = cardNameTextField.text,
+				type = cardTypeComboBox.value,
+				code = codeTextField.text,
+				effect = effectTextArea.text,
+				monster = if (!cardTypeComboBox.value.isMonster()) null else Monster(
+						attribute = attributeComboBox.value,
+						level = levelComboBox.value,
+						type = monsterTypeComboBox.value,
+						ability = monsterAbilityComboBox.value,
+						effect = effectCheckBox.isSelected,
+						atk = atkTextField.text,
+						def = defTextField.text
+				)
 		)
 
 		cardModifiedHandler(card)

@@ -12,21 +12,22 @@ import strikt.assertions.isTrue
 import java.nio.file.Paths
 
 object CardFormSpec : Spek({
-	val mockCardImage by memoized { mockk<CardImage>(relaxed = true) }
-	setupTestFx<CardForm>("fx/CardForm.fxml", mapOf(
-			CardImage::class to { mockCardImage },
-			CardForm::class to { CardForm() }
+	val mockCardImage by memoized { mockk<CardImageCtrl>(relaxed = true) }
+	setupTestFx<CardFormCtrl>("fx/CardForm.fxml", mapOf(
+			CardImageCtrl::class to { mockCardImage },
+			CardFormCtrl::class to { CardFormCtrl() }
 	))
 
-	val ctrl by memoized<CardForm>()
+	val ctrl by memoized<CardFormCtrl>()
 	val robot by memoized<FxRobot>()
 
 	lateinit var card: Card
-	val capturedImageModifiedHandler = slot<ImageModifiedHandler>()
+	val capturedImageModifiedHandler = slot<(Image) -> Result<Unit>>()
 	beforeEachTest {
 		every {
-			mockCardImage.imageModifiedHandler = capture(
-					capturedImageModifiedHandler)
+			mockCardImage.setImageModifiedHandler(
+					capture(capturedImageModifiedHandler)
+			)
 		}.just(Runs)
 
 		ctrl.cardModifiedHandler = { card = it.copy() }

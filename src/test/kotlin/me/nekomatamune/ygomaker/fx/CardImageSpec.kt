@@ -7,6 +7,7 @@ import javafx.scene.control.TextField
 import javafx.scene.image.ImageView
 import javafx.stage.FileChooser
 import me.nekomatamune.ygomaker.Image
+import me.nekomatamune.ygomaker.success
 import me.nekomatamune.ygomaker.toAbsNormPath
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
@@ -17,12 +18,12 @@ import javafx.scene.image.Image as FxImage
 
 
 object CardImageSpec : Spek({
-	setupTestFx<CardImage>(
+	setupTestFx<CardImageCtrl>(
 			fxmlLocation = "fx/CardImage.fxml",
-			controllers = mapOf(CardImage::class to { CardImage() })
+			controllers = mapOf(CardImageCtrl::class to { CardImageCtrl() })
 	)
 
-	val ctrl by memoized<CardImage>()
+	val ctrl by memoized<CardImageCtrl>()
 	val robot by memoized<FxRobot>()
 	val mockFileChooser by memoized { mockk<FileChooser>(relaxed = true) }
 
@@ -32,8 +33,11 @@ object CardImageSpec : Spek({
 
 	lateinit var selectedImage: Image
 	beforeEachTest {
-		ctrl.fileChooserFactory = { mockFileChooser }
-		ctrl.imageModifiedHandler = { selectedImage = it.copy() }
+		ctrl.injectFileChooserFactoryForTesting { mockFileChooser }
+		ctrl.setImageModifiedHandler {
+			selectedImage = it.copy()
+			success()
+		}
 	}
 
 	group("Setting initial state") {
