@@ -29,13 +29,14 @@ open class CardFormCtrl {
 	@FXML lateinit var cardImageController: CardImageCtrl
 	// endregion
 
+	// region Controller states
 	private var card = Card()
-
 	private var cardModifiedHandler: (Card) -> Result<Unit> = {
 		failure(IllegalStateException("Handler not set!"))
 	}
 
-	var onSelectCardInProgress: Boolean = false
+	private val cardFieldsListenerLock = SoftLock()
+	// endregion
 
 
 	@FXML
@@ -106,50 +107,47 @@ open class CardFormCtrl {
 			"setState(card=$newCard, packDir=$newPackDir)"
 		}
 
-		this.card = newCard.copy()
+		card = newCard.copy()
 
-		onSelectCardInProgress = true
+		cardFieldsListenerLock.lockAndRun {
+			cardNameTextField.text = newCard.name
+			cardTypeComboBox.selectionModel.select(newCard.type)
+			attributeComboBox.selectionModel.select(newCard.monster?.attribute)
+			levelComboBox.selectionModel.select(newCard.monster?.level)
+			monsterTypeComboBox.selectionModel.select(newCard.monster?.type)
+			monsterAbilityComboBox.selectionModel.select(
+					newCard.monster?.ability ?: "")
+			effectCheckBox.isSelected = newCard.monster?.effect ?: false
+			effectTextArea.text = newCard.effect
+			atkTextField.text = newCard.monster?.atk ?: ""
+			defTextField.text = newCard.monster?.def ?: ""
+			codeTextField.text = newCard.code
 
-		cardNameTextField.text = newCard.name
-		cardTypeComboBox.selectionModel.select(newCard.type)
-		attributeComboBox.selectionModel.select(newCard.monster?.attribute)
-		levelComboBox.selectionModel.select(newCard.monster?.level)
-		monsterTypeComboBox.selectionModel.select(newCard.monster?.type)
-		monsterAbilityComboBox.selectionModel.select(newCard.monster?.ability ?: "")
-		effectCheckBox.isSelected = newCard.monster?.effect ?: false
-		effectTextArea.text = newCard.effect
-		atkTextField.text = newCard.monster?.atk ?: ""
-		defTextField.text = newCard.monster?.def ?: ""
-		codeTextField.text = newCard.code
-
-		cardImageController.setState(newCard.image ?: Image(), newPackDir)
-
-		onSelectCardInProgress = false
+			cardImageController.setState(newCard.image ?: Image(), newPackDir)
+		}
 	}
 
 
 	private fun onCardValueChange() {
 		logger.trace { "onCardValueChange()" }
-		if (onSelectCardInProgress) {
-			return
+
+		cardFieldsListenerLock.runIfNotLocked {
+			card = card.copy(
+					name = cardNameTextField.text,
+					type = cardTypeComboBox.value,
+					code = codeTextField.text,
+					effect = effectTextArea.text,
+					monster = if (!cardTypeComboBox.value.isMonster()) null else Monster(
+							attribute = attributeComboBox.value,
+							level = levelComboBox.value,
+							type = monsterTypeComboBox.value,
+							ability = monsterAbilityComboBox.value,
+							effect = effectCheckBox.isSelected,
+							atk = atkTextField.text,
+							def = defTextField.text
+					)
+			)
+			cardModifiedHandler(card)
 		}
-
-		card = card.copy(
-				name = cardNameTextField.text,
-				type = cardTypeComboBox.value,
-				code = codeTextField.text,
-				effect = effectTextArea.text,
-				monster = if (!cardTypeComboBox.value.isMonster()) null else Monster(
-						attribute = attributeComboBox.value,
-						level = levelComboBox.value,
-						type = monsterTypeComboBox.value,
-						ability = monsterAbilityComboBox.value,
-						effect = effectCheckBox.isSelected,
-						atk = atkTextField.text,
-						def = defTextField.text
-				)
-		)
-
-		cardModifiedHandler(card)
 	}
 }
