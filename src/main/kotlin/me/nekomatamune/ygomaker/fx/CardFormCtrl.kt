@@ -48,12 +48,20 @@ open class CardFormCtrl {
 	fun initialize() {
 		logger.debug { "Initializing CardForm" }
 
-		// Set selectable values
+		// Set selectable values for ComboBoxes
 		cardTypeComboBox.items = observableArrayList(CardType.values().toList())
 		attributeComboBox.items = observableArrayList(Attribute.values().toList())
 		levelComboBox.items = observableArrayList((1..12).toList())
 		monsterTypeComboBox.items = observableArrayList(MONSTER_TYPE_PRESETS)
 		monsterAbilityComboBox.items = observableArrayList(MONSTER_ABILITY_PRESETS)
+
+		// Set 1st value as the default value for ComboBoxes
+		sequenceOf(
+				cardTypeComboBox, attributeComboBox, levelComboBox,
+				monsterTypeComboBox, monsterAbilityComboBox
+		).forEach {
+			it.selectionModel.selectFirst()
+		}
 
 		// Group fields together for ease of reference later
 		val monsterComboBoxes = sequenceOf(
@@ -63,11 +71,6 @@ open class CardFormCtrl {
 		val monsterFields = monsterComboBoxes.plus(
 				sequenceOf(effectCheckBox, atkTextField, defTextField)
 		)
-
-		// Set the first value to be the default
-		monsterComboBoxes.plus(cardTypeComboBox).forEach {
-			it.selectionModel.selectFirst()
-		}
 
 		// Special rules to apply when CardType changes
 		cardTypeComboBox.valueProperty().addListener { _, oldCardType, newCardType ->

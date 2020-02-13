@@ -8,6 +8,7 @@ import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isNotNull
 import strikt.assertions.isTrue
 import java.nio.file.Paths
 
@@ -37,6 +38,17 @@ object CardFormSpec : Spek({
 	}
 
 	group("Basic") {
+		test("Should set default ComboBox values to be the first options") {
+			expectThat(card.type).isEqualTo(CardType.NORMAL_SUMMON_MONSTER)
+			expectThat(card.monster).isNotNull().get {
+				expectThat(level).isEqualTo(1)
+				expectThat(attribute).isEqualTo(Attribute.LIGHT)
+				expectThat(type).isEqualTo(MONSTER_TYPE_PRESETS[0])
+				expectThat(ability).isEqualTo(MONSTER_ABILITY_PRESETS[0])
+			}
+
+		}
+
 		test("Should modify card name") {
 			robot.clickOn("#cardNameTextField")
 			robot.write("Hello World!")

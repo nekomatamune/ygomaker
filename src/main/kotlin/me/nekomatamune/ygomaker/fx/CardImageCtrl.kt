@@ -37,6 +37,21 @@ open class CardImageCtrl {
 	// endregion
 
 	// region Controller states
+	var image: Image
+		get() = Image(
+				file = fileTextField.text,
+				x = xSpinner.value,
+				y = ySpinner.value,
+				size = sizeSpinner.value
+		)
+		private set(value) {
+			fileTextField.text = value.file
+			xSpinner.valueFactory.value = value.x
+			ySpinner.valueFactory.value = value.y
+			sizeSpinner.valueFactory.value = value.size
+
+		}
+
 	private var packDir: Path = Paths.get("")
 	private var mouseClickX: Int = 0
 	private var mouseClickY: Int = 0
@@ -46,7 +61,7 @@ open class CardImageCtrl {
 	}
 
 	private var fileChooserFactory = { FileChooser() }
-	private val spinnerListenerLock = SoftLock()
+	private val imageComponentListenerLock = SoftLock()
 	// endregion
 
 	/**
@@ -87,14 +102,7 @@ open class CardImageCtrl {
 		packDir = newPackDir.toAbsNormPath()
 		logger.info { "Normalized packDir: $packDir" }
 
-		fileTextField.text = newImage.file
-
-		// Lock to avoid triggering handlers that cyclically call this method.
-		spinnerListenerLock.lockAndRun {
-			xSpinner.valueFactory.value = newImage.x
-			ySpinner.valueFactory.value = newImage.y
-			sizeSpinner.valueFactory.value = newImage.size
-		}
+		imageComponentListenerLock.lockAndRun { image = newImage }
 
 		return loadImage()
 	}
@@ -115,9 +123,9 @@ open class CardImageCtrl {
 	private fun onSpinnerValueChanged(): Result<Unit> {
 		logger.trace { "onSpinnerValueChanged()" }
 
-		spinnerListenerLock.runIfNotLocked {
+		imageComponentListenerLock.runIfNotLocked {
 			refreshViewPort().onFailure { return it }
-			invokeImageModifiedHandler().onFailure { return it }
+			imageModifiedHandler(image).onFailure { return it }
 		}
 
 		return success()
@@ -140,7 +148,7 @@ open class CardImageCtrl {
 				(ySpinner.value + (mouseClickY - event.screenY) * scale).roundToInt()
 
 		onMousePressed(event).onFailure { return it }
-		return invokeImageModifiedHandler()
+		return imageModifiedHandler(image)
 	}
 
 	private fun onMouseScrolled(event: ScrollEvent): Result<Unit> {
@@ -149,7 +157,7 @@ open class CardImageCtrl {
 				(sizeSpinner.value * (1 + (event.deltaY * 0.001))).roundToInt()
 
 		refreshViewPort().onFailure { return it }
-		return invokeImageModifiedHandler()
+		return imageModifiedHandler(image)
 	}
 
 	private fun onZoom(event: ZoomEvent): Result<Unit> {
@@ -158,7 +166,7 @@ open class CardImageCtrl {
 				(sizeSpinner.value / event.zoomFactor).roundToInt()
 
 		refreshViewPort().onFailure { return it }
-		return invokeImageModifiedHandler()
+		return imageModifiedHandler(image)
 	}
 
 	/**
@@ -187,7 +195,7 @@ open class CardImageCtrl {
 		setState(Image(file = imageFile.toString())).onFailure {
 			return it
 		}
-		return invokeImageModifiedHandler()
+		return imageModifiedHandler(image)
 	}
 	//endregion
 
@@ -215,7 +223,7 @@ open class CardImageCtrl {
 		logger.info { "Image loaded." }
 
 		imageView.image = image
-		spinnerListenerLock.lockAndRun {
+		imageComponentListenerLock.lockAndRun {
 			(sizeSpinner.valueFactory as IntegerSpinnerValueFactory).max =
 					min(image.height, image.width).toInt()
 			(xSpinner.valueFactory as IntegerSpinnerValueFactory).max = image.width.toInt()
@@ -223,19 +231,6 @@ open class CardImageCtrl {
 		}
 
 		return refreshViewPort()
-	}
-
-	/**
-	 * Invokes [imageModifiedHandler] with contents from the FX components.
-	 */
-	private fun invokeImageModifiedHandler(): Result<Unit> {
-		logger.info { "invoke" }
-		return imageModifiedHandler(Image(
-				file = fileTextField.text,
-				x = xSpinner.value,
-				y = ySpinner.value,
-				size = sizeSpinner.value
-		))
 	}
 
 	/**
