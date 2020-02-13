@@ -12,8 +12,6 @@ import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 
-typealias CardModifiedHandler = (Card) -> Unit
-
 open class CardFormCtrl {
 
 	// region FXML components
@@ -31,12 +29,14 @@ open class CardFormCtrl {
 	@FXML lateinit var cardImageController: CardImageCtrl
 	// endregion
 
-	var cardModifiedHandler: CardModifiedHandler = {}
+	private var card = Card()
+
+	private var cardModifiedHandler: (Card) -> Result<Unit> = {
+		failure(IllegalStateException("Handler not set!"))
+	}
 
 	var onSelectCardInProgress: Boolean = false
 
-	var card = Card()
-		private set
 
 	@FXML
 	fun initialize() {
@@ -93,31 +93,40 @@ open class CardFormCtrl {
 		}
 	}
 
-	fun setState(card: Card, packDir: Path) {
+	// region simple getter/setter
+	fun card() = card
+
+	fun setCardModifiedHandler(handler: (Card) -> Result<Unit>) {
+		cardModifiedHandler = handler
+	}
+	// endregion
+
+	fun setState(newCard: Card, newPackDir: Path) {
 		logger.info {
-			"setState(card=$card, packDir=$packDir)"
+			"setState(card=$newCard, packDir=$newPackDir)"
 		}
 
-		this.card = card.copy()
+		this.card = newCard.copy()
 
 		onSelectCardInProgress = true
 
-		cardNameTextField.text = card.name
-		cardTypeComboBox.selectionModel.select(card.type)
-		attributeComboBox.selectionModel.select(card.monster?.attribute)
-		levelComboBox.selectionModel.select(card.monster?.level)
-		monsterTypeComboBox.selectionModel.select(card.monster?.type)
-		monsterAbilityComboBox.selectionModel.select(card.monster?.ability ?: "")
-		effectCheckBox.isSelected = card.monster?.effect ?: false
-		effectTextArea.text = card.effect
-		atkTextField.text = card.monster?.atk ?: ""
-		defTextField.text = card.monster?.def ?: ""
-		codeTextField.text = card.code
+		cardNameTextField.text = newCard.name
+		cardTypeComboBox.selectionModel.select(newCard.type)
+		attributeComboBox.selectionModel.select(newCard.monster?.attribute)
+		levelComboBox.selectionModel.select(newCard.monster?.level)
+		monsterTypeComboBox.selectionModel.select(newCard.monster?.type)
+		monsterAbilityComboBox.selectionModel.select(newCard.monster?.ability ?: "")
+		effectCheckBox.isSelected = newCard.monster?.effect ?: false
+		effectTextArea.text = newCard.effect
+		atkTextField.text = newCard.monster?.atk ?: ""
+		defTextField.text = newCard.monster?.def ?: ""
+		codeTextField.text = newCard.code
 
-		cardImageController.setState(card.image ?: Image(), packDir)
+		cardImageController.setState(newCard.image ?: Image(), newPackDir)
 
 		onSelectCardInProgress = false
 	}
+
 
 	private fun onCardValueChange() {
 		logger.trace { "onCardValueChange()" }

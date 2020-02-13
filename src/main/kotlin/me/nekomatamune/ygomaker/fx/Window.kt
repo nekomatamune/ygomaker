@@ -35,7 +35,7 @@ class Window {
 				MenuAction.SAVE_PACK_AS -> savePackAs()
 				MenuAction.NEW_CARD -> newCard()
 				MenuAction.RENDER_CARD -> cardRendererController.render(
-					cardFormController.card, packDir)
+						cardFormController.card(), packDir)
 			}
 		}
 
@@ -44,7 +44,7 @@ class Window {
 			cardRendererController.render(it, packDir)
 		}
 
-		cardFormController.cardModifiedHandler = {
+		cardFormController.setCardModifiedHandler {
 			cardListController.onModifyCard(it)
 		}
 

@@ -30,7 +30,10 @@ object CardFormSpec : Spek({
 			)
 		}.just(Runs)
 
-		ctrl.cardModifiedHandler = { card = it.copy() }
+		ctrl.setCardModifiedHandler {
+			card = it
+			success()
+		}
 	}
 
 	group("Basic") {
@@ -105,7 +108,7 @@ object CardFormSpec : Spek({
 			val myPackDir = Paths.get("my_path")
 
 			runFx {
-				ctrl.setState(card = myCard, packDir = myPackDir)
+				ctrl.setState(newCard = myCard, newPackDir = myPackDir)
 			}
 
 			verify { mockCardImage.setState(myCard.image!!, myPackDir) }
