@@ -39,10 +39,16 @@ open class CardFormCtrl {
 	// endregion
 
 
+	/**
+	 * Called by the javafx framework when this component is first loaded.
+	 *
+	 * Sets up listeners for own FXML components.
+	 */
 	@FXML
 	fun initialize() {
 		logger.debug { "Initializing CardForm" }
 
+		// Set selectable values
 		cardTypeComboBox.items = observableArrayList(CardType.values().toList())
 		attributeComboBox.items = observableArrayList(Attribute.values().toList())
 		levelComboBox.items = observableArrayList((1..12).toList())
