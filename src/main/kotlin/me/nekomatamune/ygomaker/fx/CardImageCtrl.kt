@@ -1,3 +1,5 @@
+@file:Suppress("NAME_SHADOWING")
+
 package me.nekomatamune.ygomaker.fx
 
 import javafx.fxml.FXML
@@ -17,7 +19,6 @@ import org.jetbrains.annotations.TestOnly
 import java.io.File
 import java.io.FileNotFoundException
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.math.min
 import kotlin.math.roundToInt
 import javafx.scene.image.Image as FxImage
@@ -82,7 +83,7 @@ open class CardImageCtrl {
 
 	private lateinit var lastMousePressedEvent: MouseEvent
 
-	private var packDir: Path = Paths.get("")
+	private lateinit var packDir: Path
 
 
 	private var imageModifiedHandler: (Image) -> Result<Unit> = {
@@ -132,25 +133,22 @@ open class CardImageCtrl {
 	 * Sets the state, which will trigger changes on the own components.
 	 */
 	fun setState(newImage: Image, newPackDir: Path): Result<Unit> {
+		val newPackDir = newPackDir.toAbsNormPath()
 		logger.info { "image=$newImage, packDir=$newPackDir" }
 
-		packDir = newPackDir.toAbsNormPath()
-		logger.info { "Normalized packDir: $packDir" }
-
-		if (newImage.file.isBlank()) {
+		fxImage = if (newImage.file.isBlank()) {
 			logger.info { "No image file is specified. Unload image." }
-			fxImage = null
-			image = newImage
-			return success()
+			null
+		} else {
+			val imageFile = newPackDir.resolve(newImage.file).toFile()
+			readImageFile(imageFile).onFailure {
+				return it
+			}
 		}
 
-		val imageFile = packDir.resolve(newImage.file).toFile()
-		fxImage = readImageFile(imageFile).onFailure {
-			return it
-		}
 		image = newImage
+		packDir = newPackDir
 		fxImageViewport = image.toViewport()
-
 		return success()
 	}
 
