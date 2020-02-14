@@ -67,7 +67,7 @@ open class CardFormCtrl {
 		failure(IllegalStateException("Handler not set!"))
 	}
 
-	private val cardFieldsListenerLock = SoftLock()
+	private val cardFieldsListenerLock = HandlerLock()
 	// endregion
 
 

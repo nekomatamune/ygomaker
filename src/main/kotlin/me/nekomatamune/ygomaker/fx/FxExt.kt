@@ -1,10 +1,19 @@
 package me.nekomatamune.ygomaker.fx
 
+import javafx.beans.value.ObservableValue
+import javafx.scene.Node
 import javafx.scene.control.*
+import javafx.scene.input.MouseDragEvent
+import javafx.scene.input.MouseEvent
+import javafx.scene.input.ScrollEvent
+import javafx.scene.input.ZoomEvent
 import me.nekomatamune.ygomaker.Result
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
+
+
+
 
 /**
  * Wraps [listener] into a [javafx.beans.value.ChangeListener] to listens to
@@ -24,22 +33,7 @@ fun Control.addSimpleListener(listener: () -> Unit) {
 	}.addListener { _, _, _ -> listener() }
 }
 
-// TODO: move to its own file
-class SoftLock {
-	private var locked = false
 
-	fun locked() = locked
-
-	inline fun runIfNotLocked(block: () -> Unit) {
-		if (!locked()) block()
-	}
-
-	fun lockAndRun(block: () -> Unit) {
-		locked = true
-		block()
-		locked = false
-	}
-}
 
 fun <T> Result<T>.alertFailure() {
 	if (this.isFailure()) {
