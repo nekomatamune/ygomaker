@@ -53,11 +53,10 @@ open class CardImageCtrl {
 				ySpinner.valueFactory.value = image.y
 				sizeSpinner.valueFactory.value = image.size
 
-				fxImage?.let {
+				imageView.image?.let {
 					(xSpinner.valueFactory as IntegerSpinnerValueFactory).max = it.width.toInt() - image.size
 					(ySpinner.valueFactory as IntegerSpinnerValueFactory).max = it.height.toInt() - image.size
 				}
-
 			}
 		}
 
@@ -74,9 +73,7 @@ open class CardImageCtrl {
 		}
 
 	private var fxImageViewport: Rectangle2D
-		get() {
-			throw UnsupportedOperationException()
-		}
+		get() = imageView.viewport
 		set(value) {
 			imageView.viewport = value
 		}
@@ -136,19 +133,19 @@ open class CardImageCtrl {
 
 		packDir = newPackDir.toAbsNormPath()
 		logger.info { "Normalized packDir: $packDir" }
-
-		image = newImage
-
-		if (image.file.isBlank()) {
+		
+		if (newImage.file.isBlank()) {
 			logger.info { "No image file is specified. Unload image." }
 			fxImage = null
+			image = newImage
 			return success()
 		}
 
-		val imageFile = packDir.resolve(image.file).toFile()
+		val imageFile = packDir.resolve(newImage.file).toFile()
 		fxImage = readImageFile(imageFile).onFailure {
 			return it
 		}
+		image = newImage
 		fxImageViewport = image.toViewport()
 
 		return success()
