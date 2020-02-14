@@ -12,10 +12,16 @@ import me.nekomatamune.ygomaker.toAbsNormPath
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
 import strikt.api.expectThat
+import strikt.assertions.isEmpty
 import strikt.assertions.isEqualTo
+import java.nio.file.Path
 import java.nio.file.Paths
 import javafx.scene.image.Image as FxImage
 
+
+private val TEST_PACK_DIR: Path = Paths
+		.get("src", "test", "resources", "fx", "TEST")
+		.toAbsNormPath()
 
 object CardImageSpec : Spek({
 	setupTestFx<CardImageCtrl>(
@@ -27,9 +33,6 @@ object CardImageSpec : Spek({
 	val robot by memoized<FxRobot>()
 	val mockFileChooser by memoized { mockk<FileChooser>(relaxed = true) }
 
-	val testPackDir = Paths.get(
-			"src", "test", "resources", "fx", "TEST"
-	).toAbsNormPath()
 
 	lateinit var selectedImage: Image
 	beforeEachTest {
@@ -40,14 +43,15 @@ object CardImageSpec : Spek({
 		}
 	}
 
-	group("Setting initial state") {
-		test("Should populate UI fields") {
+	group("#setState") {
+		test("Should populate UI components") {
 			val expectedImage = Image(
-					x = 12, y = 34, size = 56, file = "original.jpg"
-			)
+					x = 12, y = 34, size = 56, file = "original.jpg")
+			val expectedFxImage = FxImage(
+					TEST_PACK_DIR.resolve(expectedImage.file).toUri().toString())
 
 			runFx {
-				ctrl.setState(expectedImage, testPackDir)
+				ctrl.setState(expectedImage, TEST_PACK_DIR)
 			}
 
 			robot.lookupAs<TextField>("#fileTextField").text.let {
@@ -69,19 +73,42 @@ object CardImageSpec : Spek({
 				expectThat(it.height.toInt()).isEqualTo(expectedImage.size)
 			}
 
+			robot.lookupAs<ImageView>("#imageView").image.let {
+				compareImagesByPixel(it, expectedFxImage)
+			}
 		}
 
-		test("Should set image.") {
-			val imageData = Image(file = "original.jpg")
+		test("Should clear UI components when file path is empty") {
+			// TODO
+		}
+	}
 
-			runFx {
-				ctrl.setState(imageData, testPackDir)
-			}
+	group("#onClickFileText") {
 
-			compareImagesByPixel(
-					robot.lookupAs<ImageView>("#imageView").image,
-					FxImage(testPackDir.resolve(imageData.file).toUri().toString())
-			)
+		beforeEachTest {
+			runFx { ctrl.setState(Image(), TEST_PACK_DIR) }
+		}
+
+		test("Should draw image when new image is selected") {
+			val expectedImageSize = 250
+			val expectedImageFileBasename = "250x250.jpg"
+			val expectedImageFile = TEST_PACK_DIR.resolve(expectedImageFileBasename)
+
+			every {
+				mockFileChooser.showOpenDialog(any())
+			} returns (expectedImageFile.toFile())
+
+			robot.rightClickOn("#fileTextField")
+
+			val imageView = robot.lookupAs<ImageView>("#imageView")
+			expectThat(imageView.fitWidth.toInt()).isEqualTo(expectedImageSize)
+
+			expectThat(
+					robot.lookupAs<TextField>("#fileTextField").text
+			).isEqualTo(expectedImageFileBasename)
+
+			compareImagesByPixel(imageView.image,
+					FxImage(expectedImageFile.toUri().toString()))
 		}
 	}
 
@@ -89,31 +116,5 @@ object CardImageSpec : Spek({
 		// TODO
 	}
 
-	test("Should draw image in view port when new image is selected.") {
-		val expectedImageSize = 250
-		val expectedImageFileBasename = "250x250.jpg"
-		val expectedImageFile = testPackDir.resolve(expectedImageFileBasename)
 
-		every {
-			mockFileChooser.showOpenDialog(any())
-		} returns (expectedImageFile.toFile())
-
-		//region action
-		runFx {
-			ctrl.setState(Image(), testPackDir)
-		}
-
-		robot.rightClickOn("#fileTextField")
-		//endregion
-
-		val imageView = robot.lookupAs<ImageView>("#imageView")
-		expectThat(imageView.fitWidth.toInt()).isEqualTo(expectedImageSize)
-
-		expectThat(
-				robot.lookupAs<TextField>("#fileTextField").text
-		).isEqualTo(expectedImageFileBasename)
-
-		compareImagesByPixel(imageView.image,
-				FxImage(expectedImageFile.toUri().toString()))
-	}
 })
