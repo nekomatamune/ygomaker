@@ -44,12 +44,11 @@ open class CardImageCtrl {
 				y = ySpinner.value,
 				size = sizeSpinner.value
 		)
-		private set(value) {
-			fileTextField.text = value.file
-			xSpinner.valueFactory.value = value.x
-			ySpinner.valueFactory.value = value.y
-			sizeSpinner.valueFactory.value = value.size
-
+		private set(image) {
+			fileTextField.text = image.file
+			xSpinner.valueFactory.value = image.x
+			ySpinner.valueFactory.value = image.y
+			sizeSpinner.valueFactory.value = image.size
 		}
 
 	private var packDir: Path = Paths.get("")

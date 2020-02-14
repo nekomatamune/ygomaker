@@ -30,7 +30,39 @@ open class CardFormCtrl {
 	// endregion
 
 	// region Controller states
-	private var card = Card()
+	var card: Card
+		get() = Card(
+				name = cardNameTextField.text,
+				type = cardTypeComboBox.value,
+				code = codeTextField.text,
+				effect = effectTextArea.text,
+				monster = if (!cardTypeComboBox.value.isMonster()) null else Monster(
+						attribute = attributeComboBox.value,
+						level = levelComboBox.value,
+						type = monsterTypeComboBox.value,
+						ability = monsterAbilityComboBox.value,
+						effect = effectCheckBox.isSelected,
+						atk = atkTextField.text,
+						def = defTextField.text
+				),
+				image = cardImageController.image
+		)
+		set(value) {
+			cardNameTextField.text = value.name
+			cardTypeComboBox.selectionModel.select(value.type)
+			attributeComboBox.selectionModel.select(value.monster?.attribute)
+			levelComboBox.selectionModel.select(value.monster?.level)
+			monsterTypeComboBox.selectionModel.select(value.monster?.type)
+			monsterAbilityComboBox.selectionModel.select(
+					value.monster?.ability ?: "")
+			effectCheckBox.isSelected = value.monster?.effect ?: false
+			effectTextArea.text = value.effect
+			atkTextField.text = value.monster?.atk ?: ""
+			defTextField.text = value.monster?.def ?: ""
+			codeTextField.text = value.code
+		}
+
+
 	private var cardModifiedHandler: (Card) -> Result<Unit> = {
 		failure(IllegalStateException("Handler not set!"))
 	}
