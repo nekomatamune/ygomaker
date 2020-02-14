@@ -53,7 +53,6 @@ open class CardImageCtrl {
 				xSpinner.valueFactory.value = image.x
 				ySpinner.valueFactory.value = image.y
 				sizeSpinner.valueFactory.value = image.size
-
 				imageView.image.let {
 					xSpinner.intValueFactory().max =
 							if (it == null) 0 else it.width.toInt() - image.size
@@ -81,25 +80,18 @@ open class CardImageCtrl {
 		}
 	// endregion
 
-	private lateinit var lastMousePressedEvent: MouseEvent
-
+	// region Controller states
 	private lateinit var packDir: Path
-
-
+	private lateinit var lastMousePressedEvent: MouseEvent
+	private val handlerLock = HandlerLock()
 	private var imageModifiedHandler: (Image) -> Result<Unit> = {
 		failure(IllegalStateException("Handler not set!"))
 	}
-
-	private val handlerLock = HandlerLock()
-
 	/** See [injectFileChooserFactoryForTesting]. */
 	private var fileChooserFactory = { FileChooser() }
+	// endregion
 
-	/**
-	 * Called by the javafx framework when this component is first loaded.
-	 *
-	 * Sets up listeners for own FXML components.
-	 */
+	// region FX initializer
 	@FXML
 	private fun initialize() {
 		logger.debug { "Initializing CardImage" }
@@ -120,7 +112,9 @@ open class CardImageCtrl {
 			setOnZoom(handlerLock) { onZoom(it).alertFailure() }
 		}
 	}
+	// endregion
 
+	// region Public API
 	/**
 	 * Sets the [handler] to be invoked when a new image is selected by this
 	 * component.
@@ -159,9 +153,9 @@ open class CardImageCtrl {
 	fun injectFileChooserFactoryForTesting(factory: () -> FileChooser) {
 		fileChooserFactory = factory
 	}
+	// endregion
 
-	//region Internal listeners
-
+	//region FX component handlers
 	/**
 	 * Invoked when the value of [xSpinner], [ySpinner], or [sizeSpinner] changes.
 	 */
@@ -216,8 +210,6 @@ open class CardImageCtrl {
 
 	/**
 	 * Opens a [FileChooser] dialog for user to select an image file.
-	 *
-	 * Populates FX components accordingly and invokes [imageModifiedHandler].
 	 */
 	private fun onClickFileText(): Result<Unit> {
 		logger.debug { "onClickFileText()" }
@@ -230,12 +222,13 @@ open class CardImageCtrl {
 		}
 
 		val imageFile = chooser.showOpenDialog(null)
-		logger.info { "Selected image file: $imageFile" }
+				.also { logger.info { "Selected image file: $it" } }
 
 		val newFxImage = readImageFile(imageFile).onFailure {
 			return it
+		}.also {
+			logger.info { "Image read successfully!" }
 		}
-		logger.info { "Image read successfully!" }
 
 		image = Image(
 				file = packDir.relativize(imageFile.toPath()).toString(),
