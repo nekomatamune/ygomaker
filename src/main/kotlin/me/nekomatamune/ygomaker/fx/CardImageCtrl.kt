@@ -53,9 +53,11 @@ open class CardImageCtrl {
 				ySpinner.valueFactory.value = image.y
 				sizeSpinner.valueFactory.value = image.size
 
-				imageView.image?.let {
-					(xSpinner.valueFactory as IntegerSpinnerValueFactory).max = it.width.toInt() - image.size
-					(ySpinner.valueFactory as IntegerSpinnerValueFactory).max = it.height.toInt() - image.size
+				imageView.image.let {
+					xSpinner.intValueFactory().max =
+							if (it == null) 0 else it.width.toInt() - image.size
+					ySpinner.intValueFactory().max =
+							if (it == null) 0 else it.height.toInt() - image.size
 				}
 			}
 		}
@@ -65,10 +67,9 @@ open class CardImageCtrl {
 		set(value) {
 			imageView.image = value
 			handlerLock.lockAndRun {
-				value?.let {
-					(sizeSpinner.valueFactory as IntegerSpinnerValueFactory).max = min(
-							it.height, it.width).roundToInt()
-				}
+				sizeSpinner.intValueFactory().max =
+						if (value == null) 0 else min(value.height,
+								value.width).roundToInt()
 			}
 		}
 
@@ -77,6 +78,7 @@ open class CardImageCtrl {
 		set(value) {
 			imageView.viewport = value
 		}
+	// endregion
 
 	private lateinit var lastMousePressedEvent: MouseEvent
 
@@ -87,9 +89,10 @@ open class CardImageCtrl {
 		failure(IllegalStateException("Handler not set!"))
 	}
 
-	private var fileChooserFactory = { FileChooser() }
 	private val handlerLock = HandlerLock()
-	// endregion
+
+	/** See [injectFileChooserFactoryForTesting]. */
+	private var fileChooserFactory = { FileChooser() }
 
 	/**
 	 * Called by the javafx framework when this component is first loaded.
@@ -128,12 +131,12 @@ open class CardImageCtrl {
 	/**
 	 * Sets the state, which will trigger changes on the own components.
 	 */
-	fun setState(newImage: Image, newPackDir: Path = packDir): Result<Unit> {
+	fun setState(newImage: Image, newPackDir: Path): Result<Unit> {
 		logger.info { "image=$newImage, packDir=$newPackDir" }
 
 		packDir = newPackDir.toAbsNormPath()
 		logger.info { "Normalized packDir: $packDir" }
-		
+
 		if (newImage.file.isBlank()) {
 			logger.info { "No image file is specified. Unload image." }
 			fxImage = null
@@ -185,8 +188,8 @@ open class CardImageCtrl {
 				x = (image.x + (lastMousePressedEvent.screenX - event.screenX) * scale).roundToInt(),
 				y = (image.y + (lastMousePressedEvent.screenY - event.screenY) * scale).roundToInt()
 		)
-		lastMousePressedEvent = event
 		fxImageViewport = image.toViewport()
+		lastMousePressedEvent = event
 
 		return imageModifiedHandler(image)
 	}
@@ -250,9 +253,8 @@ open class CardImageCtrl {
 	//endregion
 }
 
-/**
- * Read an [FxImage] from [file].
- */
+// region Helper functions
+
 private fun readImageFile(file: File): Result<FxImage> {
 	logger.debug { "Reading image from file: $file" }
 
@@ -273,3 +275,8 @@ private fun readImageFile(file: File): Result<FxImage> {
 
 private fun Image.toViewport() =
 		Rectangle2D(x.toDouble(), y.toDouble(), size.toDouble(), size.toDouble())
+
+private fun Spinner<Int>.intValueFactory() =
+		(valueFactory as IntegerSpinnerValueFactory)
+
+// endregion
