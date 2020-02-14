@@ -29,7 +29,7 @@ private val logger = KotlinLogging.logger { }
  */
 open class CardImageCtrl {
 
-	// region FXML components
+	// region FX components
 	@FXML private lateinit var fileTextField: TextField
 	@FXML private lateinit var xSpinner: Spinner<Int>
 	@FXML private lateinit var ySpinner: Spinner<Int>
@@ -38,7 +38,7 @@ open class CardImageCtrl {
 	@FXML private lateinit var imageHBox: HBox
 	// endregion
 
-	// region FXML component-backed properties
+	// region FX component-backed properties
 	var image: Image
 		get() = Image(
 				file = fileTextField.text,
@@ -52,21 +52,23 @@ open class CardImageCtrl {
 				xSpinner.valueFactory.value = image.x
 				ySpinner.valueFactory.value = image.y
 				sizeSpinner.valueFactory.value = image.size
+
+				fxImage?.let {
+					(xSpinner.valueFactory as IntegerSpinnerValueFactory).max = it.width.toInt() - image.size
+					(ySpinner.valueFactory as IntegerSpinnerValueFactory).max = it.height.toInt() - image.size
+				}
+
 			}
 		}
 
 	private var fxImage: FxImage?
-		get() {
-			throw UnsupportedOperationException()
-		}
+		get() = imageView.image
 		set(value) {
 			imageView.image = value
 			handlerLock.lockAndRun {
 				value?.let {
-					val maxSize = min(it.height, it.width).roundToInt()
-					(sizeSpinner.valueFactory as IntegerSpinnerValueFactory).max = maxSize
-					(xSpinner.valueFactory as IntegerSpinnerValueFactory).max = it.width.toInt() - maxSize
-					(ySpinner.valueFactory as IntegerSpinnerValueFactory).max = it.height.toInt() - maxSize
+					(sizeSpinner.valueFactory as IntegerSpinnerValueFactory).max = min(
+							it.height, it.width).roundToInt()
 				}
 			}
 		}
