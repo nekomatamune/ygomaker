@@ -51,19 +51,19 @@ object CardImageSpec : Spek({
 			}
 
 			expectThat(
-					robot.lookupAs("#fileTextField", TextField::class).text
+					robot.lookupAs<TextField>("#fileTextField").text
 			).isEqualTo(expectedImage.file)
 			expectThat(
-					robot.lookupAs("#xSpinner", Spinner::class).value
+					robot.lookupAs<Spinner<Int>>("#xSpinner").value
 			).isEqualTo(expectedImage.x)
 			expectThat(
-					robot.lookupAs("#ySpinner", Spinner::class).value
+					robot.lookupAs<Spinner<Int>>("#ySpinner").value
 			).isEqualTo(expectedImage.y)
 			expectThat(
-					robot.lookupAs("#sizeSpinner", Spinner::class).value
+					robot.lookupAs<Spinner<Int>>("#sizeSpinner").value
 			).isEqualTo(expectedImage.size)
 
-			val viewPort = robot.lookupAs("#imageView", ImageView::class).viewport
+			val viewPort = robot.lookupAs<ImageView>("#imageView").viewport
 			expectThat(viewPort.minX.toInt()).isEqualTo(expectedImage.x)
 			expectThat(viewPort.minY.toInt()).isEqualTo(expectedImage.y)
 			expectThat(viewPort.width.toInt()).isEqualTo(expectedImage.size)
@@ -78,7 +78,7 @@ object CardImageSpec : Spek({
 			}
 
 			compareImagesByPixel(
-					robot.lookupAs("#imageView", ImageView::class).image,
+					robot.lookupAs<ImageView>("#imageView").image,
 					FxImage(testPackDir.resolve(imageData.file).toUri().toString())
 			)
 		}
@@ -105,11 +105,11 @@ object CardImageSpec : Spek({
 		robot.rightClickOn("#fileTextField")
 		//endregion
 
-		val imageView = robot.lookupAs("#imageView", ImageView::class)
+		val imageView = robot.lookupAs<ImageView>("#imageView")
 		expectThat(imageView.fitWidth.toInt()).isEqualTo(expectedImageSize)
 
 		expectThat(
-				robot.lookupAs("#fileTextField", TextField::class).text
+				robot.lookupAs<TextField>("#fileTextField").text
 		).isEqualTo(expectedImageFileBasename)
 
 		compareImagesByPixel(imageView.image,

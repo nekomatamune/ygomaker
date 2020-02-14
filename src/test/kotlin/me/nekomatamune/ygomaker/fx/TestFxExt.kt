@@ -87,8 +87,8 @@ fun runFx(block: () -> Unit) {
 	semaphore.acquire()
 }
 
-fun <T> FxRobot.lookupAs(id: String, clazz: KClass<T>): T where T : Node {
-	return this.lookup(id).queryAs(clazz.java)
+inline fun <reified T> FxRobot.lookupAs(id: String): T where T : Node {
+	return this.lookup(id).queryAs(T::class.java)
 }
 
 fun compareImagesByPixel(actual: Image, expected: Image,
