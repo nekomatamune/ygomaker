@@ -50,24 +50,25 @@ object CardImageSpec : Spek({
 				ctrl.setState(expectedImage, testPackDir)
 			}
 
-			expectThat(
-					robot.lookupAs<TextField>("#fileTextField").text
-			).isEqualTo(expectedImage.file)
-			expectThat(
-					robot.lookupAs<Spinner<Int>>("#xSpinner").value
-			).isEqualTo(expectedImage.x)
-			expectThat(
-					robot.lookupAs<Spinner<Int>>("#ySpinner").value
-			).isEqualTo(expectedImage.y)
-			expectThat(
-					robot.lookupAs<Spinner<Int>>("#sizeSpinner").value
-			).isEqualTo(expectedImage.size)
+			robot.lookupAs<TextField>("#fileTextField").text.let {
+				expectThat(it).isEqualTo(expectedImage.file)
+			}
+			robot.lookupAs<Spinner<Int>>("#xSpinner").value.let {
+				expectThat(it).isEqualTo(expectedImage.x)
+			}
+			robot.lookupAs<Spinner<Int>>("#ySpinner").value.let {
+				expectThat(it).isEqualTo(expectedImage.y)
+			}
+			robot.lookupAs<Spinner<Int>>("#sizeSpinner").value.let {
+				expectThat(it).isEqualTo(expectedImage.size)
+			}
+			robot.lookupAs<ImageView>("#imageView").viewport.let {
+				expectThat(it.minX.toInt()).isEqualTo(expectedImage.x)
+				expectThat(it.minY.toInt()).isEqualTo(expectedImage.y)
+				expectThat(it.width.toInt()).isEqualTo(expectedImage.size)
+				expectThat(it.height.toInt()).isEqualTo(expectedImage.size)
+			}
 
-			val viewPort = robot.lookupAs<ImageView>("#imageView").viewport
-			expectThat(viewPort.minX.toInt()).isEqualTo(expectedImage.x)
-			expectThat(viewPort.minY.toInt()).isEqualTo(expectedImage.y)
-			expectThat(viewPort.width.toInt()).isEqualTo(expectedImage.size)
-			expectThat(viewPort.height.toInt()).isEqualTo(expectedImage.size)
 		}
 
 		test("Should set image.") {
