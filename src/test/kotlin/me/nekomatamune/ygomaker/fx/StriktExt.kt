@@ -3,6 +3,11 @@ package me.nekomatamune.ygomaker.fx
 import javafx.scene.image.Image
 import me.nekomatamune.ygomaker.Result
 import strikt.api.Assertion
+import strikt.api.expectThat
+
+fun <T> Result<T>.assertSuccess() {
+	expectThat(this).isSuccess()
+}
 
 fun <T> Assertion.Builder<Result<T>>.isSuccess() =
 		assert("is success") {
