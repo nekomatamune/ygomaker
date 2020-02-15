@@ -13,7 +13,6 @@ import me.nekomatamune.ygomaker.toAbsNormPath
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
 import strikt.api.expectThat
-import strikt.assertions.isBlank
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNull
 import java.nio.file.Path
@@ -35,8 +34,8 @@ object CardImageSpec : Spek({
 	val robot by memoized<FxRobot>()
 	val mockFileChooser by memoized { mockk<FileChooser>(relaxed = true) }
 
-
 	val someImage = Image(x = 12, y = 34, size = 56, file = "original.jpg")
+
 	lateinit var selectedImage: Image
 	beforeEachTest {
 		ctrl.injectFileChooserFactoryForTesting { mockFileChooser }
@@ -44,13 +43,17 @@ object CardImageSpec : Spek({
 			selectedImage = it.copy()
 			success()
 		}
+
+		runFx {
+			ctrl.setState(someImage, TEST_PACK_DIR)
+		}.assertSuccess()
 	}
 
 	group("#setState") {
 
 		test("Should populate UI components") {
 			val expectedImage = someImage.copy(
-					x = 12, y = 34, size = 56, file = "original.jpg")
+					x = 22, y = 44, size = 66, file = "500x500.jpg")
 			val expectedFxImage = FxImage(
 					TEST_PACK_DIR.resolve(expectedImage.file).toUri().toString())
 
@@ -97,29 +100,32 @@ object CardImageSpec : Spek({
 		}
 	}
 
-	group("#onClickFileText") {
-
-		beforeEachTest {
-			runFx { ctrl.setState(Image(), TEST_PACK_DIR) }.assertSuccess()
-		}
+	group("#onClickFileTextField") {
 
 		test("Should not draw image when no image is selected") {
+			val myImage = someImage.copy(file = "500x500.jpg")
+			val myFxImage = FxImage(
+					TEST_PACK_DIR.resolve(myImage.file).toUri().toString())
+
 			every {
 				mockFileChooser.showOpenDialog(any())
 			} returns (null)
 
-			robot.rightClickOn("#fileTextField")
+			runFx {
+				ctrl.setState(myImage, TEST_PACK_DIR)
+			}.assertSuccess()
+			robot.clickOn("#fileTextField")
 
 			robot.lookupAs<TextField>("#fileTextField").let {
-				expectThat(it.text).isBlank()
+				expectThat(it.text).isEqualTo(myImage.file)
 			}
 			robot.lookupAs<ImageView>("#imageView").let {
-				expectThat(it.image).isNull()
+				expectThat(it.image).isPixelEqualTo(myFxImage)
 			}
 		}
 
 		test("Should draw image when new image is selected") {
-			val expectedImageSize = 250
+			val myImage = someImage.copy(size = 250)
 			val expectedImageFileBasename = "250x250.jpg"
 			val expectedImageFile = TEST_PACK_DIR.resolve(expectedImageFileBasename)
 			val expectedFxImage = FxImage(expectedImageFile.toUri().toString())
@@ -128,24 +134,24 @@ object CardImageSpec : Spek({
 				mockFileChooser.showOpenDialog(any())
 			} returns (expectedImageFile.toFile())
 
-			robot.rightClickOn("#fileTextField")
 
+			runFx {
+				ctrl.setState(myImage, TEST_PACK_DIR)
+			}.assertSuccess()
+			robot.clickOn("#fileTextField")
 
 			robot.lookupAs<TextField>("#fileTextField").let {
 				expectThat(it.text).isEqualTo(expectedImageFileBasename)
 			}
 
 			robot.lookupAs<ImageView>("#imageView").let {
-				expectThat(it.fitWidth.toInt()).isEqualTo(expectedImageSize)
+				expectThat(it.fitWidth.toInt()).isEqualTo(myImage.size)
 				expectThat(it.image).isPixelEqualTo(expectedFxImage)
 			}
 		}
 	}
 
 	group("#onSpinnerValueChange") {
-		beforeEachTest {
-			runFx { ctrl.setState(someImage, TEST_PACK_DIR) }.assertSuccess()
-		}
 
 		test("Should shift viewport when X and Y spinners changes") {
 			robot.doubleClickOn("#xSpinner").write("33").type(ENTER)
@@ -165,8 +171,6 @@ object CardImageSpec : Spek({
 				expectThat(it.viewport.height.toInt()).isEqualTo(55)
 			}
 		}
-
-
 	}
 
 
