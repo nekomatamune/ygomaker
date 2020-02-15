@@ -75,9 +75,11 @@ fun <C> Root.setupTestFx(
 	}
 }
 
-fun runFx(block: () -> Unit) {
+fun <T> runFx(block: () -> T): T {
+	var result:T? = null
+
 	Platform.runLater {
-		block()
+		result = block()
 	}
 
 	val semaphore = Semaphore(0)
@@ -85,25 +87,12 @@ fun runFx(block: () -> Unit) {
 		semaphore.release()
 	}
 	semaphore.acquire()
+
+	return result!!
 }
 
 inline fun <reified T> FxRobot.lookupAs(id: String): T where T : Node {
 	return this.lookup(id).queryAs(T::class.java)
-}
-
-fun compareImagesByPixel(actual: Image, expected: Image,
-		x: Int = 0, y: Int = 0,
-		w: Int = actual.width.toInt(), h: Int = actual.height.toInt()) {
-
-	val actualPixels = actual.pixelReader
-	val expectedPixels = expected.pixelReader
-	(0 until w).forEach { i ->
-		(0 until h).forEach { j ->
-			expectThat(actualPixels.getArgb(i, j))
-					.describedAs("Pixel at ($i,$j)")
-					.isEqualTo(expectedPixels.getArgb(x + i, y + j))
-		}
-	}
 }
 
 private fun isRunByIntellij() =
