@@ -221,8 +221,13 @@ open class CardImageCtrl {
 					"Image Files", "*.png", "*.jpg")
 		}
 
-		val imageFile = chooser.showOpenDialog(null)
+		val imageFile: File? = chooser.showOpenDialog(null)
 				.also { logger.info { "Selected image file: $it" } }
+
+		if (imageFile == null) {
+			logger.warn { "No image file selected. Most likely canceled by user." }
+			return success()
+		}
 
 		val newFxImage = readImageFile(imageFile).onFailure {
 			return it

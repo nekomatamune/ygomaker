@@ -12,6 +12,7 @@ import me.nekomatamune.ygomaker.toAbsNormPath
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
 import strikt.api.expectThat
+import strikt.assertions.isBlank
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNull
 import java.nio.file.Path
@@ -101,6 +102,21 @@ object CardImageSpec : Spek({
 				ctrl.setState(Image(), TEST_PACK_DIR)
 			}.let {
 				expectThat(it).isSuccess()
+			}
+		}
+
+		test("Should not draw image when no image is selected") {
+			every {
+				mockFileChooser.showOpenDialog(any())
+			} returns (null)
+
+			robot.rightClickOn("#fileTextField")
+
+			robot.lookupAs<TextField>("#fileTextField").let {
+				expectThat(it.text).isBlank()
+			}
+			robot.lookupAs<ImageView>("#imageView").let {
+				expectThat(it.image).isNull()
 			}
 		}
 
