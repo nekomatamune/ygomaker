@@ -2,6 +2,7 @@ package me.nekomatamune.ygomaker.fx
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import javafx.scene.control.Spinner
 import javafx.scene.control.TextField
 import javafx.scene.image.ImageView
@@ -116,6 +117,10 @@ object CardImageSpec : Spek({
 			}.assertSuccess()
 			robot.clickOn("#fileTextField")
 
+			verify {
+				mockFileChooser.showOpenDialog(any())
+			}
+
 			robot.lookupAs<TextField>("#fileTextField").let {
 				expectThat(it.text).isEqualTo(myImage.file)
 			}
@@ -134,11 +139,14 @@ object CardImageSpec : Spek({
 				mockFileChooser.showOpenDialog(any())
 			} returns (expectedImageFile.toFile())
 
-
 			runFx {
 				ctrl.setState(myImage, TEST_PACK_DIR)
 			}.assertSuccess()
 			robot.clickOn("#fileTextField")
+
+			verify {
+				mockFileChooser.showOpenDialog(any())
+			}
 
 			robot.lookupAs<TextField>("#fileTextField").let {
 				expectThat(it.text).isEqualTo(expectedImageFileBasename)
