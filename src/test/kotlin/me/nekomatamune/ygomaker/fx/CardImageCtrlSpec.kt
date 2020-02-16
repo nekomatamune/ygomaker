@@ -25,7 +25,7 @@ private val TEST_PACK_DIR: Path = Paths
 		.get("src", "test", "resources", "fx", "TEST")
 		.toAbsNormPath()
 
-object CardImageSpec : Spek({
+object CardImageCtrlSpec : Spek({
 	setupTestFx<CardImageCtrl>(
 			fxmlLocation = "fx/CardImage.fxml",
 			controllers = mapOf(CardImageCtrl::class to { CardImageCtrl() })
