@@ -1,4 +1,5 @@
 import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.internal.configurableFileCollection
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -50,11 +51,8 @@ tasks.clean {
 	delete("$rootDir/ygomaker.jar")
 }
 
-detekt {
-	config = files(".detekt.yml")
-}
-
 tasks.register<Detekt>("lint") {
+	config.setFrom(".detekt.yml")
 	source = fileTree("src")
 	include("**/*.kt")
 }
