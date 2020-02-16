@@ -99,6 +99,8 @@ enum class LinkMarker {
 	UP_LEFT, UP, UP_RIGHT, LEFT, RIGHT, DOWN_LEFT, DOWN, DOWN_RIGHT,
 }
 
+val MONSTER_LEVEL_PRESETS = (1..12).toList()
+
 /**
  * Predefined value for [Monster.type]
  */

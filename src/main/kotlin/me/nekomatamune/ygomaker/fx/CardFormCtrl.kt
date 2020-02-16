@@ -6,7 +6,18 @@ import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
-import me.nekomatamune.ygomaker.*
+import me.nekomatamune.ygomaker.Attribute
+import me.nekomatamune.ygomaker.Card
+import me.nekomatamune.ygomaker.CardType
+import me.nekomatamune.ygomaker.Image
+import me.nekomatamune.ygomaker.MONSTER_ABILITY_PRESETS
+import me.nekomatamune.ygomaker.MONSTER_LEVEL_PRESETS
+import me.nekomatamune.ygomaker.MONSTER_TYPE_PRESETS
+import me.nekomatamune.ygomaker.Monster
+import me.nekomatamune.ygomaker.Result
+import me.nekomatamune.ygomaker.failure
+import me.nekomatamune.ygomaker.isMonster
+import me.nekomatamune.ygomaker.success
 import mu.KotlinLogging
 import java.nio.file.Path
 
@@ -83,7 +94,7 @@ open class CardFormCtrl {
 		// Set selectable values for ComboBoxes
 		cardTypeComboBox.items = observableArrayList(CardType.values().toList())
 		attributeComboBox.items = observableArrayList(Attribute.values().toList())
-		levelComboBox.items = observableArrayList((1..12).toList())
+		levelComboBox.items = observableArrayList(MONSTER_LEVEL_PRESETS)
 		monsterTypeComboBox.items = observableArrayList(MONSTER_TYPE_PRESETS)
 		monsterAbilityComboBox.items = observableArrayList(MONSTER_ABILITY_PRESETS)
 

@@ -505,7 +505,7 @@ style:
     ignoreAnnotation: false
     ignoreNamedArgument: true
     ignoreEnums: false
-    ignoreRanges: false
+    ignoreRanges: true
   MandatoryBracesIfStatements:
     active: false
   MaxLineLength:
