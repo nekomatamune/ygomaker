@@ -37,11 +37,9 @@ object CardImageSpec : Spek({
 
 	val someImage = Image(x = 12, y = 34, size = 56, file = "original.jpg")
 
-	lateinit var selectedImage: Image
 	beforeEachTest {
 		ctrl.injectFileChooserFactoryForTesting { mockFileChooser }
 		ctrl.setImageModifiedHandler {
-			selectedImage = it.copy()
 			success()
 		}
 
