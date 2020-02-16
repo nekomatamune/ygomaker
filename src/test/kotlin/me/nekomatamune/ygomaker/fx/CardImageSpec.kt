@@ -90,7 +90,7 @@ object CardImageSpec : Spek({
 
 		test("Should clear UI components when file path is empty") {
 			runFx {
-				ctrl.setState(someImage.copy(file = ""), TEST_PACK_DIR)
+				ctrl.setState(someImage.copy(file = ""))
 			}.let {
 				expectThat(it).isSuccess()
 			}
@@ -180,6 +180,8 @@ object CardImageSpec : Spek({
 			}
 		}
 	}
+
+	// TODO: add unit test for mouse drag, scroll, and zoom
 
 
 })

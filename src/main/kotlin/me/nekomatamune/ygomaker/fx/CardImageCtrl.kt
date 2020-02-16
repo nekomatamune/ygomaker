@@ -126,7 +126,7 @@ open class CardImageCtrl {
 	/**
 	 * Sets the state, which will trigger changes on the own components.
 	 */
-	fun setState(newImage: Image, newPackDir: Path): Result<Unit> {
+	fun setState(newImage: Image, newPackDir: Path = packDir): Result<Unit> {
 		val newPackDir = newPackDir.toAbsNormPath()
 		logger.info { "image=$newImage, packDir=$newPackDir" }
 
