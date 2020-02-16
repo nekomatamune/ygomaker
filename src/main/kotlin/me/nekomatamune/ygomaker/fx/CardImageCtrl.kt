@@ -13,7 +13,11 @@ import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.HBox
 import javafx.stage.FileChooser
-import me.nekomatamune.ygomaker.*
+import me.nekomatamune.ygomaker.Image
+import me.nekomatamune.ygomaker.Result
+import me.nekomatamune.ygomaker.failure
+import me.nekomatamune.ygomaker.success
+import me.nekomatamune.ygomaker.toAbsNormPath
 import mu.KotlinLogging
 import org.jetbrains.annotations.TestOnly
 import java.io.File
@@ -24,6 +28,7 @@ import kotlin.math.roundToInt
 import javafx.scene.image.Image as FxImage
 
 private val logger = KotlinLogging.logger { }
+private const val SCROLL_ZOOM_RATIO = 0.0001
 
 /**
  * Controller for fx/CardImage.fxml.
@@ -190,7 +195,7 @@ open class CardImageCtrl {
 		logger.trace { "onMouseScrolled(): $event" }
 
 		image = image.copy(
-				size = (image.size * (1 + (event.deltaY * 0.001))).roundToInt()
+				size = (image.size * (1 + (event.deltaY * SCROLL_ZOOM_RATIO))).roundToInt()
 		)
 		fxImageViewport = image.toViewport()
 
@@ -264,8 +269,8 @@ private fun readImageFile(file: File): Result<FxImage> {
 	return try {
 		val image = FxImage(file.toURI().toString())
 		success(image)
-	} catch (e: Exception) {
-		failure(e)
+	} catch (error: Exception) {
+		failure(error)
 	}
 }
 
