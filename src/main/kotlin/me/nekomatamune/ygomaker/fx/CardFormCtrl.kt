@@ -160,6 +160,7 @@ open class CardFormCtrl {
 		}
 
 		card = newCard.copy()
+		cardImageController.setState(newCard.image ?: Image(), newPackDir)
 
 		cardFieldsListenerLock.lockAndRun {
 			cardNameTextField.text = newCard.name
