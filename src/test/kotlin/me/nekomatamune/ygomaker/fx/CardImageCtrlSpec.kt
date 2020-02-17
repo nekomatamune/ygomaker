@@ -9,7 +9,6 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode.ENTER
 import javafx.stage.FileChooser
 import me.nekomatamune.ygomaker.Image
-import me.nekomatamune.ygomaker.success
 import me.nekomatamune.ygomaker.toAbsNormPath
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
@@ -39,10 +38,6 @@ object CardImageCtrlSpec : Spek({
 
 	beforeEachTest {
 		ctrl.injectFileChooserFactoryForTesting { mockFileChooser }
-		ctrl.setImageModifiedHandler {
-			success()
-		}
-
 		runFx {
 			ctrl.setState(someImage, TEST_PACK_DIR)
 		}.assertSuccess()

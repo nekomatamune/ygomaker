@@ -135,15 +135,15 @@ open class CardFormCtrl {
 			it.addSimpleListener { onCardValueChange() }
 		}
 
-		cardImageController.setImageModifiedHandler {
-			card = card.copy(image = it)
-			cardModifiedHandler(card)
-
-			logger.info { "after cardModifiedHandler" }
-
-			//TODO: return the correct result
-			success()
-		}
+//		cardImageController.setImageModifiedHandler {
+//			card = card.copy(image = it)
+//			cardModifiedHandler(card)
+//
+//			logger.info { "after cardModifiedHandler" }
+//
+//			//TODO: return the correct result
+//			success()
+//		}
 	}
 
 	// region simple getter/setter

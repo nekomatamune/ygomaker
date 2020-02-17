@@ -1,8 +1,5 @@
 package me.nekomatamune.ygomaker.fx
 
-import io.mockk.Runs
-import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -37,12 +34,6 @@ object CardFormCtrlSpec : Spek({
 	lateinit var card: Card
 	val capturedImageModifiedHandler = slot<(Image) -> Result<Unit>>()
 	beforeEachTest {
-		every {
-			mockCardImage.setImageModifiedHandler(
-					capture(capturedImageModifiedHandler)
-			)
-		}.just(Runs)
-
 		ctrl.setCardModifiedHandler {
 			card = it
 			success()

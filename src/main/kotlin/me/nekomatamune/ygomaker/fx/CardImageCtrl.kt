@@ -89,9 +89,6 @@ open class CardImageCtrl {
 	private lateinit var packDir: Path
 	private lateinit var lastMousePressedEvent: MouseEvent
 	private val handlerLock = HandlerLock()
-	private var imageModifiedHandler: (Image) -> Result<Unit> = {
-		failure(IllegalStateException("Handler not set!"))
-	}
 	/** See [injectFileChooserFactoryForTesting]. */
 	private var fileChooserFactory = { FileChooser() }
 	// endregion
@@ -104,7 +101,7 @@ open class CardImageCtrl {
 		// Set event handlers
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
 			it.valueProperty().addListener(handlerLock) { oldValue, newValue ->
-				onSpinnerValueChanged(oldValue, newValue).alertFailure()
+				onSpinnerValueChanged(oldValue, newValue)
 			}
 		}
 		fileTextField.setOnMouseClicked(handlerLock) {
@@ -112,22 +109,14 @@ open class CardImageCtrl {
 		}
 		imageView.apply {
 			setOnMousePressed(handlerLock) { onMousePressed(it) }
-			setOnMouseDragged(handlerLock) { onMouseDragged(it).alertFailure() }
-			setOnScroll(handlerLock) { onMouseScrolled(it).alertFailure() }
-			setOnZoom(handlerLock) { onZoom(it).alertFailure() }
+			setOnMouseDragged(handlerLock) { onMouseDragged(it) }
+			setOnScroll(handlerLock) { onMouseScrolled(it) }
+			setOnZoom(handlerLock) { onZoom(it) }
 		}
 	}
 	// endregion
 
 	// region Public API
-	/**
-	 * Sets the [handler] to be invoked when a new image is selected by this
-	 * component.
-	 */
-	fun setImageModifiedHandler(handler: (Image) -> Result<Unit>) {
-		imageModifiedHandler = handler
-	}
-
 	/**
 	 * Sets the state, which will trigger changes on the own components.
 	 */
@@ -164,12 +153,9 @@ open class CardImageCtrl {
 	/**
 	 * Invoked when the value of [xSpinner], [ySpinner], or [sizeSpinner] changes.
 	 */
-	private fun onSpinnerValueChanged(oldValue: Int, newValue: Int)
-			: Result<Unit> {
+	private fun onSpinnerValueChanged(oldValue: Int, newValue: Int) {
 		logger.trace { "onSpinnerValueChanged(): $oldValue -> $newValue" }
 		fxImageViewport = image.toViewport()
-
-		return imageModifiedHandler(image)
 	}
 
 	private fun onMousePressed(event: MouseEvent) {
@@ -177,7 +163,7 @@ open class CardImageCtrl {
 		lastMousePressedEvent = event
 	}
 
-	private fun onMouseDragged(event: MouseEvent): Result<Unit> {
+	private fun onMouseDragged(event: MouseEvent) {
 		logger.trace { "onMouseDragged(): $event" }
 
 		val scale = sizeSpinner.value / imageHBox.prefHeight
@@ -187,30 +173,24 @@ open class CardImageCtrl {
 		)
 		fxImageViewport = image.toViewport()
 		lastMousePressedEvent = event
-
-		return imageModifiedHandler(image)
 	}
 
-	private fun onMouseScrolled(event: ScrollEvent): Result<Unit> {
+	private fun onMouseScrolled(event: ScrollEvent) {
 		logger.trace { "onMouseScrolled(): $event" }
 
 		image = image.copy(
 				size = (image.size * (1 + (event.deltaY * SCROLL_ZOOM_RATIO))).roundToInt()
 		)
 		fxImageViewport = image.toViewport()
-
-		return imageModifiedHandler(image)
 	}
 
-	private fun onZoom(event: ZoomEvent): Result<Unit> {
+	private fun onZoom(event: ZoomEvent) {
 		logger.trace { "onZoom(): $event" }
 
 		image = image.copy(
 				size = (image.size / event.zoomFactor).roundToInt()
 		)
 		fxImageViewport = image.toViewport()
-
-		return imageModifiedHandler(image)
 	}
 
 	/**
@@ -249,7 +229,7 @@ open class CardImageCtrl {
 		fxImage = newFxImage
 		fxImageViewport = image.toViewport()
 
-		return imageModifiedHandler(image)
+		return success()
 	}
 	//endregion
 }
