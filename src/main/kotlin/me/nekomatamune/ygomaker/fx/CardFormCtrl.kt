@@ -14,10 +14,7 @@ import me.nekomatamune.ygomaker.MONSTER_ABILITY_PRESETS
 import me.nekomatamune.ygomaker.MONSTER_LEVEL_PRESETS
 import me.nekomatamune.ygomaker.MONSTER_TYPE_PRESETS
 import me.nekomatamune.ygomaker.Monster
-import me.nekomatamune.ygomaker.Result
-import me.nekomatamune.ygomaker.failure
 import me.nekomatamune.ygomaker.isMonster
-import me.nekomatamune.ygomaker.success
 import mu.KotlinLogging
 import java.nio.file.Path
 
@@ -41,6 +38,7 @@ open class CardFormCtrl {
 	// endregion
 
 	// region Controller states
+	private lateinit var packDir: Path
 	var card: Card
 		get() = Card(
 				name = cardNameTextField.text,
@@ -56,7 +54,9 @@ open class CardFormCtrl {
 						atk = atkTextField.text,
 						def = defTextField.text
 				),
-				image = cardImageController.image
+				image = cardImageController.image.let {
+					if (it.file.isBlank()) null else it
+				}
 		)
 		set(value) {
 			cardNameTextField.text = value.name
@@ -71,14 +71,9 @@ open class CardFormCtrl {
 			atkTextField.text = value.monster?.atk ?: ""
 			defTextField.text = value.monster?.def ?: ""
 			codeTextField.text = value.code
+
+			cardImageController.setState(value.image ?: Image(), packDir)
 		}
-
-
-	private var cardModifiedHandler: (Card) -> Result<Unit> = {
-		failure(IllegalStateException("Handler not set!"))
-	}
-
-	private val cardFieldsListenerLock = HandlerLock()
 	// endregion
 
 
@@ -127,80 +122,14 @@ open class CardFormCtrl {
 				monsterComboBoxes.forEach { it.selectionModel.selectFirst() }
 			}
 		}
-
-		monsterFields.plus(
-				sequenceOf(cardNameTextField, cardTypeComboBox, effectTextArea,
-						codeTextField)
-		).forEach {
-			it.addSimpleListener { onCardValueChange() }
-		}
-
-//		cardImageController.setImageModifiedHandler {
-//			card = card.copy(image = it)
-//			cardModifiedHandler(card)
-//
-//			logger.info { "after cardModifiedHandler" }
-//
-//			//TODO: return the correct result
-//			success()
-//		}
 	}
-
-	// region simple getter/setter
-	fun card() = card
-
-	fun setCardModifiedHandler(handler: (Card) -> Result<Unit>) {
-		cardModifiedHandler = handler
-	}
-	// endregion
 
 	fun setState(newCard: Card, newPackDir: Path) {
 		logger.info {
 			"setState(card=$newCard, packDir=$newPackDir)"
 		}
 
-		card = newCard.copy()
-		cardImageController.setState(newCard.image ?: Image(), newPackDir)
-
-		cardFieldsListenerLock.lockAndRun {
-			cardNameTextField.text = newCard.name
-			cardTypeComboBox.selectionModel.select(newCard.type)
-			attributeComboBox.selectionModel.select(newCard.monster?.attribute)
-			levelComboBox.selectionModel.select(newCard.monster?.level)
-			monsterTypeComboBox.selectionModel.select(newCard.monster?.type)
-			monsterAbilityComboBox.selectionModel.select(
-					newCard.monster?.ability ?: "")
-			effectCheckBox.isSelected = newCard.monster?.effect ?: false
-			effectTextArea.text = newCard.effect
-			atkTextField.text = newCard.monster?.atk ?: ""
-			defTextField.text = newCard.monster?.def ?: ""
-			codeTextField.text = newCard.code
-
-			cardImageController.setState(newCard.image ?: Image(), newPackDir)
-		}
-	}
-
-
-	private fun onCardValueChange() {
-		logger.trace { "onCardValueChange()" }
-
-		cardFieldsListenerLock.runIfNotLocked {
-			card = card.copy(
-					name = cardNameTextField.text,
-					type = cardTypeComboBox.value,
-					code = codeTextField.text,
-					effect = effectTextArea.text,
-					monster = if (!cardTypeComboBox.value.isMonster()) null else Monster(
-							attribute = attributeComboBox.value,
-							level = levelComboBox.value,
-							type = monsterTypeComboBox.value,
-							ability = monsterAbilityComboBox.value,
-							effect = effectCheckBox.isSelected,
-							atk = atkTextField.text,
-							def = defTextField.text
-					)
-			)
-			cardModifiedHandler(card)
-		}
+		packDir = newPackDir
+		card = newCard
 	}
 }
