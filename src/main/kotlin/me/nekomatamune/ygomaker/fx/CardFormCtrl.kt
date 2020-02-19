@@ -4,8 +4,10 @@ import javafx.collections.FXCollections.observableArrayList
 import javafx.fxml.FXML
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
+import javafx.scene.control.ComboBoxBase
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
+import javafx.scene.control.TextInputControl
 import me.nekomatamune.ygomaker.Attribute
 import me.nekomatamune.ygomaker.Card
 import me.nekomatamune.ygomaker.CardType
@@ -14,7 +16,10 @@ import me.nekomatamune.ygomaker.MONSTER_ABILITY_PRESETS
 import me.nekomatamune.ygomaker.MONSTER_LEVEL_PRESETS
 import me.nekomatamune.ygomaker.MONSTER_TYPE_PRESETS
 import me.nekomatamune.ygomaker.Monster
+import me.nekomatamune.ygomaker.Result
+import me.nekomatamune.ygomaker.failure
 import me.nekomatamune.ygomaker.isMonster
+import me.nekomatamune.ygomaker.success
 import mu.KotlinLogging
 import java.nio.file.Path
 
@@ -39,7 +44,8 @@ open class CardFormCtrl {
 
 	// region Controller states
 	private lateinit var packDir: Path
-	var card: Card
+	private lateinit var image: Image
+	private var card: Card
 		get() = Card(
 				name = cardNameTextField.text,
 				type = cardTypeComboBox.value,
@@ -54,28 +60,31 @@ open class CardFormCtrl {
 						atk = atkTextField.text,
 						def = defTextField.text
 				),
-				image = cardImageController.image.let {
-					if (it.file.isBlank()) null else it
-				}
+				image = if (image.file.isBlank()) null else image
 		)
 		set(value) {
-			cardNameTextField.text = value.name
-			cardTypeComboBox.selectionModel.select(value.type)
-			attributeComboBox.selectionModel.select(value.monster?.attribute)
-			levelComboBox.selectionModel.select(value.monster?.level)
-			monsterTypeComboBox.selectionModel.select(value.monster?.type)
-			monsterAbilityComboBox.selectionModel.select(
-					value.monster?.ability ?: "")
-			effectCheckBox.isSelected = value.monster?.effect ?: false
-			effectTextArea.text = value.effect
-			atkTextField.text = value.monster?.atk ?: ""
-			defTextField.text = value.monster?.def ?: ""
-			codeTextField.text = value.code
-
+			handlerLock.lockAndRun {
+				cardNameTextField.text = value.name
+				cardTypeComboBox.selectionModel.select(value.type)
+				attributeComboBox.selectionModel.select(value.monster?.attribute)
+				levelComboBox.selectionModel.select(value.monster?.level)
+				monsterTypeComboBox.selectionModel.select(value.monster?.type)
+				monsterAbilityComboBox.selectionModel.select(
+						value.monster?.ability ?: "")
+				effectCheckBox.isSelected = value.monster?.effect ?: false
+				effectTextArea.text = value.effect
+				atkTextField.text = value.monster?.atk ?: ""
+				defTextField.text = value.monster?.def ?: ""
+				codeTextField.text = value.code
+			}
 			cardImageController.setState(value.image ?: Image(), packDir)
 		}
-	// endregion
 
+	private val handlerLock = HandlerLock()
+	var cardModifiedHandler: (Card) -> Result<Unit> = {
+		failure(IllegalStateException("Handler not set"))
+	}
+	// endregion
 
 	/**
 	 * Called by the javafx framework when this component is first loaded.
@@ -86,40 +95,67 @@ open class CardFormCtrl {
 	fun initialize() {
 		logger.debug { "Initializing CardForm" }
 
-		// Set selectable values for ComboBoxes
-		cardTypeComboBox.items = observableArrayList(CardType.values().toList())
-		attributeComboBox.items = observableArrayList(Attribute.values().toList())
-		levelComboBox.items = observableArrayList(MONSTER_LEVEL_PRESETS)
-		monsterTypeComboBox.items = observableArrayList(MONSTER_TYPE_PRESETS)
-		monsterAbilityComboBox.items = observableArrayList(MONSTER_ABILITY_PRESETS)
+		// Group components together
+		val allFields = listOf(
+				cardNameTextField, cardTypeComboBox, attributeComboBox, levelComboBox,
+				monsterTypeComboBox, monsterAbilityComboBox, effectCheckBox,
+				effectTextArea, atkTextField, defTextField, codeTextField
+		)
+		val monsterOnlyField = listOf(
+				attributeComboBox, levelComboBox,
+				monsterTypeComboBox, monsterAbilityComboBox, effectCheckBox,
+				atkTextField, defTextField)
 
-		// Set 1st value as the default value for ComboBoxes
-		sequenceOf(
-				cardTypeComboBox, attributeComboBox, levelComboBox,
-				monsterTypeComboBox, monsterAbilityComboBox
-		).forEach {
-			it.selectionModel.selectFirst()
+		val allComboBoxes = mapOf(
+				cardTypeComboBox to CardType.values().toList(),
+				attributeComboBox to Attribute.values().toList(),
+				levelComboBox to MONSTER_LEVEL_PRESETS,
+				monsterTypeComboBox to MONSTER_TYPE_PRESETS,
+				monsterAbilityComboBox to MONSTER_ABILITY_PRESETS
+		)
+
+		// Set selectable values for ComboBoxes and select 1st value
+		allComboBoxes.forEach {
+			it.key.items = observableArrayList(it.value)
+			it.key.selectionModel.selectFirst()
 		}
 
-		// Group fields together for ease of reference later
-		val monsterComboBoxes = sequenceOf(
-				attributeComboBox, levelComboBox,
-				monsterTypeComboBox, monsterAbilityComboBox
-		)
-		val monsterFields = monsterComboBoxes.plus(
-				sequenceOf(effectCheckBox, atkTextField, defTextField)
-		)
 
 		// Special rules to apply when CardType changes
-		cardTypeComboBox.valueProperty().addListener { _, oldCardType, newCardType ->
+		cardTypeComboBox.valueProperty().addListener(
+				handlerLock) { oldCardType, newCardType ->
 			logger.trace { "Card type changed from $oldCardType to $newCardType" }
 
-			monsterFields.forEach {
-				it.isDisable = !newCardType.isMonster()
-			}
+			allFields.filter { it in monsterOnlyField }
+					.forEach {
+						it.isDisable = !newCardType.isMonster()
+					}
 
+			// Need to reset the combobox to the first value (default)
 			if (!oldCardType.isMonster() && newCardType.isMonster()) {
-				monsterComboBoxes.forEach { it.selectionModel.selectFirst() }
+				allComboBoxes.map { it.key }
+						.filter { it in monsterOnlyField }
+						.forEach {
+							it.selectionModel.selectFirst()
+						}
+			}
+		}
+
+		// Capture the image when it gets modified
+		cardImageController.imageModifiedHandler = {
+			image = it
+			success()
+		}
+
+		// Set FXML component listeners
+		allFields.forEach {
+			when (it) {
+				is TextInputControl -> it.textProperty()
+				is ComboBoxBase<*> -> it.valueProperty()
+				is CheckBox -> it.selectedProperty()
+				else -> error("Unexpected component class ${it::class}")
+			}.addListener(handlerLock) { _, _ ->
+				cardModifiedHandler(card).alertFailure()
 			}
 		}
 	}

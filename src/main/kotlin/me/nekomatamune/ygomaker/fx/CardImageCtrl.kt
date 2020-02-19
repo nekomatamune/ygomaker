@@ -45,14 +45,14 @@ open class CardImageCtrl {
 	// endregion
 
 	// region FX component-backed properties
-	var image: Image
+	private var image: Image
 		get() = Image(
 				file = fileTextField.text,
 				x = xSpinner.value,
 				y = ySpinner.value,
 				size = sizeSpinner.value
 		)
-		private set(image) {
+		set(image) {
 			handlerLock.lockAndRun {
 				fileTextField.text = image.file
 				xSpinner.valueFactory.value = image.x
@@ -86,6 +86,10 @@ open class CardImageCtrl {
 	// endregion
 
 	// region Controller states
+	var imageModifiedHandler: (Image) -> Result<Unit> = {
+		failure(IllegalStateException("Handler not set"))
+	}
+
 	private lateinit var packDir: Path
 	private lateinit var lastMousePressedEvent: MouseEvent
 	private val handlerLock = HandlerLock()
@@ -101,7 +105,7 @@ open class CardImageCtrl {
 		// Set event handlers
 		sequenceOf(xSpinner, ySpinner, sizeSpinner).forEach {
 			it.valueProperty().addListener(handlerLock) { oldValue, newValue ->
-				onSpinnerValueChanged(oldValue, newValue)
+				onSpinnerValueChanged(oldValue, newValue).alertFailure()
 			}
 		}
 		fileTextField.setOnMouseClicked(handlerLock) {
@@ -109,9 +113,9 @@ open class CardImageCtrl {
 		}
 		imageView.apply {
 			setOnMousePressed(handlerLock) { onMousePressed(it) }
-			setOnMouseDragged(handlerLock) { onMouseDragged(it) }
-			setOnScroll(handlerLock) { onMouseScrolled(it) }
-			setOnZoom(handlerLock) { onZoom(it) }
+			setOnMouseDragged(handlerLock) { onMouseDragged(it).alertFailure() }
+			setOnScroll(handlerLock) { onMouseScrolled(it).alertFailure() }
+			setOnZoom(handlerLock) { onZoom(it).alertFailure() }
 		}
 	}
 	// endregion
@@ -153,9 +157,12 @@ open class CardImageCtrl {
 	/**
 	 * Invoked when the value of [xSpinner], [ySpinner], or [sizeSpinner] changes.
 	 */
-	private fun onSpinnerValueChanged(oldValue: Int, newValue: Int) {
+	private fun onSpinnerValueChanged(oldValue: Int,
+			newValue: Int): Result<Unit> {
 		logger.trace { "onSpinnerValueChanged(): $oldValue -> $newValue" }
 		fxImageViewport = image.toViewport()
+
+		return imageModifiedHandler(image)
 	}
 
 	private fun onMousePressed(event: MouseEvent) {
@@ -163,7 +170,7 @@ open class CardImageCtrl {
 		lastMousePressedEvent = event
 	}
 
-	private fun onMouseDragged(event: MouseEvent) {
+	private fun onMouseDragged(event: MouseEvent): Result<Unit> {
 		logger.trace { "onMouseDragged(): $event" }
 
 		val scale = sizeSpinner.value / imageHBox.prefHeight
@@ -173,24 +180,30 @@ open class CardImageCtrl {
 		)
 		fxImageViewport = image.toViewport()
 		lastMousePressedEvent = event
+
+		return imageModifiedHandler(image)
 	}
 
-	private fun onMouseScrolled(event: ScrollEvent) {
+	private fun onMouseScrolled(event: ScrollEvent): Result<Unit> {
 		logger.trace { "onMouseScrolled(): $event" }
 
 		image = image.copy(
 				size = (image.size * (1 + (event.deltaY * SCROLL_ZOOM_RATIO))).roundToInt()
 		)
 		fxImageViewport = image.toViewport()
+
+		return imageModifiedHandler(image)
 	}
 
-	private fun onZoom(event: ZoomEvent) {
+	private fun onZoom(event: ZoomEvent): Result<Unit> {
 		logger.trace { "onZoom(): $event" }
 
 		image = image.copy(
 				size = (image.size / event.zoomFactor).roundToInt()
 		)
 		fxImageViewport = image.toViewport()
+
+		return imageModifiedHandler(image)
 	}
 
 	/**
@@ -211,7 +224,7 @@ open class CardImageCtrl {
 
 		if (imageFile == null) {
 			logger.warn { "No image file selected. Most likely canceled by user." }
-			return success()
+			return imageModifiedHandler(image)
 		}
 
 		val newFxImage = readImageFile(imageFile).onFailure {
@@ -229,7 +242,7 @@ open class CardImageCtrl {
 		fxImage = newFxImage
 		fxImageViewport = image.toViewport()
 
-		return success()
+		return imageModifiedHandler(image)
 	}
 	//endregion
 }

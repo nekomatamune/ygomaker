@@ -34,8 +34,10 @@ class Window {
 				MenuAction.SAVE_PACK -> cardListController.getPack().writeTo(packDir)
 				MenuAction.SAVE_PACK_AS -> savePackAs()
 				MenuAction.NEW_CARD -> newCard()
+//				MenuAction.RENDER_CARD -> cardRendererController.render(
+//						cardFormController.card, packDir)
 				MenuAction.RENDER_CARD -> cardRendererController.render(
-						cardFormController.card, packDir)
+						Card(), packDir)
 			}
 		}
 
