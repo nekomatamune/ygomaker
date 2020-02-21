@@ -15,6 +15,7 @@ class Window {
 
 	// region states
 	private var packDir = Command.dataDir.resolve(Command.packCode)
+	private lateinit var card: Card
 	// endregion
 
 	// region subview controllers
@@ -37,13 +38,18 @@ class Window {
 //				MenuAction.RENDER_CARD -> cardRendererController.render(
 //						cardFormController.card, packDir)
 				MenuAction.RENDER_CARD -> cardRendererController.render(
-						Card(), packDir)
+						card, packDir)
 			}
 		}
 
 		cardListController.cardSelectedHandler = {
 			cardFormController.setState(it, packDir)
 			cardRendererController.render(it, packDir)
+		}
+
+		cardFormController.cardModifiedHandler = {
+			card = it
+			success()
 		}
 
 		logger.info { "Setup completed!" }

@@ -82,11 +82,12 @@ fun <T> runFx(block: () -> T): T {
 		result = block()
 	}
 
-	val semaphore = Semaphore(0)
-	Platform.runLater {
-		semaphore.release()
+	Semaphore(0).let {
+		Platform.runLater {
+			it.release()
+		}
+		it.acquire()
 	}
-	semaphore.acquire()
 
 	return result!!
 }
