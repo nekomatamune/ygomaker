@@ -42,6 +42,13 @@ open class CardFormCtrl {
 	@FXML lateinit var cardImageController: CardImageCtrl
 	// endregion
 
+	private val monsterOnlyFields by lazy {
+		listOf(
+				attributeComboBox, levelComboBox,
+				monsterTypeComboBox, monsterAbilityComboBox, effectCheckBox,
+				atkTextField, defTextField)
+	}
+
 	// region Controller states
 	private lateinit var packDir: Path
 	private lateinit var image: Image
@@ -64,25 +71,29 @@ open class CardFormCtrl {
 		)
 		set(value) {
 			handlerLock.lockAndRun {
+				monsterOnlyFields.forEach {
+					it.isDisable = !value.type.isMonster()
+				}
+
 				cardNameTextField.text = value.name
 				cardTypeComboBox.selectionModel.select(value.type)
+				effectTextArea.text = value.effect
+				codeTextField.text = value.code
+
 				attributeComboBox.selectionModel.select(value.monster?.attribute)
 				levelComboBox.selectionModel.select(value.monster?.level)
 				monsterTypeComboBox.selectionModel.select(value.monster?.type)
 				monsterAbilityComboBox.selectionModel.select(
 						value.monster?.ability ?: "")
 				effectCheckBox.isSelected = value.monster?.effect ?: false
-				effectTextArea.text = value.effect
 				atkTextField.text = value.monster?.atk ?: ""
 				defTextField.text = value.monster?.def ?: ""
-				codeTextField.text = value.code
 			}
+
 			(value.image ?: Image()).let {
 				image = it
 				cardImageController.setState(it, packDir)
 			}
-
-
 		}
 
 	private val handlerLock = HandlerLock()
@@ -106,10 +117,6 @@ open class CardFormCtrl {
 				monsterTypeComboBox, monsterAbilityComboBox, effectCheckBox,
 				effectTextArea, atkTextField, defTextField, codeTextField
 		)
-		val monsterOnlyField = listOf(
-				attributeComboBox, levelComboBox,
-				monsterTypeComboBox, monsterAbilityComboBox, effectCheckBox,
-				atkTextField, defTextField)
 
 		val allComboBoxes = mapOf(
 				cardTypeComboBox to CardType.values().toList(),
@@ -131,18 +138,20 @@ open class CardFormCtrl {
 				handlerLock) { oldCardType, newCardType ->
 			logger.trace { "Card type changed from $oldCardType to $newCardType" }
 
-			allFields.filter { it in monsterOnlyField }
-					.forEach {
-						it.isDisable = !newCardType.isMonster()
-					}
+			handlerLock.lockAndRun {
+				monsterOnlyFields.forEach {
+					if (newCardType.isMonster()) {
+						it.isDisable = false
 
-			// Need to reset the combobox to the first value (default)
-			if (!oldCardType.isMonster() && newCardType.isMonster()) {
-				allComboBoxes.map { it.key }
-						.filter { it in monsterOnlyField }
-						.forEach {
-							it.selectionModel.selectFirst()
+					} else {
+						it.isDisable = true
+						when (it) {
+							is ComboBox<*> -> it.selectionModel.selectFirst()
+							is TextField -> it.text = ""
+							is CheckBox -> it.isSelected = false
 						}
+					}
+				}
 			}
 		}
 
