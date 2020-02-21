@@ -77,7 +77,12 @@ open class CardFormCtrl {
 				defTextField.text = value.monster?.def ?: ""
 				codeTextField.text = value.code
 			}
-			cardImageController.setState(value.image ?: Image(), packDir)
+			(value.image ?: Image()).let {
+				image = it
+				cardImageController.setState(it, packDir)
+			}
+
+
 		}
 
 	private val handlerLock = HandlerLock()
@@ -160,7 +165,7 @@ open class CardFormCtrl {
 		}
 	}
 
-	fun setState(newCard: Card, newPackDir: Path) {
+	fun setState(newCard: Card, newPackDir: Path = packDir) {
 		logger.info {
 			"setState(card=$newCard, packDir=$newPackDir)"
 		}

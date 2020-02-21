@@ -1,5 +1,8 @@
 package me.nekomatamune.ygomaker.fx
 
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
@@ -7,22 +10,48 @@ import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
+import javafx.scene.input.KeyCode.DOWN
+import javafx.scene.input.KeyCode.ENTER
+import javafx.scene.input.KeyCode.UP
 import me.nekomatamune.ygomaker.Attribute
 import me.nekomatamune.ygomaker.Card
 import me.nekomatamune.ygomaker.CardType
 import me.nekomatamune.ygomaker.Image
 import me.nekomatamune.ygomaker.MONSTER_ABILITY_PRESETS
+import me.nekomatamune.ygomaker.MONSTER_LEVEL_PRESETS
 import me.nekomatamune.ygomaker.MONSTER_TYPE_PRESETS
 import me.nekomatamune.ygomaker.Monster
 import me.nekomatamune.ygomaker.Result
+import me.nekomatamune.ygomaker.success
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
-import java.nio.file.Path
+import strikt.assertions.isNotEqualTo
 import java.nio.file.Paths
 
 object CardFormCtrlSpec : Spek({
+
+	// Mock FX component
+	val imageModifiedHandlerSlot by memoized { slot<(Image) -> Result<Unit>>() }
+	val mockCardImage by memoized {
+		mockk<CardImageCtrl>(relaxed = true).also {
+			every {
+				it.imageModifiedHandler = capture(imageModifiedHandlerSlot)
+			}.just(Runs)
+		}
+	}
+
+
+	// FX test setup
+	setupTestFx<CardFormCtrl>("fx/CardForm.fxml", mapOf(
+			CardImageCtrl::class to { mockCardImage },
+			CardFormCtrl::class to { CardFormCtrl() }
+	))
+	val ctrl by memoized<CardFormCtrl>()
+	val robot by memoized<FxRobot>()
+
+	// Test data
 	val kSomeCard = Card(
 			name = "someCardName",
 			type = CardType.XYZ_MONSTER,
@@ -41,22 +70,19 @@ object CardFormCtrlSpec : Spek({
 	)
 	val kSomePath = Paths.get("this", "is", "some", "path")
 
-	val mockCardImage by memoized { mockk<CardImageCtrl>(relaxed = true) }
-	setupTestFx<CardFormCtrl>("fx/CardForm.fxml", mapOf(
-			CardImageCtrl::class to { mockCardImage },
-			CardFormCtrl::class to { CardFormCtrl() }
-	))
-
-	val ctrl by memoized<CardFormCtrl>()
-	val robot by memoized<FxRobot>()
-
+	// Mocks
 	val mockCardModifiedHandler = mockk<(Card) -> Result<Unit>>()
+	val cardSlot = slot<Card>()
+
 	beforeEachTest {
+		every { mockCardModifiedHandler(any()) }
+				.returns(success())
 		ctrl.cardModifiedHandler = mockCardModifiedHandler
+
 		runFx { ctrl.setState(kSomeCard, kSomePath) }
 	}
 
-	group("setState") {
+	group("#setState") {
 		test("Should populate components with card data") {
 			val myCard = kSomeCard.copy(
 					name = "myCardName",
@@ -123,20 +149,104 @@ object CardFormCtrlSpec : Spek({
 				ctrl.setState(kSomeCard.copy(image = myImage), myPackDir)
 			}
 
-			val actualImage = slot<Image>()
-			val actualPackDir = slot<Path>()
 			verify {
-				mockCardImage.setState(capture(actualImage), capture(actualPackDir))
+				mockCardImage.setState(myImage, myPackDir)
 			}
-			expectThat(actualImage.captured).isEqualTo(myImage)
-			expectThat(actualPackDir.captured).isEqualTo(myPackDir)
 		}
-		//
-		//		test("Should modify card name") {
-		//			robot.clickOn("#cardNameTextField")
-		//			robot.write("Hello World!")
-		//			expectThat(card.name).isEqualTo("Hello World!")
-		//		}
+	}
+
+	group("#UI") {
+
+		test("Should modify text components") {
+			val myCardName = "myCardName"
+			val myEffect = "my effect\nanother my effect"
+			val myCode = "TEST-MY123"
+
+			robot.doubleClickOn("#cardNameTextField").write(myCardName)
+			robot.doubleClickOn("#effectTextArea").write(myEffect)
+			robot.doubleClickOn("#codeTextField").write(myCode)
+
+			verify { mockCardModifiedHandler(capture(cardSlot)) }
+			cardSlot.captured.let {
+				expectThat(it.name).isEqualTo(myCardName)
+				expectThat(it.effect).isEqualTo(myEffect)
+				expectThat(it.code).isEqualTo(myCode)
+			}
+		}
+
+		group("#MonsterCardType") {
+			beforeEachTest {
+				runFx {
+					ctrl.setState(kSomeCard.copy(type = CardType.NORMAL_SUMMON_MONSTER))
+				}
+			}
+
+			test("Should modify combo box components") {
+				val myLevelIdx = 3
+				val myAttributeIdx = 2
+				val myMonsterTypeIdx = 5
+				val myMonsterAbilityIdx = 4
+
+				robot.clickOn("#levelComboBox")
+						.type(UP, MONSTER_LEVEL_PRESETS.size)
+						.type(DOWN, myLevelIdx)
+						.type(ENTER)
+				robot.clickOn("#attributeComboBox")
+						.type(UP, Attribute.values().size)
+						.type(DOWN, myAttributeIdx)
+						.type(ENTER)
+				robot.clickOn("#monsterTypeComboBox")
+						.type(UP, MONSTER_TYPE_PRESETS.size)
+						.type(DOWN, myMonsterTypeIdx)
+						.type(ENTER)
+				robot.clickOn("#monsterAbilityComboBox")
+						.type(UP, MONSTER_ABILITY_PRESETS.size)
+						.type(DOWN, myMonsterAbilityIdx)
+						.type(ENTER)
+
+				verify { mockCardModifiedHandler(capture(cardSlot)) }
+				cardSlot.captured.monster!!.let {
+					expectThat(it.level)
+							.isEqualTo(MONSTER_LEVEL_PRESETS[myLevelIdx])
+					expectThat(it.attribute)
+							.isEqualTo(Attribute.values()[myAttributeIdx])
+					expectThat(it.type)
+							.isEqualTo(MONSTER_TYPE_PRESETS[myMonsterTypeIdx])
+					expectThat(it.ability)
+							.isEqualTo(MONSTER_ABILITY_PRESETS[myMonsterAbilityIdx])
+				}
+			}
+
+			test("Should toggle monster effect checkbox") {
+				robot.clickOn("#effectCheckBox")
+				verify { mockCardModifiedHandler(capture(cardSlot)) }
+				val firstIsSelected = cardSlot.captured.monster!!.effect
+
+				robot.clickOn("#effectCheckBox")
+				verify { mockCardModifiedHandler(capture(cardSlot)) }
+				val secondIsSelected = cardSlot.captured.monster!!.effect
+
+				expectThat(firstIsSelected).isNotEqualTo(secondIsSelected)
+			}
+
+			test("Should modify ATK and DEF") {
+				val myAtk = "3000"
+				val myDef = "2500"
+
+				robot.doubleClickOn("#atkTextField").write(myAtk)
+				robot.doubleClickOn("#defTextField").write(myDef)
+
+				verify { mockCardModifiedHandler(capture(cardSlot)) }
+
+				cardSlot.captured.monster!!.let {
+					expectThat(it.atk).isEqualTo(myAtk)
+					expectThat(it.def).isEqualTo(myDef)
+				}
+
+			}
+		}
+
+
 		//
 		//		test("Should modify card type") {
 		//			robot.clickOn("#cardTypeComboBox")
