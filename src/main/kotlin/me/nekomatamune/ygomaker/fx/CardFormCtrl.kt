@@ -158,7 +158,7 @@ open class CardFormCtrl {
 		// Capture the image when it gets modified
 		cardImageController.imageModifiedHandler = {
 			image = it
-			success()
+			cardModifiedHandler(card)
 		}
 
 		// Set FXML component listeners
