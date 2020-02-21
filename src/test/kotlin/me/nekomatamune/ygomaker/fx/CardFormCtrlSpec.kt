@@ -27,7 +27,9 @@ import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isFalse
 import strikt.assertions.isNotEqualTo
+import strikt.assertions.isNull
 import java.nio.file.Paths
 
 object CardFormCtrlSpec : Spek({
@@ -155,7 +157,7 @@ object CardFormCtrlSpec : Spek({
 		}
 	}
 
-	group("#UI") {
+	group("#UI Event") {
 
 		test("Should modify text components") {
 			val myCardName = "myCardName"
@@ -172,6 +174,56 @@ object CardFormCtrlSpec : Spek({
 				expectThat(it.effect).isEqualTo(myEffect)
 				expectThat(it.code).isEqualTo(myCode)
 			}
+		}
+
+		test("Should disable monster fields when card type is not monster") {
+			runFx { ctrl.setState(kSomeCard.copy(type = CardType.NORMAL_TRAP)) }
+
+			robot.doubleClickOn("#atkTextField").write("0000")
+			robot.doubleClickOn("#defTextField").write("0000")
+
+			verify { mockCardModifiedHandler(capture(cardSlot)) }
+
+			expectThat(cardSlot.captured.monster).isNull()
+		}
+
+		test("Should reset monster fields after selecting non-monster card type") {
+			runFx {
+				ctrl.setState(kSomeCard.copy(
+						type = CardType.SPECIAL_SUMMON_MONSTER,
+						monster = Monster(
+								attribute = Attribute.FIRE,
+								level = 11,
+								type = MONSTER_TYPE_PRESETS[2],
+								ability = MONSTER_ABILITY_PRESETS[2],
+								effect = true,
+								atk = "3333",
+								def = "5555"
+						)
+				))
+			}
+
+			robot.clickOn("#cardTypeComboBox")
+					.type(UP, CardType.values().size)
+					.type(DOWN, CardType.EQUIP_SPELL.ordinal)
+					.type(ENTER)
+
+			robot.clickOn("#cardTypeComboBox")
+					.type(UP, CardType.values().size)
+					.type(DOWN, CardType.FUSION_MONSTER.ordinal)
+					.type(ENTER)
+
+			verify { mockCardModifiedHandler(capture(cardSlot)) }
+
+			cardSlot.captured.monster!!.let {
+				expectThat(it.level).isEqualTo(MONSTER_LEVEL_PRESETS.first())
+				expectThat(it.attribute).isEqualTo(Attribute.values().first())
+				expectThat(it.type).isEqualTo(MONSTER_TYPE_PRESETS.first())
+				expectThat(it.ability).isEqualTo(MONSTER_ABILITY_PRESETS.first())
+				expectThat(it.effect).isFalse()
+
+			}
+
 		}
 
 		group("#MonsterCardType") {
