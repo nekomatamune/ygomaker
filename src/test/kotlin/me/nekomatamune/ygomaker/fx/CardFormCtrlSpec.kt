@@ -44,7 +44,6 @@ object CardFormCtrlSpec : Spek({
 		}
 	}
 
-
 	// FX test setup
 	setupTestFx<CardFormCtrl>("fx/CardForm.fxml", mapOf(
 			CardImageCtrl::class to { mockCardImage },
