@@ -2,11 +2,10 @@ package me.nekomatamune.ygomaker.fx
 
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import javafx.scene.control.ListView
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyCode.*
+import javafx.scene.input.KeyCode.DOWN
+import javafx.scene.input.KeyCode.UP
 import me.nekomatamune.ygomaker.Card
 import me.nekomatamune.ygomaker.Language
 import me.nekomatamune.ygomaker.Pack
@@ -43,10 +42,10 @@ object CardListCtrlSpec : Spek({
 		every { mockCardSelectedHandler(any()) }.returns(success())
 		ctrl.cardSelectedHandler = mockCardSelectedHandler
 
-		robot.interact { ctrl.setState(kSomePack) }
+		robot.interact { ctrl.updatePack(kSomePack) }
 	}
 
-	group("#setState") {
+	group("#setPack") {
 		test("Should populate card list") {
 			val myPack = kSomePack.copy(
 					cards = (1..20).map {
@@ -54,7 +53,7 @@ object CardListCtrlSpec : Spek({
 					}
 			)
 
-			robot.interact { ctrl.setState(myPack) }
+			robot.interact { ctrl.updatePack(myPack) }
 
 			robot.lookupAs<ListView<Card>>("#cardListView").let {
 				expectThat(it.items).containsExactly(myPack.cards)
@@ -62,27 +61,45 @@ object CardListCtrlSpec : Spek({
 		}
 	}
 
-	test("Should invoke cardSelectedHandler") {
-		val myCardName = (1..5).map { "My Card #$it" }
+	group("#UI") {
+		test("Should invoke cardSelectedHandler") {
+			val myCardName = (1..5).map { "My Card #$it" }
 
-		robot.interact {
-			ctrl.setState(kSomePack.copy(
-					cards = myCardName.map { kSomeCard.copy(name = it) }
-			))
-			robot.lookupAs<ListView<Card>>("#cardListView").requestFocus()
+			robot.interact {
+				ctrl.updatePack(kSomePack.copy(
+						cards = myCardName.map { kSomeCard.copy(name = it) }
+				))
+			}.focus<ListView<Card>>("#cardListView")
+					.type(DOWN, UP)
+					.type(DOWN, 4)
+
+			verify(exactly = 6) { mockCardSelectedHandler(capture(cardLists)) }
+			expectThat(cardLists).map { it.name }.containsExactly(
+					myCardName[1],
+					myCardName[0],
+					myCardName[1],
+					myCardName[2],
+					myCardName[3],
+					myCardName[4]
+			)
 		}
-
-		robot.type(DOWN, UP).type(DOWN, 4)
-
-		verify(exactly = 6) { mockCardSelectedHandler(capture(cardLists)) }
-		expectThat(cardLists).map { it.name }.containsExactly(
-				myCardName[1],
-				myCardName[0],
-				myCardName[1],
-				myCardName[2],
-				myCardName[3],
-				myCardName[4]
-		)
 	}
+
+	group("#selectedCard") {
+		test("Should modify selected card") {
+			val myNewSelectedCard = Card(name = "my new selected card")
+
+			robot.focus<ListView<Card>>("#cardListView")
+					.type(DOWN, UP)
+					.type(DOWN, 3)
+					.interact { ctrl.modifySelectedCard(myNewSelectedCard) }
+
+			robot.lookupAs<ListView<Card>>("#cardListView").let {
+				expectThat(it.selectionModel.selectedIndex).isEqualTo(3)
+				expectThat(it.items[3]).isEqualTo(myNewSelectedCard)
+			}
+		}
+	}
+
 
 })

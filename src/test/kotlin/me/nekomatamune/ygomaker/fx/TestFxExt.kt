@@ -100,5 +100,10 @@ inline fun <reified T> FxRobot.lookupAs(id: String): T where T : Node {
 	return this.lookup(id).queryAs(T::class.java)
 }
 
+inline fun <reified T> FxRobot.focus(id: String): FxRobot where T : Node {
+	this.interact { this.lookupAs<T>(id).requestFocus() }
+	return this
+}
+
 private fun isRunByIntellij() =
 		System.getenv("XPC_SERVICE_NAME")?.contains("intellij") ?: false

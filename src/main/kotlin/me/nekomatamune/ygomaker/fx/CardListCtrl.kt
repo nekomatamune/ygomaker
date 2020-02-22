@@ -1,7 +1,5 @@
 package me.nekomatamune.ygomaker.fx
 
-import javafx.collections.FXCollections
-import javafx.collections.FXCollections.observableList
 import javafx.fxml.FXML
 import javafx.scene.control.ComboBox
 import javafx.scene.control.ListCell
@@ -42,6 +40,15 @@ class CardListCtrl {
 				cardListView.selectionModel.selectFirst()
 			}
 		}
+
+	private var selectedCard: Card
+		get() = cardListView.selectionModel.selectedItem
+		set(value) {
+			handlerLock.lockAndRun {
+				cardListView.items[cardListView.selectionModel.selectedIndex] = value
+			}
+		}
+
 	// endregion
 
 	var cardSelectedHandler: (Card) -> Result<Unit> = {
@@ -79,28 +86,8 @@ class CardListCtrl {
 
 	}
 
-	fun setState(newPack: Pack) {
-		pack = newPack
-	}
-
-	private fun onModifyPackInfo() {
-		logger.trace { "Pack info updated" }
-		pack = pack.copy(
-				name = packNameTextField.text,
-				code = packCodeTextField.text,
-				language = languageComboBox.selectionModel.selectedItem
-		)
-	}
-
-	private fun onSelectCard() {
-		if (disableOnSelectCard) {
-			return
-		}
-
-		cardListView.selectionModel.selectedItem?.let {
-			cardSelectedHandler(it)
-		}
-	}
+	fun updatePack(newPack: Pack) { pack = newPack}
+	fun modifySelectedCard(newCard: Card) { selectedCard = newCard}
 
 	fun onModifyCard(card: Card?): Result<Unit> {
 		if (cardListView.selectionModel.selectedItem == null) {
@@ -130,22 +117,7 @@ class CardListCtrl {
 	}
 
 	fun setPack(pack: Pack, selectLast: Boolean = false) {
-		logger.info { "Pack ${pack.name} (${pack.code})" }
 
-		packNameTextField.text = pack.name
-		packCodeTextField.text = pack.code
-		languageComboBox.selectionModel.select(pack.language)
-
-		cardListView.apply {
-			items = FXCollections.observableArrayList(pack.cards)
-
-			if (selectLast)
-				selectionModel.selectLast()
-			else
-				selectionModel.selectFirst()
-		}
-
-		this.pack = pack
 	}
 
 }
@@ -155,7 +127,6 @@ class CardListCtrl {
  */
 private class CardListCell : ListCell<Card>() {
 	override fun updateItem(item: Card?, empty: Boolean) {
-		println("update item")
 		super.updateItem(item, empty)
 		if (!empty) {
 			text = item?.toShortString()
