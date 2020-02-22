@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="me.nekomatamune.ygomaker.fx.CardListController">
+            fx:controller="me.nekomatamune.ygomaker.fx.CardListCtrl">
     <top>
         <VBox>
             <TextField fx:id="packNameTextField" promptText="Pack Name"/>

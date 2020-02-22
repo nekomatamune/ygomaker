@@ -19,7 +19,7 @@ private val logger = KotlinLogging.logger { }
 
 typealias CardSelectedHandler = (Card) -> Unit
 
-class CardListController {
+class CardListCtrl {
 
 	private var pack: Pack = Pack()
 

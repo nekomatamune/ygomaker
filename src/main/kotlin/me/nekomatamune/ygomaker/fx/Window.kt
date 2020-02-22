@@ -20,7 +20,7 @@ class Window {
 
 	// region subview controllers
 	@FXML lateinit var menuBarController: MenuBar
-	@FXML lateinit var cardListController: CardListController
+	@FXML lateinit var cardListController: CardListCtrl
 	@FXML lateinit var cardRendererController: CardRendererController
 	@FXML lateinit var cardFormController: CardFormCtrl
 	// endregion
