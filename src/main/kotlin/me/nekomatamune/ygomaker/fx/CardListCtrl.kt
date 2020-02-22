@@ -15,7 +15,6 @@ import me.nekomatamune.ygomaker.failure
 import me.nekomatamune.ygomaker.success
 import me.nekomatamune.ygomaker.toShortString
 import mu.KotlinLogging
-import java.util.logging.Handler
 
 private val logger = KotlinLogging.logger { }
 
@@ -39,16 +38,18 @@ class CardListCtrl {
 				packNameTextField.text = value.name
 				packCodeTextField.text = value.code
 				languageComboBox.selectionModel.select(value.language)
-				cardListView.items = observableList(value.cards)
+				cardListView.items.setAll(value.cards)
+				cardListView.selectionModel.selectFirst()
 			}
 		}
 	// endregion
 
-	private val handlerLock = HandlerLock()
-
 	var cardSelectedHandler: (Card) -> Result<Unit> = {
 		failure(IllegalStateException("Handler not set"))
 	}
+
+	private val handlerLock = HandlerLock()
+
 
 	private var disableOnSelectCard = false
 
@@ -57,17 +58,24 @@ class CardListCtrl {
 	private fun initialize() {
 		logger.debug { "Initializing CardList" }
 
-//		sequenceOf(
-//				packNameTextField, packCodeTextField, languageComboBox
-//		).forEach {
-//			it.addSimpleListener { onModifyPackInfo() }
-//		}
-//
-//		cardListView.addSimpleListener { onSelectCard() }
-		cardListView.setCellFactory { CardListCell() }
-//
-//		languageComboBox.items = observableList(Language.values().toList())
-//		languageComboBox.selectionModel.selectFirst()
+		//		sequenceOf(
+		//				packNameTextField, packCodeTextField, languageComboBox
+		//		).forEach {
+		//			it.addSimpleListener { onModifyPackInfo() }
+		//		}
+		//
+		cardListView.apply {
+			setCellFactory { CardListCell() }
+			selectionModel.selectedItemProperty()
+					.addListener(handlerLock) { _, newValue ->
+						cardSelectedHandler(newValue).alertFailure()
+					}
+		}
+
+
+		//
+		//		languageComboBox.items = observableList(Language.values().toList())
+		//		languageComboBox.selectionModel.selectFirst()
 
 	}
 
