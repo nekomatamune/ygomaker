@@ -11,24 +11,44 @@ import me.nekomatamune.ygomaker.Card
 import me.nekomatamune.ygomaker.Language
 import me.nekomatamune.ygomaker.Pack
 import me.nekomatamune.ygomaker.Result
+import me.nekomatamune.ygomaker.failure
 import me.nekomatamune.ygomaker.success
 import me.nekomatamune.ygomaker.toShortString
 import mu.KotlinLogging
+import java.util.logging.Handler
 
 private val logger = KotlinLogging.logger { }
 
-typealias CardSelectedHandler = (Card) -> Unit
-
 class CardListCtrl {
 
-	private var pack: Pack = Pack()
-
+	// region FXML components and backed properties
 	@FXML private lateinit var packNameTextField: TextField
 	@FXML private lateinit var packCodeTextField: TextField
 	@FXML private lateinit var languageComboBox: ComboBox<Language>
 	@FXML private lateinit var cardListView: ListView<Card>
 
-	lateinit var cardSelectedHandler: CardSelectedHandler
+	private var pack: Pack
+		get() = Pack(
+				name = packNameTextField.text,
+				code = packCodeTextField.text,
+				language = languageComboBox.selectionModel.selectedItem,
+				cards = cardListView.items.toList()
+		)
+		set(value) {
+			handlerLock.lockAndRun {
+				packNameTextField.text = value.name
+				packCodeTextField.text = value.code
+				languageComboBox.selectionModel.select(value.language)
+				cardListView.items = observableList(value.cards)
+			}
+		}
+	// endregion
+
+	private val handlerLock = HandlerLock()
+
+	var cardSelectedHandler: (Card) -> Result<Unit> = {
+		failure(IllegalStateException("Handler not set"))
+	}
 
 	private var disableOnSelectCard = false
 
@@ -37,26 +57,30 @@ class CardListCtrl {
 	private fun initialize() {
 		logger.debug { "Initializing CardList" }
 
-		sequenceOf(
-			packNameTextField, packCodeTextField, languageComboBox
-		).forEach {
-			it.addSimpleListener { onModifyPackInfo() }
-		}
-
-		cardListView.addSimpleListener { onSelectCard() }
+//		sequenceOf(
+//				packNameTextField, packCodeTextField, languageComboBox
+//		).forEach {
+//			it.addSimpleListener { onModifyPackInfo() }
+//		}
+//
+//		cardListView.addSimpleListener { onSelectCard() }
 		cardListView.setCellFactory { CardListCell() }
+//
+//		languageComboBox.items = observableList(Language.values().toList())
+//		languageComboBox.selectionModel.selectFirst()
 
-		languageComboBox.items = observableList(Language.values().toList())
-		languageComboBox.selectionModel.selectFirst()
+	}
 
+	fun setState(newPack: Pack) {
+		pack = newPack
 	}
 
 	private fun onModifyPackInfo() {
 		logger.trace { "Pack info updated" }
 		pack = pack.copy(
-			name = packNameTextField.text,
-			code = packCodeTextField.text,
-			language = languageComboBox.selectionModel.selectedItem
+				name = packNameTextField.text,
+				code = packCodeTextField.text,
+				language = languageComboBox.selectionModel.selectedItem
 		)
 	}
 
@@ -79,12 +103,12 @@ class CardListCtrl {
 
 		val mergedCard = card?.let {
 			cardListView.selectionModel.selectedItem.copy(
-				name = it.name,
-				type = it.type,
-				monster = it.monster,
-				code = it.code,
-				effect = it.effect,
-				image = it.image
+					name = it.name,
+					type = it.type,
+					monster = it.monster,
+					code = it.code,
+					effect = it.effect,
+					image = it.image
 			)
 		}
 
@@ -116,7 +140,6 @@ class CardListCtrl {
 		this.pack = pack
 	}
 
-	fun getPack() = pack
 }
 
 /**
@@ -124,6 +147,7 @@ class CardListCtrl {
  */
 private class CardListCell : ListCell<Card>() {
 	override fun updateItem(item: Card?, empty: Boolean) {
+		println("update item")
 		super.updateItem(item, empty)
 		if (!empty) {
 			text = item?.toShortString()

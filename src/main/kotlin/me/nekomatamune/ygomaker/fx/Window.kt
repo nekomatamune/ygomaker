@@ -32,7 +32,7 @@ class Window {
 		menuBarController.menuActionHandler = {
 			when (it) {
 				MenuAction.LOAD_PACK -> loadPack()
-				MenuAction.SAVE_PACK -> cardListController.getPack().writeTo(packDir)
+				//MenuAction.SAVE_PACK -> cardListController.getPack().writeTo(packDir)
 				MenuAction.SAVE_PACK_AS -> savePackAs()
 				MenuAction.NEW_CARD -> newCard()
 //				MenuAction.RENDER_CARD -> cardRendererController.render(
@@ -85,16 +85,16 @@ class Window {
 				packDir.deepCopyTo(newPackDir)
 				this.packDir = newPackDir
 
-				cardListController.getPack().writeTo(packDir)
+				//cardListController.getPack().writeTo(packDir)
 			}
 		}
 	}
 
 	private fun newCard() {
-		cardListController.getPack().let {
-			val newPack = it.copy(cards = it.cards + Card())
-			cardListController.setPack(newPack, selectLast = true)
-		}
+//		cardListController.getPack().let {
+//			val newPack = it.copy(cards = it.cards + Card())
+//			cardListController.setPack(newPack, selectLast = true)
+//		}
 	}
 
 }

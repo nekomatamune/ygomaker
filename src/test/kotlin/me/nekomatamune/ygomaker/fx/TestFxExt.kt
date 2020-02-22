@@ -6,22 +6,23 @@ import javafx.application.Platform
 import javafx.fxml.FXMLLoader
 import javafx.scene.Node
 import javafx.scene.Parent
-import javafx.scene.image.Image
 import javafx.stage.Stage
 import javafx.util.Callback
+import mu.KotlinLogging
 import org.spekframework.spek2.dsl.Root
 import org.testfx.api.FxRobot
 import org.testfx.api.FxToolkit
-import strikt.api.expectThat
-import strikt.assertions.isEqualTo
 import java.util.concurrent.Semaphore
 import kotlin.reflect.KClass
+
+private val logger = KotlinLogging.logger { }
 
 @Suppress("UNUSED_VARIABLE", "UNUSED_EXPRESSION")
 fun <C> Root.setupTestFx(
 		fxmlLocation: String,
 		controllers: Map<KClass<*>, () -> Any>
 ) {
+	logger.info { "setupTextFx()" }
 
 	val loader by memoized {
 		FXMLLoader().apply {
@@ -40,6 +41,7 @@ fun <C> Root.setupTestFx(
 				FxToolkit.setupApplication {
 					object : Application() {
 						override fun start(primaryStage: Stage) {
+							logger.debug { "Starting TestFx Application" }
 							primaryStage.scene = javafx.scene.Scene(loader.load<Parent>())
 							primaryStage.show()
 						}
@@ -47,24 +49,26 @@ fun <C> Root.setupTestFx(
 				}
 			},
 			destructor = {
+				logger.debug { "Stopping TextFx Application" }
 				FxToolkit.cleanupApplication(it)
-
 			}
 	)
 
-
 	val ctrl by memoized<C> {
-		app
 		loader.getController()
 	}
 
 	val robot by memoized {
-		ctrl
 		FxRobot()
 	}
 
 	beforeGroup {
 		FxToolkit.registerPrimaryStage()
+	}
+
+	beforeEachTest {
+		logger.debug { "Loading TextFx Application..." }
+		app
 	}
 
 	afterGroup {
@@ -76,7 +80,7 @@ fun <C> Root.setupTestFx(
 }
 
 fun <T> runFx(block: () -> T): T {
-	var result:T? = null
+	var result: T? = null
 
 	Platform.runLater {
 		result = block()
