@@ -129,8 +129,7 @@ object CardImageCtrlSpec : Spek({
 				expectThat(it.image).isPixelEqualTo(myFxImage)
 			}
 			verify { mockFileChooser.showOpenDialog(any()) }
-			verify { mockImageModifiedHandler(capture(imageSlot)) }
-			expectThat(imageSlot.captured).isEqualTo(Image())
+			verify(exactly = 0) { mockImageModifiedHandler(any()) }
 		}
 
 		test("Should draw image when new image is selected") {
@@ -160,7 +159,7 @@ object CardImageCtrlSpec : Spek({
 			}
 			verify { mockImageModifiedHandler(capture(imageSlot)) }
 			expectThat(imageSlot.captured.file)
-					.isEqualTo(expectedImageFile.toFile().toString())
+					.isEqualTo(expectedImageFileBasename)
 		}
 	}
 

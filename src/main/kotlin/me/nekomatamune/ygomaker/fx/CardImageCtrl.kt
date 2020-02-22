@@ -224,7 +224,7 @@ open class CardImageCtrl {
 
 		if (imageFile == null) {
 			logger.warn { "No image file selected. Most likely canceled by user." }
-			return imageModifiedHandler(image)
+			return success()
 		}
 
 		val newFxImage = readImageFile(imageFile).onFailure {
