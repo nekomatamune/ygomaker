@@ -50,8 +50,6 @@ object CardListCtrlSpec : Spek({
 	val mockCardSelectedHandler = mockk<(Card, Path) -> Result<Unit>>()
 
 	val cardSlots = mutableListOf<Card>()
-	val packSlot = slot<Pack>()
-	val packDirSlot = slot<Path>()
 
 	beforeEachTest {
 		every { mockCardSelectedHandler(any(), any()) }.returns(success())
@@ -67,7 +65,7 @@ object CardListCtrlSpec : Spek({
 	group("#setPack") {
 		test("Should populate card list") {
 			val myPack = kSomePack.copy(
-					cards = (1..20).map {
+					cards = (1..5).map {
 						kSomeCard.copy(name = "My Card $it")
 					}
 			)
@@ -147,8 +145,6 @@ object CardListCtrlSpec : Spek({
 			verify { mockFileChooser.showOpenDialog(any()) }
 			verify { mockFileIO.readPack(myFullPackDir) }
 			verify { mockCardSelectedHandler(myPack.cards.first(), myPackDir) }
-
-
 		}
 	}
 
@@ -165,10 +161,7 @@ object CardListCtrlSpec : Spek({
 				ctrl.savePack().assertSuccess()
 			}
 
-			verify { mockFileIO.writePack(capture(packSlot), capture(packDirSlot)) }
-
-			expectThat(packSlot.captured).isEqualTo(myPack)
-			expectThat(packDirSlot.captured).isEqualTo(myPackDir)
+			verify { mockFileIO.writePack(myPack, myPackDir) }
 		}
 	}
 
