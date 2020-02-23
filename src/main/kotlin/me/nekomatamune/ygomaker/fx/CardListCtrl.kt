@@ -5,7 +5,10 @@ import javafx.scene.control.ComboBox
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
 import javafx.scene.control.TextField
+import javafx.stage.FileChooser
 import me.nekomatamune.ygomaker.Card
+import me.nekomatamune.ygomaker.Command
+import me.nekomatamune.ygomaker.FileIO
 import me.nekomatamune.ygomaker.Language
 import me.nekomatamune.ygomaker.Pack
 import me.nekomatamune.ygomaker.Result
@@ -13,10 +16,14 @@ import me.nekomatamune.ygomaker.failure
 import me.nekomatamune.ygomaker.success
 import me.nekomatamune.ygomaker.toShortString
 import mu.KotlinLogging
+import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 
-class CardListCtrl {
+open class CardListCtrl(
+		val fileChooserFactory: () -> FileChooser = { FileChooser() },
+		val fileIO: FileIO = FileIO()
+) {
 
 	// region FXML components and backed properties
 	@FXML private lateinit var packNameTextField: TextField
@@ -24,6 +31,7 @@ class CardListCtrl {
 	@FXML private lateinit var languageComboBox: ComboBox<Language>
 	@FXML private lateinit var cardListView: ListView<Card>
 
+	private lateinit var packDir: Path
 	private var pack: Pack
 		get() = Pack(
 				name = packNameTextField.text,
@@ -83,11 +91,23 @@ class CardListCtrl {
 		//
 		//		languageComboBox.items = observableList(Language.values().toList())
 		//		languageComboBox.selectionModel.selectFirst()
-
 	}
 
-	fun updatePack(newPack: Pack) { pack = newPack}
-	fun modifySelectedCard(newCard: Card) { selectedCard = newCard}
+	fun updatePackDir(newPackDir: Path) {
+		packDir = newPackDir
+	}
+
+	fun updatePack(newPack: Pack) {
+		pack = newPack
+	}
+
+	fun modifySelectedCard(newCard: Card) {
+		selectedCard = newCard
+	}
+
+	fun savePack(): Result<Unit> {
+		return fileIO.savePack(pack, packDir)
+	}
 
 	fun onModifyCard(card: Card?): Result<Unit> {
 		if (cardListView.selectionModel.selectedItem == null) {
@@ -116,9 +136,6 @@ class CardListCtrl {
 		return success()
 	}
 
-	fun setPack(pack: Pack, selectLast: Boolean = false) {
-
-	}
 
 }
 

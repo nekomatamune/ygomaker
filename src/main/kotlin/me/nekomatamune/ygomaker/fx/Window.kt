@@ -63,7 +63,7 @@ class Window {
 		}.showDialog(null).toPath()
 
 		val pack = Pack.readFrom(packDir)
-		cardListController.setPack(pack)
+		cardListController.updatePack(pack)
 		this.packDir = packDir
 	}
 
