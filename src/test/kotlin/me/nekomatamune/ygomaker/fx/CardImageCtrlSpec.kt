@@ -24,9 +24,13 @@ import javafx.scene.image.Image as FxImage
 
 
 object CardImageCtrlSpec : Spek({
+	val mockFileChooser by memoized { mockk<FileChooser>(relaxed = true) }
+
 	setupTestFx<CardImageCtrl>(
 			fxmlLocation = "fx/CardImage.fxml",
-			controllers = mapOf(CardImageCtrl::class to { CardImageCtrl() })
+			controllers = mapOf(CardImageCtrl::class to { CardImageCtrl(
+					fileChooserFactory = { mockFileChooser }
+			) })
 	)
 
 	val kTestPathDir: Path = Paths
@@ -36,7 +40,7 @@ object CardImageCtrlSpec : Spek({
 
 	val ctrl by memoized<CardImageCtrl>()
 	val robot by memoized<FxRobot>()
-	val mockFileChooser by memoized { mockk<FileChooser>(relaxed = true) }
+
 	val mockImageModifiedHandler = mockk<(Image) -> Result<Unit>>()
 	val imageSlot = slot<Image>()
 
@@ -46,8 +50,6 @@ object CardImageCtrlSpec : Spek({
 			mockImageModifiedHandler(any())
 		}.returns(success())
 
-
-		ctrl.injectFileChooserFactoryForTesting { mockFileChooser }
 		runFx {
 			ctrl.setState(kSomeImage, kTestPathDir)
 		}.assertSuccess()

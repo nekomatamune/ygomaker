@@ -33,7 +33,9 @@ private const val SCROLL_ZOOM_RATIO = 0.0001
 /**
  * Controller for fx/CardImage.fxml.
  */
-open class CardImageCtrl {
+open class CardImageCtrl(
+		val fileChooserFactory: () -> FileChooser = { FileChooser() }
+) {
 
 	// region FX components
 	@FXML private lateinit var fileTextField: TextField
@@ -93,8 +95,6 @@ open class CardImageCtrl {
 	private lateinit var packDir: Path
 	private lateinit var lastMousePressedEvent: MouseEvent
 	private val handlerLock = HandlerLock()
-	/** See [injectFileChooserFactoryForTesting]. */
-	private var fileChooserFactory = { FileChooser() }
 	// endregion
 
 	// region FX initializer
@@ -142,14 +142,6 @@ open class CardImageCtrl {
 		packDir = newPackDir
 		fxImageViewport = image.toViewport()
 		return success()
-	}
-
-	/**
-	 * Injects a fake factory for [FileChooser] for testing purpose.
-	 */
-	@TestOnly
-	fun injectFileChooserFactoryForTesting(factory: () -> FileChooser) {
-		fileChooserFactory = factory
 	}
 	// endregion
 
