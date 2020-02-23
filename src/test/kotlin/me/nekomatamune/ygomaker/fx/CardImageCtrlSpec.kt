@@ -28,9 +28,9 @@ object CardImageCtrlSpec : Spek({
 
 	setupTestFx<CardImageCtrl>(
 			fxmlLocation = "fx/CardImage.fxml",
-			controllers = mapOf(CardImageCtrl::class to { CardImageCtrl(
-					fileChooserFactory = { mockFileChooser }
-			) })
+			controllers = mapOf(CardImageCtrl::class to {
+				CardImageCtrl(fileChooserFactory = { mockFileChooser })
+			})
 	)
 
 	val kTestPathDir: Path = Paths

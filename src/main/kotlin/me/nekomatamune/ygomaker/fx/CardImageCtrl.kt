@@ -13,6 +13,7 @@ import javafx.scene.input.ScrollEvent
 import javafx.scene.input.ZoomEvent
 import javafx.scene.layout.HBox
 import javafx.stage.FileChooser
+import me.nekomatamune.ygomaker.FileIO
 import me.nekomatamune.ygomaker.Image
 import me.nekomatamune.ygomaker.Result
 import me.nekomatamune.ygomaker.failure
@@ -34,7 +35,8 @@ private const val SCROLL_ZOOM_RATIO = 0.0001
  * Controller for fx/CardImage.fxml.
  */
 open class CardImageCtrl(
-		val fileChooserFactory: () -> FileChooser = { FileChooser() }
+		val fileChooserFactory: () -> FileChooser = { FileChooser() },
+		val fileIO: FileIO = FileIO()
 ) {
 
 	// region FX components
@@ -133,7 +135,7 @@ open class CardImageCtrl(
 			null
 		} else {
 			val imageFile = newPackDir.resolve(newImage.file).toFile()
-			readImageFile(imageFile).onFailure {
+			fileIO.readImage(imageFile).onFailure {
 				return it
 			}
 		}
@@ -219,7 +221,7 @@ open class CardImageCtrl(
 			return success()
 		}
 
-		val newFxImage = readImageFile(imageFile).onFailure {
+		val newFxImage = fileIO.readImage(imageFile).onFailure {
 			return it
 		}.also {
 			logger.info { "Image read successfully!" }
