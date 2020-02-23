@@ -126,6 +126,7 @@ object CardListCtrlSpec : Spek({
 		test("Should load pack from a directory") {
 			val myDataDir = Paths.get("MyDataDir")
 			val myPackDir = Paths.get("my", "load", "pack", "dir")
+			val myFullPackDir = myDataDir.resolve(myPackDir)
 			val myPack = Pack(name = "my loaded pack", cards = listOf(
 					Card(name = "my loaded card 1"),
 					Card(name = "my loaded card 2")
@@ -133,12 +134,19 @@ object CardListCtrlSpec : Spek({
 
 			every {
 				mockFileChooser.showOpenDialog(any())
-			}.returns(myDataDir.resolve(myPackDir).toFile())
+			}.returns(myFullPackDir.toFile())
 			every { mockFileIO.readPack(any()) }.returns(success(myPack))
+			every {
+				mockCardSelectedHandler(any(), any())
+			}.returns(success())
 
 			robot.interact {
 				ctrl.loadPack(dataDir = myDataDir).assertSuccess()
 			}
+
+			verify { mockFileChooser.showOpenDialog(any()) }
+			verify { mockFileIO.readPack(myFullPackDir) }
+			verify { mockCardSelectedHandler(myPack.cards.first(), myPackDir) }
 
 
 		}

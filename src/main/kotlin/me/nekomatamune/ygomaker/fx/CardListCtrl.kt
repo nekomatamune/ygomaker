@@ -111,13 +111,14 @@ open class CardListCtrl(
 			initialDirectory = dataDir.toFile()
 		}
 
-		val newPackDir = fileChooser.showOpenDialog(null)
+		val newPackDir = fileChooser.showOpenDialog(null).toPath()
 
-		pack = fileIO.readPack(newPackDir.toPath()).onFailure {
+		pack = fileIO.readPack(newPackDir).onFailure {
 			return it
 		}
+		packDir = dataDir.relativize(newPackDir)
 
-		return success()
+		return cardSelectedHandler(selectedCard, packDir)
 	}
 
 	fun savePack(): Result<Unit> {
