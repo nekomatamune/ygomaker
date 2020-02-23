@@ -59,7 +59,7 @@ open class CardListCtrl(
 
 	// endregion
 
-	var cardSelectedHandler: (Card) -> Result<Unit> = {
+	var cardSelectedHandler: (Card, Path) -> Result<Unit> = { _, _ ->
 		failure(IllegalStateException("Handler not set"))
 	}
 
@@ -83,7 +83,7 @@ open class CardListCtrl(
 			setCellFactory { CardListCell() }
 			selectionModel.selectedItemProperty()
 					.addListener(handlerLock) { _, newValue ->
-						cardSelectedHandler(newValue).alertFailure()
+						cardSelectedHandler(newValue, packDir).alertFailure()
 					}
 		}
 
@@ -105,8 +105,23 @@ open class CardListCtrl(
 		selectedCard = newCard
 	}
 
+	fun loadPack(dataDir: Path = Command.dataDir): Result<Unit> {
+		val fileChooser = fileChooserFactory().apply {
+			title = "Select a Pack Directory"
+			initialDirectory = dataDir.toFile()
+		}
+
+		val newPackDir = fileChooser.showOpenDialog(null)
+
+		pack = fileIO.readPack(newPackDir.toPath()).onFailure {
+			return it
+		}
+
+		return success()
+	}
+
 	fun savePack(): Result<Unit> {
-		return fileIO.savePack(pack, packDir)
+		return fileIO.writePack(pack, packDir)
 	}
 
 	fun onModifyCard(card: Card?): Result<Unit> {

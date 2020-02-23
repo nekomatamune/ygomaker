@@ -7,6 +7,7 @@ import io.mockk.verify
 import javafx.scene.control.ListView
 import javafx.scene.input.KeyCode.DOWN
 import javafx.scene.input.KeyCode.UP
+import javafx.stage.FileChooser
 import me.nekomatamune.ygomaker.Card
 import me.nekomatamune.ygomaker.FileIO
 import me.nekomatamune.ygomaker.Language
@@ -23,10 +24,15 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 object CardListCtrlSpec : Spek({
+	val mockFileChooser = mockk<FileChooser>(relaxed = true)
 	val mockFileIO = mockk<FileIO>(relaxed = true)
 
 	setupTestFx<CardListCtrl>("fx/CardList.fxml", mapOf(
-			CardListCtrl::class to { CardListCtrl(fileIO = mockFileIO) }
+			CardListCtrl::class to {
+				CardListCtrl(
+						fileChooserFactory = { mockFileChooser },
+						fileIO = mockFileIO)
+			}
 	))
 
 	val ctrl by memoized<CardListCtrl>()
@@ -41,15 +47,15 @@ object CardListCtrlSpec : Spek({
 			cards = kSomeCards
 	)
 
-	val mockCardSelectedHandler = mockk<(Card) -> Result<Unit>>()
+	val mockCardSelectedHandler = mockk<(Card, Path) -> Result<Unit>>()
 
 	val cardSlots = mutableListOf<Card>()
 	val packSlot = slot<Pack>()
 	val packDirSlot = slot<Path>()
 
 	beforeEachTest {
-		every { mockCardSelectedHandler(any()) }.returns(success())
-		every { mockFileIO.savePack(any(), any()) }.returns(success())
+		every { mockCardSelectedHandler(any(), any()) }.returns(success())
+		every { mockFileIO.writePack(any(), any()) }.returns(success())
 		ctrl.cardSelectedHandler = mockCardSelectedHandler
 
 		robot.interact {
@@ -86,7 +92,9 @@ object CardListCtrlSpec : Spek({
 					.type(DOWN, UP)
 					.type(DOWN, 4)
 
-			verify(exactly = 6) { mockCardSelectedHandler(capture(cardSlots)) }
+			verify(exactly = 6) {
+				mockCardSelectedHandler(capture(cardSlots), any())
+			}
 			expectThat(cardSlots).map { it.name }.containsExactly(
 					myCardName[1],
 					myCardName[0],
@@ -114,6 +122,28 @@ object CardListCtrlSpec : Spek({
 		}
 	}
 
+	group("#loadPack") {
+		test("Should load pack from a directory") {
+			val myDataDir = Paths.get("MyDataDir")
+			val myPackDir = Paths.get("my", "load", "pack", "dir")
+			val myPack = Pack(name = "my loaded pack", cards = listOf(
+					Card(name = "my loaded card 1"),
+					Card(name = "my loaded card 2")
+			))
+
+			every {
+				mockFileChooser.showOpenDialog(any())
+			}.returns(myDataDir.resolve(myPackDir).toFile())
+			every { mockFileIO.readPack(any()) }.returns(success(myPack))
+
+			robot.interact {
+				ctrl.loadPack(dataDir = myDataDir).assertSuccess()
+			}
+
+
+		}
+	}
+
 	group("#savePack") {
 		test("Should save pack to directory") {
 			val myPackDir = Paths.get("my", "pack", "dir")
@@ -124,15 +154,13 @@ object CardListCtrlSpec : Spek({
 			robot.interact {
 				ctrl.updatePackDir(myPackDir)
 				ctrl.updatePack(myPack)
-				ctrl.savePack()
+				ctrl.savePack().assertSuccess()
 			}
 
-			verify { mockFileIO.savePack(capture(packSlot), capture(packDirSlot)) }
+			verify { mockFileIO.writePack(capture(packSlot), capture(packDirSlot)) }
 
 			expectThat(packSlot.captured).isEqualTo(myPack)
 			expectThat(packDirSlot.captured).isEqualTo(myPackDir)
-
-
 		}
 	}
 

@@ -11,7 +11,7 @@ import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
-private val PACK_JSON_BASENAME = "pack.json"
+private const val PACK_JSON_BASENAME = "pack.json"
 
 open class FileIO {
 
@@ -33,7 +33,27 @@ open class FileIO {
 		}
 	}
 
-	fun savePack(pack: Pack, packDir: Path): Result<Unit> {
+	fun readPack(packDir: Path): Result<Pack> {
+		logger.info { "Read pack from $packDir" }
+
+		if(!packDir.toFile().isDirectory) {
+			return failure(IllegalArgumentException("Not a directory: $packDir"))
+		}
+
+		val packJsonFile = packDir.resolve(PACK_JSON_BASENAME)
+
+		val pack = try {
+			val packText = packJsonFile.toFile().readText()
+			json.parse(Pack.serializer(), packText)
+
+		} catch (e: Exception) {
+			return failure(e)
+		}
+
+		return success(pack)
+	}
+
+	fun writePack(pack: Pack, packDir: Path): Result<Unit> {
 		logger.info { "Write pack to $packDir" }
 
 		val packJson = json.stringify(Pack.serializer(), pack)

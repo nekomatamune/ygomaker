@@ -42,9 +42,9 @@ class Window {
 			}
 		}
 
-		cardListController.cardSelectedHandler = {
-			cardFormController.setState(it, packDir)
-			cardRendererController.render(it, packDir)
+		cardListController.cardSelectedHandler = {card, packDir ->
+			cardFormController.setState(card, packDir)
+			cardRendererController.render(card, packDir)
 		}
 
 		cardFormController.cardModifiedHandler = {
