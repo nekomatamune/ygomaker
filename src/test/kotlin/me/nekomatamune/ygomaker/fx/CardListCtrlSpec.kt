@@ -181,8 +181,7 @@ object CardListCtrlSpec : Spek({
 			verify { mockFileChooser.showOpenDialog(any()) }
 			verify { mockFileIO.copyPack(myOldPackDir, myNewPackDir) }
 			verify { mockCardSelectedHandler(myPack.cards.first(), myNewPackDir) }
-
-
+			
 		}
 	}
 
