@@ -2,7 +2,6 @@ package me.nekomatamune.ygomaker.fx
 
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import javafx.scene.control.ListView
 import javafx.scene.input.KeyCode.DOWN
@@ -24,12 +23,14 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 object CardListCtrlSpec : Spek({
+	val kSomeDataDir = Paths.get("SomeDataDir")
 	val mockFileChooser = mockk<FileChooser>(relaxed = true)
 	val mockFileIO = mockk<FileIO>(relaxed = true)
 
 	setupTestFx<CardListCtrl>("fx/CardList.fxml", mapOf(
 			CardListCtrl::class to {
 				CardListCtrl(
+						dataDir = kSomeDataDir,
 						fileChooserFactory = { mockFileChooser },
 						fileIO = mockFileIO)
 			}
@@ -50,16 +51,15 @@ object CardListCtrlSpec : Spek({
 	val mockCardSelectedHandler = mockk<(Card, Path) -> Result<Unit>>()
 
 	val cardSlots = mutableListOf<Card>()
-	val packSlot = slot<Pack>()
-	val packDirSlot = slot<Path>()
 
 	beforeEachTest {
 		every { mockCardSelectedHandler(any(), any()) }.returns(success())
 		every { mockFileIO.writePack(any(), any()) }.returns(success())
+		every { mockFileIO.copyPack(any(), any()) }.returns(success())
 		ctrl.cardSelectedHandler = mockCardSelectedHandler
 
 		robot.interact {
-			ctrl.updatePackDir(Paths.get("some", "pack", "dir"))
+			ctrl.updatePackDir(kSomeDataDir.resolve(Paths.get("somePackDir")))
 			ctrl.updatePack(kSomePack)
 		}
 	}
@@ -67,7 +67,7 @@ object CardListCtrlSpec : Spek({
 	group("#setPack") {
 		test("Should populate card list") {
 			val myPack = kSomePack.copy(
-					cards = (1..20).map {
+					cards = (1..5).map {
 						kSomeCard.copy(name = "My Card $it")
 					}
 			)
@@ -124,9 +124,7 @@ object CardListCtrlSpec : Spek({
 
 	group("#loadPack") {
 		test("Should load pack from a directory") {
-			val myDataDir = Paths.get("MyDataDir")
-			val myPackDir = Paths.get("my", "load", "pack", "dir")
-			val myFullPackDir = myDataDir.resolve(myPackDir)
+			val myPackDir = kSomeDataDir.resolve(Paths.get("somePackDir"))
 			val myPack = Pack(name = "my loaded pack", cards = listOf(
 					Card(name = "my loaded card 1"),
 					Card(name = "my loaded card 2")
@@ -134,21 +132,16 @@ object CardListCtrlSpec : Spek({
 
 			every {
 				mockFileChooser.showOpenDialog(any())
-			}.returns(myFullPackDir.toFile())
+			}.returns(myPackDir.toFile())
 			every { mockFileIO.readPack(any()) }.returns(success(myPack))
-			every {
-				mockCardSelectedHandler(any(), any())
-			}.returns(success())
 
 			robot.interact {
-				ctrl.loadPack(dataDir = myDataDir).assertSuccess()
+				ctrl.loadPack().assertSuccess()
 			}
 
 			verify { mockFileChooser.showOpenDialog(any()) }
-			verify { mockFileIO.readPack(myFullPackDir) }
+			verify { mockFileIO.readPack(myPackDir) }
 			verify { mockCardSelectedHandler(myPack.cards.first(), myPackDir) }
-
-
 		}
 	}
 
@@ -165,10 +158,31 @@ object CardListCtrlSpec : Spek({
 				ctrl.savePack().assertSuccess()
 			}
 
-			verify { mockFileIO.writePack(capture(packSlot), capture(packDirSlot)) }
+			verify { mockFileIO.writePack(myPack, myPackDir) }
+		}
+	}
 
-			expectThat(packSlot.captured).isEqualTo(myPack)
-			expectThat(packDirSlot.captured).isEqualTo(myPackDir)
+	group("#savePackAs") {
+		test("Should copy pack and move to the new pack") {
+			val myOldPackDir = kSomeDataDir.resolve(Paths.get("myOldPack"))
+			val myNewPackDir = kSomeDataDir.resolve(Paths.get("myNewPack"))
+			val myPack = kSomePack.copy(name = "my pack")
+
+			every {
+				mockFileChooser.showOpenDialog(any())
+			}.returns(myNewPackDir.toFile())
+
+			robot.interact {
+				ctrl.updatePackDir(myOldPackDir)
+				ctrl.updatePack(myPack)
+				ctrl.savePackAs().assertSuccess()
+			}
+
+			verify { mockFileChooser.showOpenDialog(any()) }
+			verify { mockFileIO.copyPack(myOldPackDir, myNewPackDir) }
+			verify { mockCardSelectedHandler(myPack.cards.first(), myNewPackDir) }
+
+
 		}
 	}
 

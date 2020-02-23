@@ -21,8 +21,9 @@ import java.nio.file.Path
 private val logger = KotlinLogging.logger { }
 
 open class CardListCtrl(
-		val fileChooserFactory: () -> FileChooser = { FileChooser() },
-		val fileIO: FileIO = FileIO()
+		private val dataDir: Path = Command.dataDir,
+		private val fileChooserFactory: () -> FileChooser = { FileChooser() },
+		private val fileIO: FileIO = FileIO()
 ) {
 
 	// region FXML components and backed properties
@@ -105,9 +106,9 @@ open class CardListCtrl(
 		selectedCard = newCard
 	}
 
-	fun loadPack(dataDir: Path = Command.dataDir): Result<Unit> {
+	fun loadPack(): Result<Unit> {
 		val fileChooser = fileChooserFactory().apply {
-			title = "Select a Pack Directory"
+			title = "Select a Pack Directory to Load"
 			initialDirectory = dataDir.toFile()
 		}
 
@@ -116,13 +117,29 @@ open class CardListCtrl(
 		pack = fileIO.readPack(newPackDir).onFailure {
 			return it
 		}
-		packDir = dataDir.relativize(newPackDir)
+		packDir = newPackDir
 
-		return cardSelectedHandler(selectedCard, packDir)
+		return cardSelectedHandler(selectedCard, newPackDir)
 	}
 
 	fun savePack(): Result<Unit> {
 		return fileIO.writePack(pack, packDir)
+	}
+
+	fun savePackAs(): Result<Unit> {
+		val fileChooser = fileChooserFactory().apply {
+			title = "Select a Pack Directory to Save"
+			initialDirectory = dataDir.toFile()
+		}
+
+		val newPackDir = fileChooser.showOpenDialog(null).toPath()
+
+		fileIO.copyPack(packDir, newPackDir).onFailure {
+			return it
+		}
+
+		packDir = newPackDir
+		return cardSelectedHandler(selectedCard, packDir)
 	}
 
 	fun onModifyCard(card: Card?): Result<Unit> {
