@@ -15,7 +15,6 @@ import me.nekomatamune.ygomaker.Pack
 import me.nekomatamune.ygomaker.Result
 import me.nekomatamune.ygomaker.failure
 import me.nekomatamune.ygomaker.success
-import me.nekomatamune.ygomaker.toShortString
 import mu.KotlinLogging
 import java.lang.Integer.min
 import java.nio.file.Path
@@ -206,8 +205,6 @@ open class CardListCtrl(
 private class CardListCell : ListCell<Card>() {
 	override fun updateItem(item: Card?, empty: Boolean) {
 		super.updateItem(item, empty)
-		if (!empty) {
-			text = item?.toShortString()
-		}
+		text = if(item == null) null else "${item.code} ${item.name}"
 	}
 }

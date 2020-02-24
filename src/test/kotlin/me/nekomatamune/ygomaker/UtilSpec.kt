@@ -13,15 +13,6 @@ object UtilSpec : Spek({
 
 		expectThat(cardFullCode).isEqualTo("TEST-JP123")
 	}
-
-	test("Card.toShortString() should work") {
-		val card = Card(name = "my_name", code = "my_code")
-
-		val shortString = card.toShortString()
-
-		expectThat(shortString).isEqualTo("my_code my_name")
-	}
-
 })
 
 
