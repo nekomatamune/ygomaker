@@ -14,7 +14,6 @@ import me.nekomatamune.ygomaker.Language
 import me.nekomatamune.ygomaker.Pack
 import me.nekomatamune.ygomaker.Result
 import me.nekomatamune.ygomaker.failure
-import me.nekomatamune.ygomaker.success
 import mu.KotlinLogging
 import java.lang.Integer.min
 import java.nio.file.Path
@@ -92,7 +91,14 @@ open class CardListCtrl(
 		//		}
 		//
 		cardListView.apply {
-			setCellFactory { CardListCell() }
+			setCellFactory {
+				object : ListCell<Card>() {
+					override fun updateItem(item: Card?, empty: Boolean) {
+						super.updateItem(item, empty)
+						text = if (item == null) null else "${item.code} ${item.name}"
+					}
+				}
+			}
 			selectionModel.selectedItemProperty()
 					.addListener(handlerLock) { _, newValue ->
 						cardSelectedHandler(newValue, packDir).alertFailure()
@@ -167,44 +173,5 @@ open class CardListCtrl(
 		pack = pack.copy(cards = pack.cards - selectedCard)
 		selectedCardIdx = min(previousSelectedCardIdx, pack.cards.size - 1)
 		return cardSelectedHandler(selectedCard, packDir)
-	}
-
-	fun onModifyCard(card: Card?): Result<Unit> {
-		if (cardListView.selectionModel.selectedItem == null) {
-			return success()
-		}
-
-		disableOnSelectCard = true
-
-		val mergedCard = card?.let {
-			cardListView.selectionModel.selectedItem.copy(
-					name = it.name,
-					type = it.type,
-					monster = it.monster,
-					code = it.code,
-					effect = it.effect,
-					image = it.image
-			)
-		}
-
-		val cards = cardListView.items
-		val selectIdx = cardListView.selectionModel.selectedIndex
-		cards[selectIdx] = mergedCard
-		pack = pack.copy(cards = cards)
-
-		disableOnSelectCard = false
-		return success()
-	}
-
-
-}
-
-/**
- * Dictates how a [Card] should be shown as a list item.
- */
-private class CardListCell : ListCell<Card>() {
-	override fun updateItem(item: Card?, empty: Boolean) {
-		super.updateItem(item, empty)
-		text = if(item == null) null else "${item.code} ${item.name}"
 	}
 }
