@@ -15,11 +15,12 @@ class Window {
 
 	// region states
 	private var packDir = Command.dataDir.resolve(Command.packCode)
+	private lateinit var card: Card
 	// endregion
 
 	// region subview controllers
 	@FXML lateinit var menuBarController: MenuBar
-	@FXML lateinit var cardListController: CardListController
+	@FXML lateinit var cardListController: CardListCtrl
 	@FXML lateinit var cardRendererController: CardRendererController
 	@FXML lateinit var cardFormController: CardFormCtrl
 	// endregion
@@ -31,25 +32,28 @@ class Window {
 		menuBarController.menuActionHandler = {
 			when (it) {
 				MenuAction.LOAD_PACK -> loadPack()
-				MenuAction.SAVE_PACK -> cardListController.getPack().writeTo(packDir)
+				//MenuAction.SAVE_PACK -> cardListController.getPack().writeTo(packDir)
 				MenuAction.SAVE_PACK_AS -> savePackAs()
 				MenuAction.NEW_CARD -> newCard()
+//				MenuAction.RENDER_CARD -> cardRendererController.render(
+//						cardFormController.card, packDir)
 				MenuAction.RENDER_CARD -> cardRendererController.render(
-					cardFormController.card, packDir)
+						card, packDir)
 			}
 		}
 
-		cardListController.cardSelectedHandler = {
-			cardFormController.setState(it, packDir)
-			cardRendererController.render(it, packDir)
+		cardListController.cardSelectedHandler = {card, packDir ->
+			cardFormController.setState(card, packDir)
+			cardRendererController.render(card, packDir)
 		}
 
 		cardFormController.cardModifiedHandler = {
-			cardListController.onModifyCard(it)
+			card = it
+			success()
 		}
 
 		logger.info { "Setup completed!" }
-		loadPack(packDir)
+		cardListController.loadPack(packDir)
 	}
 
 	private fun loadPack(packDir: Path? = null) {
@@ -59,7 +63,7 @@ class Window {
 		}.showDialog(null).toPath()
 
 		val pack = Pack.readFrom(packDir)
-		cardListController.setPack(pack)
+		cardListController.updatePack(pack)
 		this.packDir = packDir
 	}
 
@@ -81,16 +85,16 @@ class Window {
 				packDir.deepCopyTo(newPackDir)
 				this.packDir = newPackDir
 
-				cardListController.getPack().writeTo(packDir)
+				//cardListController.getPack().writeTo(packDir)
 			}
 		}
 	}
 
 	private fun newCard() {
-		cardListController.getPack().let {
-			val newPack = it.copy(cards = it.cards + Card())
-			cardListController.setPack(newPack, selectLast = true)
-		}
+//		cardListController.getPack().let {
+//			val newPack = it.copy(cards = it.cards + Card())
+//			cardListController.setPack(newPack, selectLast = true)
+//		}
 	}
 
 }

@@ -1,3 +1,4 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -5,6 +6,8 @@ plugins {
 	val kotlinVer = "1.3.60"
 	id("org.jetbrains.kotlin.jvm").version(kotlinVer)
 	id("org.jetbrains.kotlin.plugin.serialization").version(kotlinVer)
+
+	id("io.gitlab.arturbosch.detekt").version("1.5.1")
 }
 
 repositories {
@@ -47,6 +50,12 @@ tasks.clean {
 	delete("$rootDir/ygomaker.jar")
 }
 
+tasks.register<Detekt>("lint") {
+	config.setFrom(".detekt.yml")
+	source = fileTree("src")
+	include("**/*.kt")
+}
+
 tasks.compileKotlin {
 	kotlinOptions {
 		jvmTarget = "1.8"
@@ -62,6 +71,13 @@ tasks.test {
 		events(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
 		exceptionFormat = TestExceptionFormat.FULL
 	}
+}
+
+tasks.check {
+	// Exlucde the default :detekt task from :check task
+	setDependsOn(dependsOn.filterNot {
+		it is TaskProvider<*> && it.name == "detekt"
+	})
 }
 
 tasks.register<Jar>("pack") {

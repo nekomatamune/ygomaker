@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
@@ -8,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="me.nekomatamune.ygomaker.fx.CardListController">
+            fx:controller="me.nekomatamune.ygomaker.fx.CardListCtrl">
     <top>
         <VBox>
             <TextField fx:id="packNameTextField" promptText="Pack Name"/>
@@ -22,4 +23,10 @@
     <center>
         <ListView fx:id="cardListView"/>
     </center>
+    <bottom>
+        <HBox>
+            <Button fx:id="addCardButton" text="+" prefWidth="30"/>
+            <Button fx:id="removeCardButton" text="-" prefWidth="30"/>
+        </HBox>
+    </bottom>
 </BorderPane>

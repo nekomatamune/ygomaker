@@ -2,7 +2,6 @@ package me.nekomatamune.ygomaker
 
 import java.nio.file.Path
 
-fun Card.toShortString() = "$code $name"
 
 fun Card.fullCode(pack: Pack) = "${pack.code}-${pack.language}${this.code}"
 
