@@ -1,6 +1,7 @@
 package me.nekomatamune.ygomaker.fx
 
 import javafx.fxml.FXML
+import javafx.scene.control.Button
 import javafx.scene.control.ComboBox
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
@@ -31,6 +32,8 @@ open class CardListCtrl(
 	@FXML private lateinit var packCodeTextField: TextField
 	@FXML private lateinit var languageComboBox: ComboBox<Language>
 	@FXML private lateinit var cardListView: ListView<Card>
+	@FXML private lateinit var addCardButton: Button
+	@FXML private lateinit var removeCardButton: Button
 
 	private lateinit var packDir: Path
 	private var pack: Pack
@@ -47,6 +50,14 @@ open class CardListCtrl(
 				languageComboBox.selectionModel.select(value.language)
 				cardListView.items.setAll(value.cards)
 				cardListView.selectionModel.selectFirst()
+			}
+		}
+
+	private var selectedCardIdx: Int
+		get() = cardListView.selectionModel.selectedIndex
+		set(value) {
+			handlerLock.lockAndRun {
+				cardListView.selectionModel.select(value)
 			}
 		}
 
@@ -87,6 +98,8 @@ open class CardListCtrl(
 						cardSelectedHandler(newValue, packDir).alertFailure()
 					}
 		}
+
+		addCardButton.setOnAction { addCard().alertFailure() }
 
 
 		//
@@ -142,6 +155,12 @@ open class CardListCtrl(
 		return cardSelectedHandler(selectedCard, packDir)
 	}
 
+	fun addCard(): Result<Unit> {
+		pack = pack.copy(cards = pack.cards + Card(name = "New Card"))
+		selectedCardIdx = pack.cards.size - 1
+		return cardSelectedHandler(selectedCard, packDir)
+	}
+
 	fun onModifyCard(card: Card?): Result<Unit> {
 		if (cardListView.selectionModel.selectedItem == null) {
 			return success()
@@ -168,6 +187,7 @@ open class CardListCtrl(
 		disableOnSelectCard = false
 		return success()
 	}
+
 
 
 }

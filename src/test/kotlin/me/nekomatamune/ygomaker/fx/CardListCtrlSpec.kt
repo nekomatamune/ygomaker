@@ -2,6 +2,7 @@ package me.nekomatamune.ygomaker.fx
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import javafx.scene.control.ListView
 import javafx.scene.input.KeyCode.DOWN
@@ -17,6 +18,7 @@ import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
 import strikt.api.expectThat
 import strikt.assertions.containsExactly
+import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
 import strikt.assertions.map
 import java.nio.file.Path
@@ -51,6 +53,7 @@ object CardListCtrlSpec : Spek({
 	val mockCardSelectedHandler = mockk<(Card, Path) -> Result<Unit>>()
 
 	val cardSlots = mutableListOf<Card>()
+	val cardSlot = slot<Card>()
 
 	beforeEachTest {
 		every { mockCardSelectedHandler(any(), any()) }.returns(success())
@@ -183,6 +186,24 @@ object CardListCtrlSpec : Spek({
 			verify { mockCardSelectedHandler(myPack.cards.first(), myNewPackDir) }
 
 		}
+	}
+
+	group("#addCardButton") {
+		test("Should add a card") {
+			val myCards = listOf(Card(name = "Card 1"), Card(name = "Card 2"))
+
+			robot.interact {
+				ctrl.updatePack(kSomePack.copy(cards = myCards))
+			}.clickOn("#addCardButton")
+			
+			robot.lookupAs<ListView<Card>>("#cardListView").let {
+				expectThat(it.items).hasSize(3)
+				expectThat(it.items.last().name).isEqualTo("New Card")
+			}
+			verify {mockCardSelectedHandler(capture(cardSlot), any())}
+			expectThat(cardSlot.captured.name).isEqualTo("New Card")
+		}
+
 	}
 
 
