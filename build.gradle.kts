@@ -1,5 +1,4 @@
 import io.gitlab.arturbosch.detekt.Detekt
-import io.gitlab.arturbosch.detekt.internal.configurableFileCollection
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -72,6 +71,13 @@ tasks.test {
 		events(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
 		exceptionFormat = TestExceptionFormat.FULL
 	}
+}
+
+tasks.check {
+	// Exlucde the default :detekt task from :check task
+	setDependsOn(dependsOn.filterNot {
+		it is TaskProvider<*> && it.name == "detekt"
+	})
 }
 
 tasks.register<Jar>("pack") {
