@@ -121,13 +121,13 @@ open class CardListCtrl(
 		selectedCard = newCard
 	}
 
-	fun loadPack(): Result<Unit> {
-		val fileChooser = fileChooserFactory().apply {
+	fun loadPack(newPackDir: Path? = null): Result<Unit> {
+
+		val newPackDir = newPackDir ?: fileChooserFactory().apply {
 			title = "Select a Pack Directory to Load"
 			initialDirectory = dataDir.toFile()
-		}
+		}.showOpenDialog(null).toPath()
 
-		val newPackDir = fileChooser.showOpenDialog(null).toPath()
 
 		pack = fileIO.readPack(newPackDir).onFailure {
 			return it
@@ -196,7 +196,6 @@ open class CardListCtrl(
 		disableOnSelectCard = false
 		return success()
 	}
-
 
 
 }

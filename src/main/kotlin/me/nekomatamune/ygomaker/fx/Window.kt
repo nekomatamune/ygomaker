@@ -53,7 +53,7 @@ class Window {
 		}
 
 		logger.info { "Setup completed!" }
-		loadPack(packDir)
+		cardListController.loadPack(packDir)
 	}
 
 	private fun loadPack(packDir: Path? = null) {
