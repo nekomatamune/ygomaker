@@ -17,6 +17,7 @@ import me.nekomatamune.ygomaker.failure
 import me.nekomatamune.ygomaker.success
 import me.nekomatamune.ygomaker.toShortString
 import mu.KotlinLogging
+import java.lang.Integer.min
 import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
@@ -100,6 +101,7 @@ open class CardListCtrl(
 		}
 
 		addCardButton.setOnAction { addCard().alertFailure() }
+		removeCardButton.setOnAction { removeCard().alertFailure() }
 
 
 		//
@@ -158,6 +160,13 @@ open class CardListCtrl(
 	fun addCard(): Result<Unit> {
 		pack = pack.copy(cards = pack.cards + Card(name = "New Card"))
 		selectedCardIdx = pack.cards.size - 1
+		return cardSelectedHandler(selectedCard, packDir)
+	}
+
+	fun removeCard(): Result<Unit> {
+		val previousSelectedCardIdx = selectedCardIdx
+		pack = pack.copy(cards = pack.cards - selectedCard)
+		selectedCardIdx = min(previousSelectedCardIdx, pack.cards.size - 1)
 		return cardSelectedHandler(selectedCard, packDir)
 	}
 

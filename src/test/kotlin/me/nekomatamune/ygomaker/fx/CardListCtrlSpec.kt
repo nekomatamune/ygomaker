@@ -17,7 +17,9 @@ import me.nekomatamune.ygomaker.success
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
 import strikt.api.expectThat
+import strikt.assertions.contains
 import strikt.assertions.containsExactly
+import strikt.assertions.doesNotContain
 import strikt.assertions.hasSize
 import strikt.assertions.isEqualTo
 import strikt.assertions.map
@@ -195,16 +197,40 @@ object CardListCtrlSpec : Spek({
 			robot.interact {
 				ctrl.updatePack(kSomePack.copy(cards = myCards))
 			}.clickOn("#addCardButton")
-			
+
 			robot.lookupAs<ListView<Card>>("#cardListView").let {
 				expectThat(it.items).hasSize(3)
 				expectThat(it.items.last().name).isEqualTo("New Card")
 			}
-			verify {mockCardSelectedHandler(capture(cardSlot), any())}
+			verify { mockCardSelectedHandler(capture(cardSlot), any()) }
 			expectThat(cardSlot.captured.name).isEqualTo("New Card")
 		}
-
 	}
 
+	group("#removeCardButton") {
+		test("Should remove the current selected card") {
+			val myCardNames = (1..5).map { "My Card $it" }
+
+
+			robot.interact {
+				ctrl.updatePack(
+						kSomePack.copy(cards = myCardNames.map { Card(name = it) }))
+			}.focus<ListView<Card>>("#cardListView")
+					.type(UP, 5)
+					.type(DOWN, 3).clickOn("#removeCardButton")
+
+			robot.lookupAs<ListView<Card>>("#cardListView").let { listView ->
+				expectThat(listView.items).map { it.name }
+						.contains(myCardNames.subList(0, 2))
+						.doesNotContain(myCardNames[3])
+						.contains(myCardNames[4])
+				listView.selectionModel.selectedItem.let {
+					expectThat(it.name).isEqualTo(myCardNames[4])
+				}
+			}
+			verify { mockCardSelectedHandler(capture(cardSlot), any()) }
+			expectThat(cardSlot.captured.name).isEqualTo(myCardNames[4])
+		}
+	}
 
 })
