@@ -13,7 +13,10 @@ private val SUPER = if (System.getProperty(
 				"os.name") == "Mac OS X") KeyCode.COMMAND else KeyCode.WINDOWS
 
 object AppCtrlSpec : Spek({
-	val mockCommand = mockk<Command>(relaxed = true)
+	val mockCommand = mockk<Command>(relaxed = true).also {
+		every { it.dataDir }.returns(Paths.get("DATA"))
+		every { it.packCode }.returns("SOME")
+	}
 	val mockCardListCtrl = mockk<CardListCtrl>(relaxed = true)
 	val mockCardFormCtrl = mockk<CardFormCtrl>(relaxed = true)
 	val mockCardRendererCtrl = mockk<CardRendererController>(relaxed = true)
@@ -29,11 +32,6 @@ object AppCtrlSpec : Spek({
 	val ctrl by memoized<AppCtrl>()
 	val robot by memoized<FxRobot>()
 
-	beforeEachTest {
-		every { mockCommand.dataDir }.returns(Paths.get("DATA"))
-		every { mockCommand.packCode }.returns("SOME")
-	}
-
 	group("#init") {
 		test("Should load CardList with initial packDir") {
 			val expectedInitialPackDir = Paths.get("DATA", "SOME")
@@ -45,7 +43,7 @@ object AppCtrlSpec : Spek({
 		group("#LoadPackMenuItem") {
 			test("Should ask CardList to load pack") {
 				robot.press(SUPER, KeyCode.O)
-				verify { mockCardListCtrl.loadPack(null) }
+				verify { mockCardListCtrl.loadPack() }
 			}
 		}
 
