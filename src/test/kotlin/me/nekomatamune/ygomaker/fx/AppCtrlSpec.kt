@@ -1,12 +1,19 @@
 package me.nekomatamune.ygomaker.fx
 
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import javafx.scene.input.KeyCode
+import me.nekomatamune.ygomaker.Card
 import me.nekomatamune.ygomaker.Command
+import me.nekomatamune.ygomaker.Result
+import me.nekomatamune.ygomaker.success
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
+import java.nio.file.Path
 import java.nio.file.Paths
 
 private val SUPER = if (System.getProperty(
@@ -17,11 +24,21 @@ object AppCtrlSpec : Spek({
 		every { it.dataDir }.returns(Paths.get("DATA"))
 		every { it.packCode }.returns("SOME")
 	}
-	val mockCardListCtrl = mockk<CardListCtrl>(relaxed = true)
-	val mockCardFormCtrl = mockk<CardFormCtrl>(relaxed = true)
+	val cardSelectedHandlerSlot = slot<(Card, Path) -> Result<Unit>>()
+	val mockCardListCtrl = mockk<CardListCtrl>(relaxed = true).also {
+		every {
+			it.cardSelectedHandler = capture(cardSelectedHandlerSlot)
+		}.just(Runs)
+	}
+
+	val cardModifiedHandlerSlot = slot<(Card) -> Result<Unit>>()
+	val mockCardFormCtrl = mockk<CardFormCtrl>(relaxed = true).also {
+		every { it.cardModifiedHandler = capture(cardModifiedHandlerSlot) }.just(
+				Runs)
+	}
 	val mockCardRendererCtrl = mockk<CardRendererController>(relaxed = true)
 
-	setupTestFx<CardFormCtrl>("fx/App.fxml", mapOf(
+	setupTestFx<AppCtrl>("fx/App.fxml", mapOf(
 			CardListCtrl::class to { mockCardListCtrl },
 			CardFormCtrl::class to { mockCardFormCtrl },
 			CardRendererController::class to { mockCardRendererCtrl },
@@ -75,8 +92,37 @@ object AppCtrlSpec : Spek({
 		}
 
 
-
 	}
 
+	group("#CardList") {
+		group("#cardSelectedHandler") {
+			test("Should update CardForm and CardRenderer") {
+				val myCard = Card(name = "MyNewCard")
+				val myPackDir = Paths.get("MyNewPackDir")
+				every { mockCardRendererCtrl.render(any(), any()) }.returns(success())
+
+				robot.interact {
+					cardSelectedHandlerSlot.captured(myCard, myPackDir).assertSuccess()
+				}
+
+				verify { mockCardFormCtrl.setState(myCard, myPackDir) }
+				verify { mockCardRendererCtrl.render(myCard, myPackDir) }
+			}
+		}
+	}
+
+	group("#CardForm") {
+		group("#cardModifiedHandler") {
+			test("Should update CardList only") {
+				val myCard = Card(name = "MyModifiedCard")
+				robot.interact {
+					cardModifiedHandlerSlot.captured(myCard).assertSuccess()
+				}
+
+				verify { mockCardListCtrl.modifySelectedCard(myCard) }
+				verify(exactly = 0) { mockCardRendererCtrl.render(myCard, any()) }
+			}
+		}
+	}
 })
 

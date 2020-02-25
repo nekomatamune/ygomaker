@@ -38,9 +38,7 @@ class AppCtrl(
 	fun initialize() {
 		logger.info { "Initializing Window..." }
 
-		loadPackMenuItem.setOnAction {
-			cardListController.loadPack().alertFailure()
-		}
+		loadPackMenuItem.setOnAction { cardListController.loadPack().alertFailure() }
 		savePackMenuItem.setOnAction { cardListController.savePack().alertFailure() }
 		savePackAsMenuItem.setOnAction { cardListController.savePackAs().alertFailure() }
 		newCardMenuItem.setOnAction { cardListController.addCard().alertFailure() }

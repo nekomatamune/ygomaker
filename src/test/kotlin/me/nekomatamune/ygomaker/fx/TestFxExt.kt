@@ -70,6 +70,8 @@ fun <C> Root.setupTestFx(
 	beforeEachTest {
 		logger.debug { "Loading TextFx Application..." }
 		app
+		ctrl
+		robot
 	}
 
 	afterGroup {
