@@ -7,7 +7,7 @@ import io.mockk.verify
 import javafx.scene.control.ListView
 import javafx.scene.input.KeyCode.DOWN
 import javafx.scene.input.KeyCode.UP
-import javafx.stage.FileChooser
+import javafx.stage.DirectoryChooser
 import me.nekomatamune.ygomaker.Card
 import me.nekomatamune.ygomaker.FileIO
 import me.nekomatamune.ygomaker.Language
@@ -28,14 +28,14 @@ import java.nio.file.Paths
 
 object CardListCtrlSpec : Spek({
 	val kSomeDataDir = Paths.get("SomeDataDir")
-	val mockFileChooser = mockk<FileChooser>(relaxed = true)
+	val mockFileChooser = mockk<DirectoryChooser>(relaxed = true)
 	val mockFileIO = mockk<FileIO>(relaxed = true)
 
 	setupTestFx<CardListCtrl>("fx/CardList.fxml", mapOf(
 			CardListCtrl::class to {
 				CardListCtrl(
 						dataDir = kSomeDataDir,
-						fileChooserFactory = { mockFileChooser },
+						directoryChooserFactory = { mockFileChooser },
 						fileIO = mockFileIO)
 			}
 	))
@@ -136,7 +136,7 @@ object CardListCtrlSpec : Spek({
 			))
 
 			every {
-				mockFileChooser.showOpenDialog(any())
+				mockFileChooser.showDialog(any())
 			}.returns(myPackDir.toFile())
 			every { mockFileIO.readPack(any()) }.returns(success(myPack))
 
@@ -144,7 +144,7 @@ object CardListCtrlSpec : Spek({
 				ctrl.loadPack().assertSuccess()
 			}
 
-			verify { mockFileChooser.showOpenDialog(any()) }
+			verify { mockFileChooser.showDialog(any()) }
 			verify { mockFileIO.readPack(myPackDir) }
 			verify { mockCardSelectedHandler(myPack.cards.first(), myPackDir) }
 		}
@@ -174,7 +174,7 @@ object CardListCtrlSpec : Spek({
 			val myPack = kSomePack.copy(name = "my pack")
 
 			every {
-				mockFileChooser.showOpenDialog(any())
+				mockFileChooser.showDialog(any())
 			}.returns(myNewPackDir.toFile())
 
 			robot.interact {
@@ -183,7 +183,7 @@ object CardListCtrlSpec : Spek({
 				ctrl.savePackAs().assertSuccess()
 			}
 
-			verify { mockFileChooser.showOpenDialog(any()) }
+			verify { mockFileChooser.showDialog(any()) }
 			verify { mockFileIO.copyPack(myOldPackDir, myNewPackDir) }
 			verify { mockCardSelectedHandler(myPack.cards.first(), myNewPackDir) }
 
