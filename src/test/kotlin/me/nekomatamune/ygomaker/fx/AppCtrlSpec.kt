@@ -2,6 +2,8 @@ package me.nekomatamune.ygomaker.fx
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
+import javafx.scene.input.KeyCode
 import me.nekomatamune.ygomaker.Command
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
@@ -23,16 +25,36 @@ object AppCtrlSpec : Spek({
 	val ctrl by memoized<AppCtrl>()
 	val robot by memoized<FxRobot>()
 
-	val kSomePackCode = "SOME"
-
 	beforeEachTest {
-		every { mockCommand.packCode }.returns(kSomePackCode)
+		every { mockCommand.packCode }.returns("SOME")
 	}
 
 	group("#MenuBar") {
-		group("#LoadPack") {
-			test("Should ask CardListCtrl to load pack") {
+		group("#LoadPackMenuItem") {
+			test("Should ask CardList to load pack") {
+				robot.press(KeyCode.COMMAND, KeyCode.O)
+				verify { mockCardListCtrl.loadPack(null) }
+			}
+		}
 
+		group("#SavePackMenuItem") {
+			test("Should ask CardList to save pack") {
+				robot.press(KeyCode.COMMAND, KeyCode.S)
+				every { mockCardListCtrl.savePack() }
+			}
+		}
+
+		group("#SavePackAsMenuItem") {
+			test("Should ask CardList to save pack as") {
+				robot.press(KeyCode.COMMAND, KeyCode.SHIFT, KeyCode.S)
+				every { mockCardListCtrl.savePackAs() }
+			}
+		}
+
+		group("#NewCardMenuItem") {
+			test("Should ask CardList to add new card") {
+				robot.press(KeyCode.COMMAND, KeyCode.N)
+				every { mockCardListCtrl.addCard() }
 			}
 		}
 	}
