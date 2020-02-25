@@ -5,23 +5,19 @@ import javafx.fxml.FXML
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.MenuItem
-import javafx.stage.DirectoryChooser
 import me.nekomatamune.ygomaker.Card
 import me.nekomatamune.ygomaker.Command
-import me.nekomatamune.ygomaker.Pack
-import me.nekomatamune.ygomaker.deepCopyTo
-import me.nekomatamune.ygomaker.readFrom
 import me.nekomatamune.ygomaker.success
 import mu.KotlinLogging
-import java.nio.file.Files
-import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 
-class AppCtrl {
+class AppCtrl(
+		private val cmd: Command = Command
+) {
 
 	// region states
-	private var packDir = Command.dataDir.resolve(Command.packCode)
+	private var packDir = cmd.dataDir.resolve(cmd.packCode)
 	private lateinit var card: Card
 	// endregion
 
@@ -51,7 +47,6 @@ class AppCtrl {
 		renderMenuItem.setOnAction { cardRendererController.render(card, packDir) }
 		exitMenuItem.setOnAction { onExitMenuItem() }
 
-
 		cardListController.cardSelectedHandler = { card, packDir ->
 			cardFormController.setState(card, packDir)
 			cardRendererController.render(card, packDir)
@@ -65,7 +60,7 @@ class AppCtrl {
 		logger.info { "Setup completed!" }
 		cardListController.loadPack(packDir)
 	}
-	
+
 	private fun onExitMenuItem() {
 		logger.debug { "onExitMenuItem()" }
 
