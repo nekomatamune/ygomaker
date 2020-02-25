@@ -65,18 +65,7 @@ class AppCtrl {
 		logger.info { "Setup completed!" }
 		cardListController.loadPack(packDir)
 	}
-
-	private fun loadPack(packDir: Path? = null) {
-		val packDir = packDir ?: DirectoryChooser().apply {
-			title = "Select a pack directory"
-			initialDirectory = Command.dataDir.toFile()
-		}.showDialog(null).toPath()
-
-		val pack = Pack.readFrom(packDir)
-		cardListController.updatePack(pack)
-		this.packDir = packDir
-	}
-
+	
 	private fun onExitMenuItem() {
 		logger.debug { "onExitMenuItem()" }
 
@@ -88,36 +77,4 @@ class AppCtrl {
 			Platform.exit()
 		}
 	}
-
-	private fun savePackAs() {
-		logger.debug { "onSavePackAsMenuItem()" }
-
-		val newPackDir = DirectoryChooser().apply {
-			title = "Enter or select a new pack directory"
-			initialDirectory = Command.dataDir.toFile()
-		}.showDialog(null).toPath()
-
-		if (Files.exists(newPackDir)) {
-			Alert(Alert.AlertType.CONFIRMATION).apply {
-				headerText = "Overwriting existing pack..."
-				contentText = "This will overwrite the existing pack ${newPackDir.fileName}. Proceed?"
-			}.showAndWait().filter(ButtonType.OK::equals).ifPresent {
-				logger.info { "Writing pack to ${newPackDir.fileName}" }
-
-				packDir.deepCopyTo(newPackDir)
-				this.packDir = newPackDir
-
-				//cardListController.getPack().writeTo(packDir)
-			}
-		}
-	}
-
-
-	private fun newCard() {
-		//		cardListController.getPack().let {
-		//			val newPack = it.copy(cards = it.cards + Card())
-		//			cardListController.setPack(newPack, selectLast = true)
-		//		}
-	}
-
 }
