@@ -51,7 +51,7 @@ tasks.clean {
 }
 
 tasks.register<Detekt>("lint") {
-	config.setFrom(".detekt.yml")
+	config.setFrom("detekt.yml")
 	source = fileTree("src")
 	include("**/*.kt")
 }
