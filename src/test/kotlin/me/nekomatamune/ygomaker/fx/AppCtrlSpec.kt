@@ -7,6 +7,7 @@ import javafx.scene.input.KeyCode
 import me.nekomatamune.ygomaker.Command
 import org.spekframework.spek2.Spek
 import org.testfx.api.FxRobot
+import java.nio.file.Paths
 
 object AppCtrlSpec : Spek({
 	val mockCommand = mockk<Command>(relaxed = true)
@@ -26,7 +27,15 @@ object AppCtrlSpec : Spek({
 	val robot by memoized<FxRobot>()
 
 	beforeEachTest {
+		every { mockCommand.dataDir }.returns(Paths.get("DATA"))
 		every { mockCommand.packCode }.returns("SOME")
+	}
+
+	group("#init") {
+		test("Should load CardList with initial packDir") {
+			val expectedInitialPackDir = Paths.get("DATA", "SOME")
+			verify { mockCardListCtrl.loadPack(expectedInitialPackDir) }
+		}
 	}
 
 	group("#MenuBar") {
@@ -57,6 +66,8 @@ object AppCtrlSpec : Spek({
 				every { mockCardListCtrl.addCard() }
 			}
 		}
+
+
 	}
 
 })

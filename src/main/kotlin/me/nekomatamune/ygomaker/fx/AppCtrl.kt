@@ -13,7 +13,7 @@ import mu.KotlinLogging
 private val logger = KotlinLogging.logger { }
 
 class AppCtrl(
-		private val cmd: Command = Command
+		cmd: Command = Command
 ) {
 
 	// region states
