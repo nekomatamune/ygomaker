@@ -10,13 +10,13 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
 
-class App : Application() {
+class YGOMakerApp : Application() {
 
 	override fun start(primaryStage: Stage) {
 
 		logger.info { "Loading App..." }
 		val appPane = FXMLLoader().apply {
-			location = Resources.getResource("fx/Window.fxml")
+			location = Resources.getResource("fx/App.fxml")
 		}.load<BorderPane>()
 
 		logger.info { "Showing stage" }

@@ -19,7 +19,7 @@ import java.nio.file.Path
 private val logger = KotlinLogging.logger { }
 private val json = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
 
-class CardRendererController {
+open class CardRendererController {
 
 	@FXML private lateinit var rootPane: BorderPane
 	@FXML private lateinit var infoText: Text

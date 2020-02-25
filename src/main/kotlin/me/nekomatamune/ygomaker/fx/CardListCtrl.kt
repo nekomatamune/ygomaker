@@ -6,7 +6,7 @@ import javafx.scene.control.ComboBox
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
 import javafx.scene.control.TextField
-import javafx.stage.FileChooser
+import javafx.stage.DirectoryChooser
 import me.nekomatamune.ygomaker.Card
 import me.nekomatamune.ygomaker.Command
 import me.nekomatamune.ygomaker.FileIO
@@ -22,7 +22,7 @@ private val logger = KotlinLogging.logger { }
 
 open class CardListCtrl(
 		private val dataDir: Path = Command.dataDir,
-		private val fileChooserFactory: () -> FileChooser = { FileChooser() },
+		private val directoryChooserFactory: () -> DirectoryChooser = { DirectoryChooser() },
 		private val fileIO: FileIO = FileIO()
 ) {
 
@@ -127,11 +127,12 @@ open class CardListCtrl(
 	}
 
 	fun loadPack(newPackDir: Path? = null): Result<Unit> {
+		println("loadPack($newPackDir")
 
-		val newPackDir = newPackDir ?: fileChooserFactory().apply {
+		val newPackDir = newPackDir ?: directoryChooserFactory().apply {
 			title = "Select a Pack Directory to Load"
 			initialDirectory = dataDir.toFile()
-		}.showOpenDialog(null).toPath()
+		}.showDialog(null).toPath()
 
 
 		pack = fileIO.readPack(newPackDir).onFailure {
@@ -147,12 +148,12 @@ open class CardListCtrl(
 	}
 
 	fun savePackAs(): Result<Unit> {
-		val fileChooser = fileChooserFactory().apply {
+		val fileChooser = directoryChooserFactory().apply {
 			title = "Select a Pack Directory to Save"
 			initialDirectory = dataDir.toFile()
 		}
 
-		val newPackDir = fileChooser.showOpenDialog(null).toPath()
+		val newPackDir = fileChooser.showDialog(null).toPath()
 
 		fileIO.copyPack(packDir, newPackDir).onFailure {
 			return it

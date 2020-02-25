@@ -41,3 +41,5 @@ fun <T> Result<T>.alertFailure() {
 		Alert(Alert.AlertType.ERROR, "${this.error()}", ButtonType.OK).showAndWait()
 	}
 }
+
+fun isMacOS() = (System.getProperty("os.name") == "Mac OS X")
