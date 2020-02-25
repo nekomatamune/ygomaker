@@ -18,7 +18,7 @@ import java.nio.file.Path
 
 private val logger = KotlinLogging.logger { }
 
-class Window {
+class AppCtrl {
 
 	// region states
 	private var packDir = Command.dataDir.resolve(Command.packCode)
