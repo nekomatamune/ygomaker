@@ -12,7 +12,7 @@
             fx:controller="me.nekomatamune.ygomaker.fx.AppCtrl">
     <top>
         <MenuBar useSystemMenuBar="true">
-            <Menu text="File">
+            <Menu fx:id="fileMenu" text="File">
                 <MenuItem fx:id="loadPackMenuItem"
                           text="Load Pack" accelerator="Shortcut+O"/>
                 <MenuItem fx:id="savePackMenuItem"

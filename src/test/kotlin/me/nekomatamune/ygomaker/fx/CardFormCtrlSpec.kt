@@ -157,15 +157,14 @@ object CardFormCtrlSpec : Spek({
 	}
 
 	group("#UI Event") {
-
 		test("Should modify text components") {
 			val myCardName = "myCardName"
 			val myEffect = "my effect\nanother my effect"
 			val myCode = "TEST-MY123"
 
 			robot.doubleClickOn("#cardNameTextField").write(myCardName)
-			robot.doubleClickOn("#effectTextArea").write(myEffect)
-			robot.doubleClickOn("#codeTextField").write(myCode)
+					.doubleClickOn("#effectTextArea").write(myEffect)
+					.doubleClickOn("#codeTextField").write(myCode)
 
 			verify { mockCardModifiedHandler(capture(cardSlot)) }
 			cardSlot.captured.let {

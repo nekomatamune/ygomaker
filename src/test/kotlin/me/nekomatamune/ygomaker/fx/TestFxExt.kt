@@ -6,12 +6,13 @@ import javafx.application.Platform
 import javafx.fxml.FXMLLoader
 import javafx.scene.Node
 import javafx.scene.Parent
-import javafx.scene.control.TextField
+import javafx.scene.input.KeyCode
 import javafx.stage.Stage
 import javafx.util.Callback
 import mu.KotlinLogging
 import org.spekframework.spek2.dsl.Root
 import org.testfx.api.FxRobot
+import org.testfx.api.FxRobotInterface
 import org.testfx.api.FxToolkit
 import java.util.concurrent.Semaphore
 import kotlin.reflect.KClass

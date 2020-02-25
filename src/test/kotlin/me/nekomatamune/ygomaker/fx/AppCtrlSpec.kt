@@ -59,28 +59,29 @@ object AppCtrlSpec : Spek({
 	group("#MenuBar") {
 		group("#LoadPackMenuItem") {
 			test("Should ask CardList to load pack") {
-				robot.press(SUPER, KeyCode.O)
+				robot.press(SUPER, KeyCode.O).release(SUPER, KeyCode.O)
 				verify { mockCardListCtrl.loadPack() }
 			}
 		}
 
 		group("#SavePackMenuItem") {
 			test("Should ask CardList to save pack") {
-				robot.press(SUPER, KeyCode.S)
+				robot.press(SUPER, KeyCode.S).release(SUPER, KeyCode.S)
 				every { mockCardListCtrl.savePack() }
 			}
 		}
 
 		group("#SavePackAsMenuItem") {
 			test("Should ask CardList to save pack as") {
-				robot.press(SUPER, KeyCode.SHIFT, KeyCode.S)
+				robot.press(SUPER, KeyCode.SHIFT, KeyCode.S).release(SUPER,
+						KeyCode.SHIFT, KeyCode.S)
 				every { mockCardListCtrl.savePackAs() }
 			}
 		}
 
 		group("#NewCardMenuItem") {
 			test("Should ask CardList to add new card") {
-				robot.press(SUPER, KeyCode.N)
+				robot.press(SUPER, KeyCode.N).release(SUPER, KeyCode.N)
 				every { mockCardListCtrl.addCard() }
 			}
 		}
