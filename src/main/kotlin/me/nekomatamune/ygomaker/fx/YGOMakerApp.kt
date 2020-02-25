@@ -10,7 +10,7 @@ import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger { }
 
-class App : Application() {
+class YGOMakerApp : Application() {
 
 	override fun start(primaryStage: Stage) {
 
