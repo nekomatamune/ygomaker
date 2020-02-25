@@ -1,11 +1,13 @@
+import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	val kotlinVer = "1.3.50"
+	val kotlinVer = "1.3.60"
 	id("org.jetbrains.kotlin.jvm").version(kotlinVer)
 	id("org.jetbrains.kotlin.plugin.serialization").version(kotlinVer)
+
+	id("io.gitlab.arturbosch.detekt").version("1.5.1")
 }
 
 repositories {
@@ -37,6 +39,10 @@ dependencies {
 	testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVer")
 	testImplementation("io.strikt:strikt-core:0.21.1")
 	testImplementation("io.mockk:mockk:1.9")
+	val testfxVer = "4.0.16-alpha"
+	testImplementation("org.testfx:testfx-core:$testfxVer")
+	testImplementation("org.testfx:testfx-junit5:$testfxVer")
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.1")
 }
 
 tasks.clean {
@@ -44,12 +50,17 @@ tasks.clean {
 	delete("$rootDir/ygomaker.jar")
 }
 
+tasks.register<Detekt>("lint") {
+	config.setFrom("detekt.yml")
+	source = fileTree("src")
+	include("**/*.kt")
+}
+
 tasks.compileKotlin {
 	kotlinOptions {
 		jvmTarget = "1.8"
 		freeCompilerArgs = listOf(
-			"-XXLanguage:+InlineClasses",
-			"-Xallow-result-return-type"
+				"-XXLanguage:+InlineClasses"
 		)
 	}
 }
@@ -60,7 +71,13 @@ tasks.test {
 		events(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
 		exceptionFormat = TestExceptionFormat.FULL
 	}
+}
 
+tasks.check {
+	// Exlucde the default :detekt task from :check task
+	setDependsOn(dependsOn.filterNot {
+		it is TaskProvider<*> && it.name == "detekt"
+	})
 }
 
 tasks.register<Jar>("pack") {

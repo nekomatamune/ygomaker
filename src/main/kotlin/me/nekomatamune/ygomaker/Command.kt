@@ -13,7 +13,7 @@ import com.google.common.io.Resources
 import javafx.application.Application.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
-import me.nekomatamune.ygomaker.fx.App
+import me.nekomatamune.ygomaker.fx.YGOMakerApp
 import mu.KotlinLogging
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.core.config.Configurator
@@ -73,7 +73,7 @@ object Command : CliktCommand(
 			return
 		}
 
-		launch(App::class.java)
+		launch(YGOMakerApp::class.java)
 	}
 }
 

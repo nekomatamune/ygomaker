@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <GridPane xmlns="http://javafx.com/javafx"
           xmlns:fx="http://javafx.com/fxml"
-          fx:controller="me.nekomatamune.ygomaker.fx.CardForm"
+          fx:controller="me.nekomatamune.ygomaker.fx.CardFormCtrl"
           hgap="10" vgap="10">
 
     <padding>
@@ -51,13 +51,13 @@
 
     <!-- Row 5 -->
     <TextField fx:id="atkTextField"
-               promptText="ATK" prefColumnCount="3"
+               promptText="ATK" prefColumnCount="2"
                GridPane.rowIndex="5" GridPane.columnIndex="0"/>
     <TextField fx:id="defTextField"
-               promptText="DEF" prefColumnCount="3"
+               promptText="DEF" prefColumnCount="2"
                GridPane.rowIndex="5" GridPane.columnIndex="1"/>
     <TextField fx:id="codeTextField"
-               promptText="Code" prefColumnCount="5"
+               promptText="Code" prefColumnCount="7"
                GridPane.rowIndex="5" GridPane.columnIndex="2" />
 
     <!-- Row 6 -->

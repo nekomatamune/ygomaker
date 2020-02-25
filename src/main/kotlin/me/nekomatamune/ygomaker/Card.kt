@@ -40,7 +40,7 @@ data class Image(
 	val file: String = "",
 	val x: Int = 0,
 	val y: Int = 0,
-	val size: Int = 300
+	val size: Int = 250
 )
 
 /**
@@ -99,16 +99,44 @@ enum class LinkMarker {
 	UP_LEFT, UP, UP_RIGHT, LEFT, RIGHT, DOWN_LEFT, DOWN, DOWN_RIGHT,
 }
 
+val MONSTER_LEVEL_PRESETS = (1..12).toList()
+
 /**
  * Predefined value for [Monster.type]
  */
-val MONSTER_TYPE_PRESETS = listOf("ドラゴン族", "魔法使い族", "戦士族")
+val MONSTER_TYPE_PRESETS = listOf(
+	"ドラゴン族",
+	"魔法使い族",
+	"戦士族",
+	"獣戦士族",
+	"獣族",
+	"鳥獣族",
+	"アンデット族",
+	"悪魔族",
+	"天使族",
+	"昆虫族",
+	"恐竜族",
+	"爬虫類族",
+	"魚族",
+	"海竜族",
+	"機械族",
+	"雷族",
+	"水族",
+	"炎族",
+	"岩石族",
+	"植物族",
+	"サイキック族",
+	"幻竜族",
+	"サイバース族",
+	"幻神獣族",
+	"創造神族"
+)
 
 /**
  * Predefined value for [Monster.ability]
  */
 val MONSTER_ABILITY_PRESETS = listOf(
-	"", "リーバス", "トゥーン ", "スピリット", "ユニオン", "デュアル", "チューナー")
+	"", "リーバス", "トゥーン", "スピリット", "ユニオン", "デュアル", "チューナー")
 
 /**
  * [CardType] that are monsters. A [Card] with the following value should have

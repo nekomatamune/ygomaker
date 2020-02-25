@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="me.nekomatamune.ygomaker.fx.CardImage"
+      fx:controller="me.nekomatamune.ygomaker.fx.CardImageCtrl"
       spacing="10">
 
     <TextField fx:id="fileTextField"
@@ -15,17 +15,33 @@
     <!-- TODO: dynamically modify max value -->
     <HBox spacing="10">
         <Label text="x:"/>
-        <Spinner fx:id="xSpinner"
-                 min="0" max="1000" amountToStepBy="1"
-                 prefWidth="70"/>
+        <Spinner fx:id="xSpinner" editable="true"
+                 prefWidth="70">
+            <valueFactory>
+                <SpinnerValueFactory.IntegerSpinnerValueFactory min="0"
+                                                                max="1000"
+                                                                amountToStepBy="1"/>
+            </valueFactory>
+        </Spinner>
         <Label text="y:"/>
-        <Spinner fx:id="ySpinner"
-                 min="0" max="1000" amountToStepBy="1"
-                 prefWidth="70"/>
+        <Spinner fx:id="ySpinner" editable="true"
+                 prefWidth="70">
+            <valueFactory>
+                <SpinnerValueFactory.IntegerSpinnerValueFactory min="0"
+                                                                max="1000"
+                                                                amountToStepBy="1"/>
+            </valueFactory>
+        </Spinner>
         <Label text="size:"/>
-        <Spinner fx:id="sizeSpinner"
-                 min="1" initialValue="250" max="1000" amountToStepBy="1"
-                 prefWidth="70"/>
+        <Spinner fx:id="sizeSpinner" editable="true"
+                 prefWidth="70">
+            <valueFactory>
+                <SpinnerValueFactory.IntegerSpinnerValueFactory min="1"
+                                                                initialValue="250"
+                                                                max="1000"
+                                                                amountToStepBy="1"/>
+            </valueFactory>
+        </Spinner>
     </HBox>
 
     <HBox fx:id="imageHBox"

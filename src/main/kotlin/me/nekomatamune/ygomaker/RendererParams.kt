@@ -22,7 +22,20 @@ data class RendererParams(
 	val spellTrapTypeFont: Font,
 	val spellTrapTypeSymbolRect: Rect,
 
-	val imageRect: Rect
+	val imageRect: Rect,
+
+	val spellTrapEffectRect: Rect,
+	val spellTrapEffectFont: Font,
+
+	val monsterTypeRect: Rect,
+	val monsterTypeFont: Font,
+	val monsterEffectRect: Rect,
+	val monsterEffectFont: Font,
+
+	val atkRect: Rect,
+	val defRect: Rect,
+	val atkDefFont: Font
+
 )
 
 @Serializable
