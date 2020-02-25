@@ -73,8 +73,6 @@ object Command : CliktCommand(
 			return
 		}
 
-		launch()
-
 		launch(YGOMakerApp::class.java)
 	}
 }

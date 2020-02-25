@@ -47,13 +47,16 @@ class AppCtrl(
 		renderMenuItem.setOnAction { cardRendererController.render(card, packDir) }
 		exitMenuItem.setOnAction { onExitMenuItem() }
 
-		cardListController.cardSelectedHandler = { card, packDir ->
-			cardFormController.setState(card, packDir)
-			cardRendererController.render(card, packDir)
+		cardListController.cardSelectedHandler = { newCard, newPackDir ->
+			packDir = newPackDir
+			card = newCard
+			cardFormController.setState(newCard, newPackDir)
+			cardRendererController.render(newCard, newPackDir)
 		}
 
-		cardFormController.cardModifiedHandler = {
-			card = it
+		cardFormController.cardModifiedHandler = { newCard ->
+			cardListController.modifySelectedCard(newCard)
+			card = newCard
 			success()
 		}
 
