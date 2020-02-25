@@ -17,7 +17,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 private val SUPER = if (System.getProperty(
-				"os.name") == "Mac OS X") KeyCode.COMMAND else KeyCode.WINDOWS
+				"os.name") == "Mac OS X") KeyCode.COMMAND else KeyCode.CONTROL
 
 object AppCtrlSpec : Spek({
 	val mockCommand = mockk<Command>(relaxed = true).also {

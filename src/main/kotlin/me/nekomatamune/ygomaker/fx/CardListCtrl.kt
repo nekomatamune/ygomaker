@@ -127,6 +127,7 @@ open class CardListCtrl(
 	}
 
 	fun loadPack(newPackDir: Path? = null): Result<Unit> {
+		println("loadPack($newPackDir")
 
 		val newPackDir = newPackDir ?: directoryChooserFactory().apply {
 			title = "Select a Pack Directory to Load"
