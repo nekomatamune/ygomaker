@@ -68,6 +68,12 @@ object AppCtrlSpec : Spek({
 			}
 		}
 
+		group("#ExitMenuItem") {
+			test("Should not exit if cancelled") {
+				// TODO
+			}
+		}
+
 
 	}
 
