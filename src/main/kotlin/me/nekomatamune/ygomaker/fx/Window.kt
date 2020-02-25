@@ -1,10 +1,17 @@
 package me.nekomatamune.ygomaker.fx
 
+import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
+import javafx.scene.control.MenuItem
 import javafx.stage.DirectoryChooser
-import me.nekomatamune.ygomaker.*
+import me.nekomatamune.ygomaker.Card
+import me.nekomatamune.ygomaker.Command
+import me.nekomatamune.ygomaker.Pack
+import me.nekomatamune.ygomaker.deepCopyTo
+import me.nekomatamune.ygomaker.readFrom
+import me.nekomatamune.ygomaker.success
 import mu.KotlinLogging
 import java.nio.file.Files
 import java.nio.file.Path
@@ -19,7 +26,13 @@ class Window {
 	// endregion
 
 	// region subview controllers
-	@FXML lateinit var menuBarController: MenuBar
+	@FXML private lateinit var loadPackMenuItem: MenuItem
+	@FXML private lateinit var savePackMenuItem: MenuItem
+	@FXML private lateinit var savePackAsMenuItem: MenuItem
+	@FXML private lateinit var newCardMenuItem: MenuItem
+	@FXML private lateinit var renderMenuItem: MenuItem
+	@FXML private lateinit var exitMenuItem: MenuItem
+
 	@FXML lateinit var cardListController: CardListCtrl
 	@FXML lateinit var cardRendererController: CardRendererController
 	@FXML lateinit var cardFormController: CardFormCtrl
@@ -29,20 +42,17 @@ class Window {
 	fun initialize() {
 		logger.info { "Initializing Window..." }
 
-		menuBarController.menuActionHandler = {
-			when (it) {
-				MenuAction.LOAD_PACK -> loadPack()
-				//MenuAction.SAVE_PACK -> cardListController.getPack().writeTo(packDir)
-				MenuAction.SAVE_PACK_AS -> savePackAs()
-				MenuAction.NEW_CARD -> newCard()
-//				MenuAction.RENDER_CARD -> cardRendererController.render(
-//						cardFormController.card, packDir)
-				MenuAction.RENDER_CARD -> cardRendererController.render(
-						card, packDir)
-			}
+		loadPackMenuItem.setOnAction {
+			cardListController.loadPack().alertFailure()
 		}
+		savePackMenuItem.setOnAction { cardListController.savePack().alertFailure() }
+		savePackAsMenuItem.setOnAction { cardListController.savePackAs().alertFailure() }
+		newCardMenuItem.setOnAction { cardListController.addCard().alertFailure() }
+		renderMenuItem.setOnAction { cardRendererController.render(card, packDir) }
+		exitMenuItem.setOnAction { onExitMenuItem() }
 
-		cardListController.cardSelectedHandler = {card, packDir ->
+
+		cardListController.cardSelectedHandler = { card, packDir ->
 			cardFormController.setState(card, packDir)
 			cardRendererController.render(card, packDir)
 		}
@@ -65,6 +75,18 @@ class Window {
 		val pack = Pack.readFrom(packDir)
 		cardListController.updatePack(pack)
 		this.packDir = packDir
+	}
+
+	private fun onExitMenuItem() {
+		logger.debug { "onExitMenuItem()" }
+
+		Alert(Alert.AlertType.CONFIRMATION).apply {
+			headerText = "Exiting YGOMaker..."
+			contentText = "All unsaved changes will be discard. Proceed?"
+		}.showAndWait().filter(ButtonType.OK::equals).ifPresent {
+			logger.info { "Exiting app..." }
+			Platform.exit()
+		}
 	}
 
 	private fun savePackAs() {
@@ -90,11 +112,12 @@ class Window {
 		}
 	}
 
+
 	private fun newCard() {
-//		cardListController.getPack().let {
-//			val newPack = it.copy(cards = it.cards + Card())
-//			cardListController.setPack(newPack, selectLast = true)
-//		}
+		//		cardListController.getPack().let {
+		//			val newPack = it.copy(cards = it.cards + Card())
+		//			cardListController.setPack(newPack, selectLast = true)
+		//		}
 	}
 
 }

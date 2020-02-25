@@ -1,12 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.BorderPane?>
+
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             prefHeight="800" prefWidth="1000"
             fx:controller="me.nekomatamune.ygomaker.fx.Window">
     <top>
-        <fx:include fx:id="menuBar" source="MenuBar.fxml"/>
+        <MenuBar useSystemMenuBar="true">
+            <Menu text="File">
+                <MenuItem fx:id="loadPackMenuItem"
+                          text="Load Pack" accelerator="Shortcut+O"/>
+                <MenuItem fx:id="savePackMenuItem"
+                          text="Save Pack" accelerator="Shortcut+S"/>
+                <MenuItem fx:id="savePackAsMenuItem"
+                          text="Save Pack as..."
+                          accelerator="Shortcut+shift+S"/>
+                <SeparatorMenuItem/>
+                <MenuItem fx:id="newCardMenuItem" text="New Card"
+                          accelerator="Shortcut+N"/>
+                <SeparatorMenuItem/>
+                <MenuItem fx:id="renderMenuItem"
+                          text="Render" accelerator="Shortcut+R"/>
+                <SeparatorMenuItem/>
+                <MenuItem fx:id="exitMenuItem"
+                          text="Exit" accelerator="Shortcut+Q"/>
+            </Menu>
+
+        </MenuBar>
     </top>
     <left>
         <fx:include fx:id="cardList" source="CardList.fxml"/>
